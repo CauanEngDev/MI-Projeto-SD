@@ -1,0 +1,85 @@
+`timescale 1ns/1ps
+
+module tb_vga_driver;
+
+    reg clock;
+    reg reset;
+
+    reg [8:0] color_in;
+
+    wire [9:0] next_x;
+    wire [9:0] next_y;
+
+    wire hsync;
+    wire vsync;
+
+    wire [7:0] red;
+    wire [7:0] green;
+    wire [7:0] blue;
+
+    wire sync;
+    wire clk;
+    wire blank;
+
+
+    // Clock
+    initial begin
+        clock = 0;
+        forever #20 clock = ~clock;
+    end
+
+
+    // Reset
+    initial begin
+
+        reset = 1;
+
+        color_in = 9'b111_000_00;
+
+        #100;
+
+        reset = 0;
+
+        #5000;
+
+        $stop;
+
+    end
+
+
+    vga_driver #(
+
+        .H_ACTIVE(10'd9),
+        .H_FRONT(10'd1),
+        .H_PULSE(10'd1),
+        .H_BACK(10'd1),
+
+        .V_ACTIVE(10'd5),
+        .V_FRONT(10'd1),
+        .V_PULSE(10'd1),
+        .V_BACK(10'd1)
+
+    ) uut (
+
+        .clock(clock),
+        .reset(reset),
+
+        .color_in(color_in),
+
+        .next_x(next_x),
+        .next_y(next_y),
+
+        .hsync(hsync),
+        .vsync(vsync),
+
+        .red(red),
+        .green(green),
+        .blue(blue),
+
+        .sync(sync),
+        .clk(clk),
+        .blank(blank)
+
+    );
+
+endmodule

@@ -1,0 +1,67 @@
+`timescale 1ns/1ps
+
+module tb_tile_memory;
+
+    reg clock;
+
+    reg [8:0] logical_x;
+    reg [7:0] logical_y;
+
+    wire [8:0] color_out;
+
+    tile_memory uut (
+        .clock(clock),
+        .logical_x(logical_x),
+        .logical_y(logical_y),
+        .color_out(color_out)
+    );
+
+    // Clock de simulação
+    initial begin
+        clock = 0;
+        forever #10 clock = ~clock;
+    end
+
+    initial begin
+
+        // Inicialização
+        logical_x = 0;
+        logical_y = 0;
+
+        #20;
+
+        // Tile (0,0)
+        logical_x = 0;
+        logical_y = 0;
+
+        #20;
+
+        // Ainda no tile (0,0)
+        logical_x = 7;
+        logical_y = 7;
+
+        #20;
+
+        // Tile (1,0)
+        logical_x = 8;
+        logical_y = 0;
+
+        #20;
+
+        // Tile (0,1)
+        logical_x = 0;
+        logical_y = 8;
+
+        #20;
+
+        // Tile (1,1)
+        logical_x = 8;
+        logical_y = 8;
+
+        #20;
+
+        $stop;
+
+    end
+
+endmodule
