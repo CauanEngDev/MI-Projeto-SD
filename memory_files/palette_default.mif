@@ -1,0 +1,32 @@
+-- palette_default.mif
+-- Paleta padrao de inicializacao para a Palette RAM
+-- Formato: indice -> cor RRRGGGBBB (3 bits por canal, 9 bits total)
+-- Entradas 0-15: cores primarias, secundarias e tons neutros basicos
+-- Entradas 16-255: reservadas (preenchidas com preto), disponiveis
+-- para expansao futura ou sobrescrita pela CPU em tempo de execucao
+
+WIDTH=9;
+DEPTH=256;
+
+ADDRESS_RADIX=UNS;
+DATA_RADIX=BIN;
+
+CONTENT BEGIN
+	0  : 000000000;  -- Preto
+	1  : 111111111;  -- Branco
+	2  : 111000000;  -- Vermelho
+	3  : 000111000;  -- Verde
+	4  : 000000111;  -- Azul
+	5  : 111111000;  -- Amarelo
+	6  : 000111111;  -- Ciano
+	7  : 111000111;  -- Magenta
+	8  : 111100000;  -- Laranja
+	9  : 100000111;  -- Roxo
+	10 : 111010101;  -- Rosa
+	11 : 100100100;  -- Cinza medio
+	12 : 010010010;  -- Cinza escuro
+	13 : 110110110;  -- Cinza claro
+	14 : 000100000;  -- Verde escuro
+	15 : 000000100;  -- Azul escuro
+	[16..255] : 000000000;  -- Reservado / expansao futura (preto)
+END;

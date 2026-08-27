@@ -1,4 +1,4 @@
-Fitter Status : Successful - Tue Aug 25 22:26:12 2026
+Fitter Status : Successful - Wed Aug 26 22:48:14 2026
 Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 Revision Name : CoProcessador
 Top-level Entity Name : DE1_SOC_golden_top
@@ -6,11 +6,11 @@ Family : Cyclone V
 Device : 5CSEMA5F31C6
 Timing Models : Final
 Logic utilization (in ALMs) : 39 / 32,070 ( < 1 % )
-Total registers : 48
+Total registers : 51
 Total pins : 241 / 457 ( 53 % )
 Total virtual pins : 0
-Total block memory bits : 10,800 / 4,065,280 ( < 1 % )
-Total RAM Blocks : 2 / 397 ( < 1 % )
+Total block memory bits : 11,904 / 4,065,280 ( < 1 % )
+Total RAM Blocks : 3 / 397 ( < 1 % )
 Total DSP Blocks : 0 / 87 ( 0 % )
 Total HSSI RX PCSs : 0
 Total HSSI PMA RX Deserializers : 0

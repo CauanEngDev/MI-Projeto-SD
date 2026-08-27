@@ -1,0 +1,144 @@
+`timescale 1ns / 1ps
+
+module tb_lsu;
+
+    // ---- Sinais de estímulo (lado Avalon-MM / CPU) ----
+    reg         clock;
+    reg         reset;
+    reg  [15:0] avs_address;
+    reg         avs_write;
+    reg  [31:0] avs_writedata;
+    reg         avs_read;
+    wire [31:0] avs_readdata;
+    wire        avs_waitrequest;
+
+    // ---- Saídas para a RAM de tiles (o que estamos validando) ----
+    wire        bg_we;
+    wire [10:0] bg_write_addr;
+    wire [8:0]  bg_write_data;
+
+    integer erros = 0;
+
+    // ---- DUT ----
+    lsu #(.ADDR_WIDTH(16), .DATA_WIDTH(32)) dut (
+        .clock          (clock),
+        .reset          (reset),
+        .avs_address    (avs_address),
+        .avs_write      (avs_write),
+        .avs_writedata  (avs_writedata),
+        .avs_read       (avs_read),
+        .avs_readdata   (avs_readdata),
+        .avs_waitrequest(avs_waitrequest),
+        .bg_we          (bg_we),
+        .bg_write_addr  (bg_write_addr),
+        .bg_write_data  (bg_write_data)
+    );
+
+    // ---- Clock: 10ns de período ----
+    always #5 clock = ~clock;
+
+    // ---- Task auxiliar: faz uma escrita Avalon-MM de 1 ciclo ----
+    task fazer_escrita(input [15:0] endereco, input [31:0] dado);
+        begin
+            @(negedge clock);
+            avs_address   = endereco;
+            avs_writedata = dado;
+            avs_write     = 1'b1;
+            @(posedge clock); #1; // #1 garante que já leu o valor combinacional pós-borda
+            avs_write     = 1'b0;
+        end
+    endtask
+
+    // ---- Task auxiliar: checa e reporta ----
+    task checar(input cond, input [255:0] nome_teste);
+        begin
+            if (cond)
+                $display("[PASSOU] %0s", nome_teste);
+            else begin
+                $display("[FALHOU] %0s", nome_teste);
+                erros = erros + 1;
+            end
+        end
+    endtask
+
+    initial begin
+        // ---- Inicialização ----
+        clock         = 0;
+        reset         = 1;
+        avs_address   = 0;
+        avs_write     = 0;
+        avs_writedata = 0;
+        avs_read      = 0;
+
+        @(posedge clock); @(posedge clock);
+        reset = 0;
+
+        // =====================================================
+        // Teste 1: escrita na região BACKGROUND (region = 4'h0)
+        // endereço 16'h0005 -> offset 5, region 0
+        // =====================================================
+        fazer_escrita(16'h0005, 32'h0000_01FF); // writedata com os 9 bits baixos = 1FF
+        checar(bg_we == 1'b1,              "T1: bg_we ativo ao escrever na regiao background");
+        checar(bg_write_addr == 11'd5,     "T1: bg_write_addr = offset extraido corretamente");
+        checar(bg_write_data == 9'h1FF,    "T1: bg_write_data = 9 bits baixos de avs_writedata");
+
+        // =====================================================
+        // Teste 2: bg_we deve cair a 0 quando avs_write volta a 0
+        // (escrita deve durar so 1 ciclo, nao "grudar")
+        // =====================================================
+        @(posedge clock); #1;
+        checar(bg_we == 1'b0, "T2: bg_we volta a 0 sem avs_write ativo");
+
+        // =====================================================
+        // Teste 3: escrita na regiao SPRITE (region = 4'h1)
+        // NAO deve ativar bg_we, mesmo com avs_write=1
+        // endereco 16'h1003 -> region=1, offset=3
+        // =====================================================
+        fazer_escrita(16'h1003, 32'h0000_00AA);
+        checar(bg_we == 1'b0, "T3: bg_we permanece 0 para escrita fora da regiao background");
+
+        // =====================================================
+        // Teste 4: escrita na regiao PALETTE (region = 4'h2)
+        // tambem nao deve ativar bg_we
+        // =====================================================
+        fazer_escrita(16'h2010, 32'h0000_0055);
+        checar(bg_we == 1'b0, "T4: bg_we permanece 0 para escrita na regiao paleta");
+
+        // =====================================================
+        // Teste 5: offset maximo valido (TOTAL_TILES-1 = 1199 = 11'h4AF)
+        // endereco 16'h04AF -> region=0, offset=1199
+        // =====================================================
+        fazer_escrita(16'h04AF, 32'h0000_0007);
+        checar(bg_we == 1'b1,           "T5: bg_we ativo no ultimo tile valido (1199)");
+        checar(bg_write_addr == 11'd1199,"T5: bg_write_addr = 1199 corretamente extraido");
+        checar(bg_write_data == 9'h007, "T5: bg_write_data correto no limite superior");
+
+        // =====================================================
+        // Teste 6: avs_writedata so usa os 9 bits baixos
+        // bits altos "sujos" nao devem vazar para bg_write_data
+        // =====================================================
+        fazer_escrita(16'h0001, 32'hFFFF_FE00); // 9 bits baixos = 000
+        checar(bg_write_data == 9'h000, "T6: bits altos de avs_writedata sao ignorados");
+
+        // =====================================================
+        // Teste 7: sem avs_write, bg_we nunca deve subir
+        // mesmo com endereco valido de background
+        // =====================================================
+        @(negedge clock);
+        avs_address = 16'h0002;
+        avs_write   = 1'b0;
+        @(posedge clock); #1;
+        checar(bg_we == 1'b0, "T7: bg_we permanece 0 sem avs_write ativo");
+
+        // ---- Resultado final ----
+        $display("----------------------------------------");
+        if (erros == 0)
+            $display("TODOS OS TESTES PASSARAM");
+        else
+            $display("%0d TESTE(S) FALHARAM", erros);
+        $display("----------------------------------------");
+
+        $finish;
+    end
+
+endmodule

@@ -1,4 +1,4 @@
-Analysis & Synthesis Status : Successful - Tue Aug 25 22:25:07 2026
+Analysis & Synthesis Status : Successful - Wed Aug 26 22:47:10 2026
 Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 Revision Name : CoProcessador
 Top-level Entity Name : DE1_SOC_golden_top
@@ -7,7 +7,7 @@ Logic utilization (in ALMs) : N/A
 Total registers : 40
 Total pins : 241
 Total virtual pins : 0
-Total block memory bits : 10,800
+Total block memory bits : 11,904
 Total DSP Blocks : 0
 Total HSSI RX PCSs : 0
 Total HSSI PMA RX Deserializers : 0

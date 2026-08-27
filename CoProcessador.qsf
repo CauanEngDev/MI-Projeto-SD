@@ -657,21 +657,25 @@ set_location_assignment PIN_D11 -to VGA_VS
 set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
-set_global_assignment -name VERILOG_FILE DE1_SOC_golden_top.v
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
-set_global_assignment -name VERILOG_FILE vga_driver.v
-set_global_assignment -name VERILOG_FILE top_video.v
-set_global_assignment -name VERILOG_FILE tb_tile_memory.v
 set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (Verilog)"
 set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
 set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda_simulation
-set_global_assignment -name VERILOG_FILE tb_vga_memory.v
-set_global_assignment -name QIP_FILE pll01.qip
-set_global_assignment -name SIP_FILE pll01.sip
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name QIP_FILE memory_files/palette_ram.qip
+set_global_assignment -name QIP_FILE memory_files/bg_tile_ram.qip
+set_global_assignment -name VERILOG_FILE tb_lsu.v
+set_global_assignment -name VERILOG_FILE LSU.v
+set_global_assignment -name VERILOG_FILE DE1_SOC_golden_top.v
+set_global_assignment -name VERILOG_FILE vga_driver.v
+set_global_assignment -name VERILOG_FILE top_video.v
+set_global_assignment -name VERILOG_FILE tb_tile_memory.v
+set_global_assignment -name VERILOG_FILE tb_vga_memory.v
+set_global_assignment -name QIP_FILE pll01.qip
+set_global_assignment -name SIP_FILE pll01.sip
 set_global_assignment -name VERILOG_FILE motor_background.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

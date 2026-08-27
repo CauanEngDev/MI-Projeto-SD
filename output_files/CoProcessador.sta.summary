@@ -3,11 +3,11 @@ Timing Analyzer Summary
 ------------------------------------------------------------
 
 Type  : Slow 1100mV 85C Model Setup 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 35.881
+Slack : 35.702
 TNS   : 0.000
 
 Type  : Slow 1100mV 85C Model Hold 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 0.313
+Slack : 0.314
 TNS   : 0.000
 
 Type  : Slow 1100mV 85C Model Minimum Pulse Width 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]'
@@ -19,15 +19,15 @@ Slack : 9.670
 TNS   : 0.000
 
 Type  : Slow 1100mV 85C Model Minimum Pulse Width 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 18.776
+Slack : 18.757
 TNS   : 0.000
 
 Type  : Slow 1100mV 0C Model Setup 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 35.926
+Slack : 35.755
 TNS   : 0.000
 
 Type  : Slow 1100mV 0C Model Hold 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 0.323
+Slack : 0.296
 TNS   : 0.000
 
 Type  : Slow 1100mV 0C Model Minimum Pulse Width 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]'
@@ -39,15 +39,15 @@ Slack : 9.673
 TNS   : 0.000
 
 Type  : Slow 1100mV 0C Model Minimum Pulse Width 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 18.752
+Slack : 18.738
 TNS   : 0.000
 
 Type  : Fast 1100mV 85C Model Setup 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 37.700
+Slack : 37.546
 TNS   : 0.000
 
 Type  : Fast 1100mV 85C Model Hold 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 0.168
+Slack : 0.182
 TNS   : 0.000
 
 Type  : Fast 1100mV 85C Model Minimum Pulse Width 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]'
@@ -59,15 +59,15 @@ Slack : 9.336
 TNS   : 0.000
 
 Type  : Fast 1100mV 85C Model Minimum Pulse Width 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 18.888
+Slack : 18.879
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Setup 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 37.876
+Slack : 37.752
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Hold 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 0.152
+Slack : 0.167
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Minimum Pulse Width 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]'
@@ -79,7 +79,7 @@ Slack : 9.286
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Minimum Pulse Width 'video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 18.889
+Slack : 18.878
 TNS   : 0.000
 
 ------------------------------------------------------------

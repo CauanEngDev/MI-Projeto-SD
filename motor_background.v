@@ -1,47 +1,47 @@
 module motor_background (
     input  wire       clock,
+
+    // Porta de leitura (rendering)
     input  wire [8:0] logical_x,
     input  wire [7:0] logical_y,
-    output reg  [8:0] color_out
+    output wire [8:0] color_out,
+
+    // Escrita do background (região 0 da LSU)
+    input  wire        bg_we,
+    input  wire [10:0] bg_write_addr,
+    input  wire [7:0]  bg_write_data,
+
+    // Escrita da paleta (região 3 da LSU)
+    input  wire        pal_we,
+    input  wire [7:0]  pal_write_addr,
+    input  wire [8:0]  pal_write_data
 );
-
-    localparam TILE_SIZE     = 8;
     localparam TILES_PER_ROW = 40;
-    localparam TOTAL_TILES   = 1200;
 
-    reg [8:0] tile_rom [0:TOTAL_TILES-1];
+    wire [5:0]  tile_col  = logical_x[8:3];
+    wire [4:0]  tile_row  = logical_y[7:3];
+    wire [10:0] tile_addr = tile_row * TILES_PER_ROW + tile_col;
 
-    integer i;
+    wire [7:0] palette_index; // saída da tile RAM = índice de paleta
 
-    initial begin
-        for (i = 0; i < TOTAL_TILES; i = i + 1) begin
+    bg_tile_ram u_bg_tile_ram (
+        .clock      (clock),
+        .data       (bg_write_data),
+        .wraddress  (bg_write_addr),
+        .wren       (bg_we),
+        .rdaddress  (tile_addr),
+        .rden       (1'b1),
+        .q          (palette_index)
+    );
 
-            if (((i / TILES_PER_ROW) +
-                 (i % TILES_PER_ROW)) % 2 == 0)
-                // Vermelho: RRRGGGBBB
-                tile_rom[i] = 9'b111_000_000;
-
-            else
-                // Azul: RRRGGGBBB
-                tile_rom[i] = 9'b000_000_111;
-
-        end
-    end
-
-
-    wire [5:0] tile_col;
-    wire [4:0] tile_row;
-    wire [10:0] tile_addr;
-
-    assign tile_col  = logical_x[8:3];
-    assign tile_row  = logical_y[7:3];
-
-    assign tile_addr =
-        tile_row * TILES_PER_ROW + tile_col;
-
-
-    always @(posedge clock) begin
-        color_out <= tile_rom[tile_addr];
-    end
+    palette_ram u_palette_ram (
+        .clock      (clock),
+        .data       (pal_write_data),
+        .wraddress  (pal_write_addr),
+        .wren       (pal_we),
+        .rdaddress  (palette_index),
+        .rden       (1'b1),
+        .q          (color_out)
+    );
 
 endmodule

@@ -1,5 +1,5 @@
 Fitter report for CoProcessador
-Tue Aug 25 22:26:12 2026
+Wed Aug 26 22:48:14 2026
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -67,7 +67,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------------------+
 ; Fitter Summary                                                                ;
 +---------------------------------+---------------------------------------------+
-; Fitter Status                   ; Successful - Tue Aug 25 22:26:12 2026       ;
+; Fitter Status                   ; Successful - Wed Aug 26 22:48:14 2026       ;
 ; Quartus Prime Version           ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
 ; Revision Name                   ; CoProcessador                               ;
 ; Top-level Entity Name           ; DE1_SOC_golden_top                          ;
@@ -75,11 +75,11 @@ https://fpgasoftware.intel.com/eula.
 ; Device                          ; 5CSEMA5F31C6                                ;
 ; Timing Models                   ; Final                                       ;
 ; Logic utilization (in ALMs)     ; 39 / 32,070 ( < 1 % )                       ;
-; Total registers                 ; 48                                          ;
+; Total registers                 ; 51                                          ;
 ; Total pins                      ; 241 / 457 ( 53 % )                          ;
 ; Total virtual pins              ; 0                                           ;
-; Total block memory bits         ; 10,800 / 4,065,280 ( < 1 % )                ;
-; Total RAM Blocks                ; 2 / 397 ( < 1 % )                           ;
+; Total block memory bits         ; 11,904 / 4,065,280 ( < 1 % )                ;
+; Total RAM Blocks                ; 3 / 397 ( < 1 % )                           ;
 ; Total DSP Blocks                ; 0 / 87 ( 0 % )                              ;
 ; Total HSSI RX PCSs              ; 0                                           ;
 ; Total HSSI PMA RX Deserializers ; 0                                           ;
@@ -163,9 +163,9 @@ https://fpgasoftware.intel.com/eula.
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processor 2            ;   0.4%      ;
-;     Processor 3            ;   0.3%      ;
-;     Processor 4            ;   0.3%      ;
+;     Processor 2            ;   0.3%      ;
+;     Processor 3            ;   0.2%      ;
+;     Processor 4            ;   0.2%      ;
 +----------------------------+-------------+
 
 
@@ -175,14 +175,17 @@ https://fpgasoftware.intel.com/eula.
 ; Node                                                                                                       ; Action     ; Operation                                         ; Reason                     ; Node Port ; Node Port Name ; Destination Node                                                       ; Destination Port ; Destination Port Name ;
 +------------------------------------------------------------------------------------------------------------+------------+---------------------------------------------------+----------------------------+-----------+----------------+------------------------------------------------------------------------+------------------+-----------------------+
 ; top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i|outclk_wire[0]~CLKENA0 ; Created    ; Placement                                         ; Fitter Periphery Placement ;           ;                ;                                                                        ;                  ;                       ;
-; top_video:video_system|vga_driver:vga|h_counter[5]                                                         ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|h_counter[5]~DUPLICATE           ;                  ;                       ;
-; top_video:video_system|vga_driver:vga|h_counter[9]                                                         ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|h_counter[9]~DUPLICATE           ;                  ;                       ;
+; top_video:video_system|vga_driver:vga|h_counter[6]                                                         ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|h_counter[6]~DUPLICATE           ;                  ;                       ;
+; top_video:video_system|vga_driver:vga|h_counter[7]                                                         ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|h_counter[7]~DUPLICATE           ;                  ;                       ;
 ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE                                                 ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE~DUPLICATE   ;                  ;                       ;
-; top_video:video_system|vga_driver:vga|hysnc_reg                                                            ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|hysnc_reg~DUPLICATE              ;                  ;                       ;
-; top_video:video_system|vga_driver:vga|v_counter[3]                                                         ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|v_counter[3]~DUPLICATE           ;                  ;                       ;
+; top_video:video_system|vga_driver:vga|h_state.H_PULSE_STATE                                                ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|h_state.H_PULSE_STATE~DUPLICATE  ;                  ;                       ;
+; top_video:video_system|vga_driver:vga|v_counter[1]                                                         ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|v_counter[1]~DUPLICATE           ;                  ;                       ;
+; top_video:video_system|vga_driver:vga|v_counter[4]                                                         ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|v_counter[4]~DUPLICATE           ;                  ;                       ;
 ; top_video:video_system|vga_driver:vga|v_counter[6]                                                         ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|v_counter[6]~DUPLICATE           ;                  ;                       ;
 ; top_video:video_system|vga_driver:vga|v_counter[7]                                                         ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|v_counter[7]~DUPLICATE           ;                  ;                       ;
 ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                               ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE~DUPLICATE ;                  ;                       ;
+; top_video:video_system|vga_driver:vga|v_state.V_FRONT_STATE                                                ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|v_state.V_FRONT_STATE~DUPLICATE  ;                  ;                       ;
+; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE                                                ; Duplicated ; Router Logic Cell Insertion and Logic Duplication ; Routability optimization   ;           ;                ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE~DUPLICATE  ;                  ;                       ;
 +------------------------------------------------------------------------------------------------------------+------------+---------------------------------------------------+----------------------------+-----------+----------------+------------------------------------------------------------------------+------------------+-----------------------+
 
 
@@ -327,8 +330,8 @@ https://fpgasoftware.intel.com/eula.
 ; Type                ; Total [A + B]      ; From Design Partitions [A] ; From Rapid Recompile [B] ;
 +---------------------+--------------------+----------------------------+--------------------------+
 ; Placement (by node) ;                    ;                            ;                          ;
-;     -- Requested    ; 0.00 % ( 0 / 702 ) ; 0.00 % ( 0 / 702 )         ; 0.00 % ( 0 / 702 )       ;
-;     -- Achieved     ; 0.00 % ( 0 / 702 ) ; 0.00 % ( 0 / 702 )         ; 0.00 % ( 0 / 702 )       ;
+;     -- Requested    ; 0.00 % ( 0 / 710 ) ; 0.00 % ( 0 / 710 )         ; 0.00 % ( 0 / 710 )       ;
+;     -- Achieved     ; 0.00 % ( 0 / 710 ) ; 0.00 % ( 0 / 710 )         ; 0.00 % ( 0 / 710 )       ;
 ;                     ;                    ;                            ;                          ;
 ; Routing (by net)    ;                    ;                            ;                          ;
 ;     -- Requested    ; 0.00 % ( 0 / 0 )   ; 0.00 % ( 0 / 0 )           ; 0.00 % ( 0 / 0 )         ;
@@ -351,7 +354,7 @@ https://fpgasoftware.intel.com/eula.
 +--------------------------------+-----------------------+-------------------------+-------------------+---------------------+-------+
 ; Partition Name                 ; Preservation Achieved ; Preservation Level Used ; Netlist Type Used ; Preservation Method ; Notes ;
 +--------------------------------+-----------------------+-------------------------+-------------------+---------------------+-------+
-; Top                            ; 0.00 % ( 0 / 693 )    ; N/A                     ; Source File       ; N/A                 ;       ;
+; Top                            ; 0.00 % ( 0 / 701 )    ; N/A                     ; Source File       ; N/A                 ;       ;
 ; hard_block:auto_generated_inst ; 0.00 % ( 0 / 9 )      ; N/A                     ; Source File       ; N/A                 ;       ;
 +--------------------------------+-----------------------+-------------------------+-------------------+---------------------+-------+
 
@@ -359,7 +362,7 @@ https://fpgasoftware.intel.com/eula.
 +--------------+
 ; Pin-Out File ;
 +--------------+
-The pin-out file can be found in F:/Pbl Sd 1/output_files/CoProcessador.pin.
+The pin-out file can be found in F:/CoprocessadorGrafico/output_files/CoProcessador.pin.
 
 
 +------------------------------------------------------------------------------------------+
@@ -369,12 +372,12 @@ The pin-out file can be found in F:/Pbl Sd 1/output_files/CoProcessador.pin.
 +-------------------------------------------------------------+--------------------+-------+
 ; Logic utilization (ALMs needed / total ALMs on device)      ; 39 / 32,070        ; < 1 % ;
 ; ALMs needed [=A-B+C]                                        ; 39                 ;       ;
-;     [A] ALMs used in final placement [=a+b+c+d]             ; 45 / 32,070        ; < 1 % ;
+;     [A] ALMs used in final placement [=a+b+c+d]             ; 46 / 32,070        ; < 1 % ;
 ;         [a] ALMs used for LUT logic and registers           ; 16                 ;       ;
-;         [b] ALMs used for LUT logic                         ; 24                 ;       ;
+;         [b] ALMs used for LUT logic                         ; 25                 ;       ;
 ;         [c] ALMs used for registers                         ; 5                  ;       ;
 ;         [d] ALMs used for memory (up to half of total ALMs) ; 0                  ;       ;
-;     [B] Estimate of ALMs recoverable by dense packing       ; 6 / 32,070         ; < 1 % ;
+;     [B] Estimate of ALMs recoverable by dense packing       ; 7 / 32,070         ; < 1 % ;
 ;     [C] Estimate of ALMs unavailable [=a+b+c+d]             ; 0 / 32,070         ; 0 %   ;
 ;         [a] Due to location constrained logic               ; 0                  ;       ;
 ;         [b] Due to LAB-wide signal conflicts                ; 0                  ;       ;
@@ -383,8 +386,8 @@ The pin-out file can be found in F:/Pbl Sd 1/output_files/CoProcessador.pin.
 ;                                                             ;                    ;       ;
 ; Difficulty packing design                                   ; Low                ;       ;
 ;                                                             ;                    ;       ;
-; Total LABs:  partially or completely used                   ; 7 / 3,207          ; < 1 % ;
-;     -- Logic LABs                                           ; 7                  ;       ;
+; Total LABs:  partially or completely used                   ; 6 / 3,207          ; < 1 % ;
+;     -- Logic LABs                                           ; 6                  ;       ;
 ;     -- Memory LABs (up to half of total LABs)               ; 0                  ;       ;
 ;                                                             ;                    ;       ;
 ; Combinational ALUT usage for logic                          ; 70                 ;       ;
@@ -393,15 +396,15 @@ The pin-out file can be found in F:/Pbl Sd 1/output_files/CoProcessador.pin.
 ;     -- 5 input functions                                    ; 13                 ;       ;
 ;     -- 4 input functions                                    ; 11                 ;       ;
 ;     -- <=3 input functions                                  ; 38                 ;       ;
-; Combinational ALUT usage for route-throughs                 ; 3                  ;       ;
+; Combinational ALUT usage for route-throughs                 ; 5                  ;       ;
 ;                                                             ;                    ;       ;
-; Dedicated logic registers                                   ; 48                 ;       ;
+; Dedicated logic registers                                   ; 51                 ;       ;
 ;     -- By type:                                             ;                    ;       ;
 ;         -- Primary logic registers                          ; 40 / 64,140        ; < 1 % ;
-;         -- Secondary logic registers                        ; 8 / 64,140         ; < 1 % ;
+;         -- Secondary logic registers                        ; 11 / 64,140        ; < 1 % ;
 ;     -- By function:                                         ;                    ;       ;
 ;         -- Design implementation registers                  ; 40                 ;       ;
-;         -- Routing optimization registers                   ; 8                  ;       ;
+;         -- Routing optimization registers                   ; 11                 ;       ;
 ;                                                             ;                    ;       ;
 ; Virtual pins                                                ; 0                  ;       ;
 ; I/O pins                                                    ; 241 / 457          ; 53 %  ;
@@ -435,10 +438,10 @@ The pin-out file can be found in F:/Pbl Sd 1/output_files/CoProcessador.pin.
 ;     -- UART                                                 ; 0 / 2 ( 0 % )      ;       ;
 ;     -- USB                                                  ; 0 / 2 ( 0 % )      ;       ;
 ;                                                             ;                    ;       ;
-; M10K blocks                                                 ; 2 / 397            ; < 1 % ;
+; M10K blocks                                                 ; 3 / 397            ; < 1 % ;
 ; Total MLAB memory bits                                      ; 0                  ;       ;
-; Total block memory bits                                     ; 10,800 / 4,065,280 ; < 1 % ;
-; Total block memory implementation bits                      ; 20,480 / 4,065,280 ; < 1 % ;
+; Total block memory bits                                     ; 11,904 / 4,065,280 ; < 1 % ;
+; Total block memory implementation bits                      ; 30,720 / 4,065,280 ; < 1 % ;
 ;                                                             ;                    ;       ;
 ; Total DSP Blocks                                            ; 0 / 87             ; 0 %   ;
 ;                                                             ;                    ;       ;
@@ -457,11 +460,11 @@ The pin-out file can be found in F:/Pbl Sd 1/output_files/CoProcessador.pin.
 ; Impedance control blocks                                    ; 0 / 4              ; 0 %   ;
 ; Hard Memory Controllers                                     ; 0 / 2              ; 0 %   ;
 ; Average interconnect usage (total/H/V)                      ; 0.0% / 0.0% / 0.0% ;       ;
-; Peak interconnect usage (total/H/V)                         ; 0.9% / 1.0% / 0.6% ;       ;
-; Maximum fan-out                                             ; 51                 ;       ;
-; Highest non-global fan-out                                  ; 25                 ;       ;
-; Total fan-out                                               ; 788                ;       ;
-; Average fan-out                                             ; 1.12               ;       ;
+; Peak interconnect usage (total/H/V)                         ; 0.9% / 1.1% / 0.5% ;       ;
+; Maximum fan-out                                             ; 71                 ;       ;
+; Highest non-global fan-out                                  ; 71                 ;       ;
+; Total fan-out                                               ; 806                ;       ;
+; Average fan-out                                             ; 1.13               ;       ;
 +-------------------------------------------------------------+--------------------+-------+
 
 
@@ -472,12 +475,12 @@ The pin-out file can be found in F:/Pbl Sd 1/output_files/CoProcessador.pin.
 +-------------------------------------------------------------+----------------------+--------------------------------+
 ; Logic utilization (ALMs needed / total ALMs on device)      ; 39 / 32070 ( < 1 % ) ; 0 / 32070 ( 0 % )              ;
 ; ALMs needed [=A-B+C]                                        ; 39                   ; 0                              ;
-;     [A] ALMs used in final placement [=a+b+c+d]             ; 45 / 32070 ( < 1 % ) ; 0 / 32070 ( 0 % )              ;
+;     [A] ALMs used in final placement [=a+b+c+d]             ; 46 / 32070 ( < 1 % ) ; 0 / 32070 ( 0 % )              ;
 ;         [a] ALMs used for LUT logic and registers           ; 16                   ; 0                              ;
-;         [b] ALMs used for LUT logic                         ; 24                   ; 0                              ;
+;         [b] ALMs used for LUT logic                         ; 25                   ; 0                              ;
 ;         [c] ALMs used for registers                         ; 5                    ; 0                              ;
 ;         [d] ALMs used for memory (up to half of total ALMs) ; 0                    ; 0                              ;
-;     [B] Estimate of ALMs recoverable by dense packing       ; 6 / 32070 ( < 1 % )  ; 0 / 32070 ( 0 % )              ;
+;     [B] Estimate of ALMs recoverable by dense packing       ; 7 / 32070 ( < 1 % )  ; 0 / 32070 ( 0 % )              ;
 ;     [C] Estimate of ALMs unavailable [=a+b+c+d]             ; 0 / 32070 ( 0 % )    ; 0 / 32070 ( 0 % )              ;
 ;         [a] Due to location constrained logic               ; 0                    ; 0                              ;
 ;         [b] Due to LAB-wide signal conflicts                ; 0                    ; 0                              ;
@@ -486,8 +489,8 @@ The pin-out file can be found in F:/Pbl Sd 1/output_files/CoProcessador.pin.
 ;                                                             ;                      ;                                ;
 ; Difficulty packing design                                   ; Low                  ; Low                            ;
 ;                                                             ;                      ;                                ;
-; Total LABs:  partially or completely used                   ; 7 / 3207 ( < 1 % )   ; 0 / 3207 ( 0 % )               ;
-;     -- Logic LABs                                           ; 7                    ; 0                              ;
+; Total LABs:  partially or completely used                   ; 6 / 3207 ( < 1 % )   ; 0 / 3207 ( 0 % )               ;
+;     -- Logic LABs                                           ; 6                    ; 0                              ;
 ;     -- Memory LABs (up to half of total LABs)               ; 0                    ; 0                              ;
 ;                                                             ;                      ;                                ;
 ; Combinational ALUT usage for logic                          ; 70                   ; 0                              ;
@@ -496,7 +499,7 @@ The pin-out file can be found in F:/Pbl Sd 1/output_files/CoProcessador.pin.
 ;     -- 5 input functions                                    ; 13                   ; 0                              ;
 ;     -- 4 input functions                                    ; 11                   ; 0                              ;
 ;     -- <=3 input functions                                  ; 38                   ; 0                              ;
-; Combinational ALUT usage for route-throughs                 ; 3                    ; 0                              ;
+; Combinational ALUT usage for route-throughs                 ; 5                    ; 0                              ;
 ; Memory ALUT usage                                           ; 0                    ; 0                              ;
 ;     -- 64-address deep                                      ; 0                    ; 0                              ;
 ;     -- 32-address deep                                      ; 0                    ; 0                              ;
@@ -504,18 +507,18 @@ The pin-out file can be found in F:/Pbl Sd 1/output_files/CoProcessador.pin.
 ; Dedicated logic registers                                   ; 0                    ; 0                              ;
 ;     -- By type:                                             ;                      ;                                ;
 ;         -- Primary logic registers                          ; 40 / 64140 ( < 1 % ) ; 0 / 64140 ( 0 % )              ;
-;         -- Secondary logic registers                        ; 8 / 64140 ( < 1 % )  ; 0 / 64140 ( 0 % )              ;
+;         -- Secondary logic registers                        ; 11 / 64140 ( < 1 % ) ; 0 / 64140 ( 0 % )              ;
 ;     -- By function:                                         ;                      ;                                ;
 ;         -- Design implementation registers                  ; 40                   ; 0                              ;
-;         -- Routing optimization registers                   ; 8                    ; 0                              ;
+;         -- Routing optimization registers                   ; 11                   ; 0                              ;
 ;                                                             ;                      ;                                ;
 ;                                                             ;                      ;                                ;
 ; Virtual pins                                                ; 0                    ; 0                              ;
 ; I/O pins                                                    ; 239                  ; 2                              ;
 ; I/O registers                                               ; 0                    ; 0                              ;
-; Total block memory bits                                     ; 10800                ; 0                              ;
-; Total block memory implementation bits                      ; 20480                ; 0                              ;
-; M10K block                                                  ; 2 / 397 ( < 1 % )    ; 0 / 397 ( 0 % )                ;
+; Total block memory bits                                     ; 11904                ; 0                              ;
+; Total block memory implementation bits                      ; 30720                ; 0                              ;
+; M10K block                                                  ; 3 / 397 ( < 1 % )    ; 0 / 397 ( 0 % )                ;
 ; Clock enable block                                          ; 0 / 116 ( 0 % )      ; 1 / 116 ( < 1 % )              ;
 ; Fractional PLL                                              ; 0 / 6 ( 0 % )        ; 1 / 6 ( 16 % )                 ;
 ; PLL Output Counter                                          ; 0 / 54 ( 0 % )       ; 1 / 54 ( 1 % )                 ;
@@ -523,18 +526,18 @@ The pin-out file can be found in F:/Pbl Sd 1/output_files/CoProcessador.pin.
 ; PLL Reference Clock Select Block                            ; 0 / 6 ( 0 % )        ; 1 / 6 ( 16 % )                 ;
 ;                                                             ;                      ;                                ;
 ; Connections                                                 ;                      ;                                ;
-;     -- Input Connections                                    ; 171                  ; 0                              ;
-;     -- Registered Input Connections                         ; 68                   ; 0                              ;
-;     -- Output Connections                                   ; 96                   ; 75                             ;
+;     -- Input Connections                                    ; 177                  ; 0                              ;
+;     -- Registered Input Connections                         ; 76                   ; 0                              ;
+;     -- Output Connections                                   ; 96                   ; 81                             ;
 ;     -- Registered Output Connections                        ; 0                    ; 0                              ;
 ;                                                             ;                      ;                                ;
 ; Internal Connections                                        ;                      ;                                ;
-;     -- Total Connections                                    ; 777                  ; 109                            ;
-;     -- Registered Connections                               ; 235                  ; 0                              ;
+;     -- Total Connections                                    ; 869                  ; 115                            ;
+;     -- Registered Connections                               ; 260                  ; 0                              ;
 ;                                                             ;                      ;                                ;
 ; External Connections                                        ;                      ;                                ;
-;     -- Top                                                  ; 192                  ; 75                             ;
-;     -- hard_block:auto_generated_inst                       ; 75                   ; 0                              ;
+;     -- Top                                                  ; 192                  ; 81                             ;
+;     -- hard_block:auto_generated_inst                       ; 81                   ; 0                              ;
 ;                                                             ;                      ;                                ;
 ; Partition Interface                                         ;                      ;                                ;
 ;     -- Input Ports                                          ; 32                   ; 1                              ;
@@ -2014,21 +2017,25 @@ Note: Pin directions (input, output or bidir) are based on device operating in u
 +-----------------------------------------------------------------------------------------------------------------------------------+----------------------------+
 
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Fitter Resource Utilization by Entity                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ;
-+----------------------------------------------+----------------------+----------------------------------+---------------------------------------------------+----------------------------------+----------------------+---------------------+---------------------------+---------------+-------------------+-------+------------+------+--------------+--------------------------------------------------------------------------------------------------------------------------+--------------------+--------------+
-; Compilation Hierarchy Node                   ; ALMs needed [=A-B+C] ; [A] ALMs used in final placement ; [B] Estimate of ALMs recoverable by dense packing ; [C] Estimate of ALMs unavailable ; ALMs used for memory ; Combinational ALUTs ; Dedicated Logic Registers ; I/O Registers ; Block Memory Bits ; M10Ks ; DSP Blocks ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                                      ; Entity Name        ; Library Name ;
-+----------------------------------------------+----------------------+----------------------------------+---------------------------------------------------+----------------------------------+----------------------+---------------------+---------------------------+---------------+-------------------+-------+------------+------+--------------+--------------------------------------------------------------------------------------------------------------------------+--------------------+--------------+
-; |DE1_SOC_golden_top                          ; 39.0 (0.5)           ; 43.5 (0.5)                       ; 4.5 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 70 (1)              ; 48 (0)                    ; 0 (0)         ; 10800             ; 2     ; 0          ; 241  ; 0            ; |DE1_SOC_golden_top                                                                                                      ; DE1_SOC_golden_top ; work         ;
-;    |top_video:video_system|                  ; 38.5 (0.0)           ; 43.0 (0.0)                       ; 4.5 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 69 (0)              ; 48 (0)                    ; 0 (0)         ; 10800             ; 2     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system                                                                               ; top_video          ; work         ;
-;       |motor_background:mem|                 ; 4.0 (4.0)            ; 4.0 (4.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 9 (9)               ; 0 (0)                     ; 0 (0)         ; 10800             ; 2     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|motor_background:mem                                                          ; motor_background   ; work         ;
-;          |altsyncram:tile_rom_rtl_0|         ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 10800             ; 2     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|motor_background:mem|altsyncram:tile_rom_rtl_0                                ; altsyncram         ; work         ;
-;             |altsyncram_0te1:auto_generated| ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 10800             ; 2     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|motor_background:mem|altsyncram:tile_rom_rtl_0|altsyncram_0te1:auto_generated ; altsyncram_0te1    ; work         ;
-;       |pll01:pll_inst|                       ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 0                 ; 0     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|pll01:pll_inst                                                                ; pll01              ; pll01        ;
-;          |pll01_0002:pll01_inst|             ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 0                 ; 0     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst                                          ; pll01_0002         ; pll01        ;
-;             |altera_pll:altera_pll_i|        ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 0                 ; 0     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i                  ; altera_pll         ; work         ;
-;       |vga_driver:vga|                       ; 34.5 (34.5)          ; 39.0 (39.0)                      ; 4.5 (4.5)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 60 (60)             ; 48 (48)                   ; 0 (0)         ; 0                 ; 0     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|vga_driver:vga                                                                ; vga_driver         ; work         ;
-+----------------------------------------------+----------------------+----------------------------------+---------------------------------------------------+----------------------------------+----------------------+---------------------+---------------------------+---------------+-------------------+-------+------------+------+--------------+--------------------------------------------------------------------------------------------------------------------------+--------------------+--------------+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Fitter Resource Utilization by Entity                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ;
++-------------------------------------------------+----------------------+----------------------------------+---------------------------------------------------+----------------------------------+----------------------+---------------------+---------------------------+---------------+-------------------+-------+------------+------+--------------+----------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------+--------------+
+; Compilation Hierarchy Node                      ; ALMs needed [=A-B+C] ; [A] ALMs used in final placement ; [B] Estimate of ALMs recoverable by dense packing ; [C] Estimate of ALMs unavailable ; ALMs used for memory ; Combinational ALUTs ; Dedicated Logic Registers ; I/O Registers ; Block Memory Bits ; M10Ks ; DSP Blocks ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                                                                      ; Entity Name        ; Library Name ;
++-------------------------------------------------+----------------------+----------------------------------+---------------------------------------------------+----------------------------------+----------------------+---------------------+---------------------------+---------------+-------------------+-------+------------+------+--------------+----------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------+--------------+
+; |DE1_SOC_golden_top                             ; 39.0 (0.5)           ; 44.5 (0.5)                       ; 5.5 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 70 (1)              ; 51 (0)                    ; 0 (0)         ; 11904             ; 3     ; 0          ; 241  ; 0            ; |DE1_SOC_golden_top                                                                                                                                      ; DE1_SOC_golden_top ; work         ;
+;    |top_video:video_system|                     ; 38.5 (0.0)           ; 44.0 (0.0)                       ; 5.5 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 69 (0)              ; 51 (0)                    ; 0 (0)         ; 11904             ; 3     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system                                                                                                               ; top_video          ; work         ;
+;       |motor_background:mem|                    ; 4.5 (4.5)            ; 4.5 (4.5)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 9 (9)               ; 0 (0)                     ; 0 (0)         ; 11904             ; 3     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|motor_background:mem                                                                                          ; motor_background   ; work         ;
+;          |bg_tile_ram:u_bg_tile_ram|            ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 9600              ; 2     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|motor_background:mem|bg_tile_ram:u_bg_tile_ram                                                                ; bg_tile_ram        ; work         ;
+;             |altsyncram:altsyncram_component|   ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 9600              ; 2     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|motor_background:mem|bg_tile_ram:u_bg_tile_ram|altsyncram:altsyncram_component                                ; altsyncram         ; work         ;
+;                |altsyncram_oh22:auto_generated| ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 9600              ; 2     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|motor_background:mem|bg_tile_ram:u_bg_tile_ram|altsyncram:altsyncram_component|altsyncram_oh22:auto_generated ; altsyncram_oh22    ; work         ;
+;          |palette_ram:u_palette_ram|            ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 2304              ; 1     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|motor_background:mem|palette_ram:u_palette_ram                                                                ; palette_ram        ; work         ;
+;             |altsyncram:altsyncram_component|   ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 2304              ; 1     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|motor_background:mem|palette_ram:u_palette_ram|altsyncram:altsyncram_component                                ; altsyncram         ; work         ;
+;                |altsyncram_2p62:auto_generated| ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 2304              ; 1     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|motor_background:mem|palette_ram:u_palette_ram|altsyncram:altsyncram_component|altsyncram_2p62:auto_generated ; altsyncram_2p62    ; work         ;
+;       |pll01:pll_inst|                          ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 0                 ; 0     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|pll01:pll_inst                                                                                                ; pll01              ; pll01        ;
+;          |pll01_0002:pll01_inst|                ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 0                 ; 0     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst                                                                          ; pll01_0002         ; pll01        ;
+;             |altera_pll:altera_pll_i|           ; 0.0 (0.0)            ; 0.0 (0.0)                        ; 0.0 (0.0)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 0 (0)               ; 0 (0)                     ; 0 (0)         ; 0                 ; 0     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i                                                  ; altera_pll         ; work         ;
+;       |vga_driver:vga|                          ; 34.0 (34.0)          ; 39.5 (39.5)                      ; 5.5 (5.5)                                         ; 0.0 (0.0)                        ; 0.0 (0.0)            ; 60 (60)             ; 51 (51)                   ; 0 (0)         ; 0                 ; 0     ; 0          ; 0    ; 0            ; |DE1_SOC_golden_top|top_video:video_system|vga_driver:vga                                                                                                ; vga_driver         ; work         ;
++-------------------------------------------------+----------------------+----------------------------------+---------------------------------------------------+----------------------------------+----------------------+---------------------+---------------------------+---------------+-------------------+-------+------------+------+--------------+----------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
 
@@ -2422,12 +2429,12 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------------------------------------------------------------+----------------------------+---------+---------------------------+--------+----------------------+------------------+---------------------------+
 ; Name                                                                                               ; Location                   ; Fan-Out ; Usage                     ; Global ; Global Resource Used ; Global Line Name ; Enable Signal Source Name ;
 +----------------------------------------------------------------------------------------------------+----------------------------+---------+---------------------------+--------+----------------------+------------------+---------------------------+
-; top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i|locked_wire[0] ; FRACTIONALPLL_X0_Y15_N0    ; 25      ; Clock enable, Sync. clear ; no     ; --                   ; --               ; --                        ;
-; top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i|outclk_wire[0] ; PLLOUTPUTCOUNTER_X0_Y20_N1 ; 51      ; Clock                     ; yes    ; Global Clock         ; GCLK6            ; --                        ;
-; top_video:video_system|vga_driver:vga|green_reg[5]~0                                               ; MLABCELL_X25_Y76_N3        ; 9       ; Sync. clear               ; no     ; --                   ; --               ; --                        ;
-; top_video:video_system|vga_driver:vga|h_counter[6]~2                                               ; LABCELL_X24_Y76_N24        ; 12      ; Sync. clear               ; no     ; --                   ; --               ; --                        ;
-; top_video:video_system|vga_driver:vga|v_counter[9]~3                                               ; MLABCELL_X28_Y76_N54       ; 13      ; Sync. clear               ; no     ; --                   ; --               ; --                        ;
-; top_video:video_system|vga_driver:vga|v_counter[9]~4                                               ; MLABCELL_X28_Y76_N33       ; 13      ; Clock enable              ; no     ; --                   ; --               ; --                        ;
+; top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i|locked_wire[0] ; FRACTIONALPLL_X0_Y15_N0    ; 27      ; Clock enable, Sync. clear ; no     ; --                   ; --               ; --                        ;
+; top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i|outclk_wire[0] ; PLLOUTPUTCOUNTER_X0_Y20_N1 ; 55      ; Clock                     ; yes    ; Global Clock         ; GCLK6            ; --                        ;
+; top_video:video_system|vga_driver:vga|blue_reg[5]~0                                                ; LABCELL_X16_Y77_N39        ; 9       ; Sync. clear               ; no     ; --                   ; --               ; --                        ;
+; top_video:video_system|vga_driver:vga|h_counter[3]~2                                               ; LABCELL_X16_Y77_N54        ; 12      ; Sync. clear               ; no     ; --                   ; --               ; --                        ;
+; top_video:video_system|vga_driver:vga|v_counter[7]~3                                               ; LABCELL_X18_Y77_N54        ; 14      ; Sync. clear               ; no     ; --                   ; --               ; --                        ;
+; top_video:video_system|vga_driver:vga|v_counter[7]~4                                               ; LABCELL_X18_Y77_N39        ; 14      ; Clock enable              ; no     ; --                   ; --               ; --                        ;
 +----------------------------------------------------------------------------------------------------+----------------------------+---------+---------------------------+--------+----------------------+------------------+---------------------------+
 
 
@@ -2436,17 +2443,18 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------------------------------------------------------------+----------------------------+---------+----------------------+------------------+---------------------------+
 ; Name                                                                                               ; Location                   ; Fan-Out ; Global Resource Used ; Global Line Name ; Enable Signal Source Name ;
 +----------------------------------------------------------------------------------------------------+----------------------------+---------+----------------------+------------------+---------------------------+
-; top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i|outclk_wire[0] ; PLLOUTPUTCOUNTER_X0_Y20_N1 ; 51      ; Global Clock         ; GCLK6            ; --                        ;
+; top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i|outclk_wire[0] ; PLLOUTPUTCOUNTER_X0_Y20_N1 ; 55      ; Global Clock         ; GCLK6            ; --                        ;
 +----------------------------------------------------------------------------------------------------+----------------------------+---------+----------------------+------------------+---------------------------+
 
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Fitter RAM Summary                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ;
-+-----------------------------------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+--------------+------------------------+-------------------------+------------------------+-------------------------+-------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+---------------------+-------------+-------+---------------------------------------------------------+----------------------------------+----------------------+-----------------+-----------------+----------+------------------------+-----------------------+
-; Name                                                                                                            ; Type ; Mode ; Clock Mode   ; Port A Depth ; Port A Width ; Port B Depth ; Port B Width ; Port A Input Registers ; Port A Output Registers ; Port B Input Registers ; Port B Output Registers ; Size  ; Implementation Port A Depth ; Implementation Port A Width ; Implementation Port B Depth ; Implementation Port B Width ; Implementation Bits ; M10K blocks ; MLABs ; MIF                                                     ; Location                         ; Mixed Width RDW Mode ; Port A RDW Mode ; Port B RDW Mode ; ECC Mode ; ECC Pipeline Registers ; Fits in MLABs         ;
-+-----------------------------------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+--------------+------------------------+-------------------------+------------------------+-------------------------+-------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+---------------------+-------------+-------+---------------------------------------------------------+----------------------------------+----------------------+-----------------+-----------------+----------+------------------------+-----------------------+
-; top_video:video_system|motor_background:mem|altsyncram:tile_rom_rtl_0|altsyncram_0te1:auto_generated|ALTSYNCRAM ; AUTO ; ROM  ; Single Clock ; 1200         ; 9            ; --           ; --           ; yes                    ; no                      ; --                     ; --                      ; 10800 ; 1200                        ; 9                           ; --                          ; --                          ; 10800               ; 2           ; 0     ; db/CoProcessador.ram0_motor_background_7a86bbfb.hdl.mif ; M10K_X26_Y77_N0, M10K_X26_Y76_N0 ; Don't care           ; New data        ; New data        ; Off      ; No                     ; No - Address Too Wide ;
-+-----------------------------------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+--------------+------------------------+-------------------------+------------------------+-------------------------+-------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+---------------------+-------------+-------+---------------------------------------------------------+----------------------------------+----------------------+-----------------+-----------------+----------+------------------------+-----------------------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Fitter RAM Summary                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;
++-------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------------+--------------+--------------+--------------+--------------+--------------+------------------------+-------------------------+------------------------+-------------------------+------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+---------------------+-------------+-------+------------------------------------+----------------------------------+----------------------+-----------------+-----------------+----------+------------------------+----------------------------------+
+; Name                                                                                                                                            ; Type       ; Mode             ; Clock Mode   ; Port A Depth ; Port A Width ; Port B Depth ; Port B Width ; Port A Input Registers ; Port A Output Registers ; Port B Input Registers ; Port B Output Registers ; Size ; Implementation Port A Depth ; Implementation Port A Width ; Implementation Port B Depth ; Implementation Port B Width ; Implementation Bits ; M10K blocks ; MLABs ; MIF                                ; Location                         ; Mixed Width RDW Mode ; Port A RDW Mode ; Port B RDW Mode ; ECC Mode ; ECC Pipeline Registers ; Fits in MLABs                    ;
++-------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------------+--------------+--------------+--------------+--------------+--------------+------------------------+-------------------------+------------------------+-------------------------+------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+---------------------+-------------+-------+------------------------------------+----------------------------------+----------------------+-----------------+-----------------+----------+------------------------+----------------------------------+
+; top_video:video_system|motor_background:mem|bg_tile_ram:u_bg_tile_ram|altsyncram:altsyncram_component|altsyncram_oh22:auto_generated|ALTSYNCRAM ; M10K block ; Simple Dual Port ; Single Clock ; 1200         ; 8            ; 1200         ; 8            ; yes                    ; no                      ; yes                    ; yes                     ; 9600 ; 1200                        ; 8                           ; 1200                        ; 8                           ; 9600                ; 2           ; 0     ; None                               ; M10K_X14_Y79_N0, M10K_X14_Y78_N0 ; Old data             ; New data        ; New data        ; Off      ; No                     ; No - Address Too Wide            ;
+; top_video:video_system|motor_background:mem|palette_ram:u_palette_ram|altsyncram:altsyncram_component|altsyncram_2p62:auto_generated|ALTSYNCRAM ; M10K block ; Simple Dual Port ; Single Clock ; 256          ; 9            ; 256          ; 9            ; yes                    ; no                      ; yes                    ; yes                     ; 2304 ; 256                         ; 9                           ; 256                         ; 9                           ; 2304                ; 1           ; 0     ; ./memory_files/palette_default.mif ; M10K_X14_Y77_N0                  ; Old data             ; New data        ; New data        ; Off      ; No                     ; No - Block Type Set to Block RAM ;
++-------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------------+--------------+--------------+--------------+--------------+--------------+------------------------+-------------------------+------------------------+-------------------------+------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+---------------------+-------------+-------+------------------------------------+----------------------------------+----------------------+-----------------+-----------------+----------+------------------------+----------------------------------+
 Note: Fitter may spread logical memories into multiple blocks to improve timing. The actual required RAM blocks can be found in the Fitter Resource Usage section.
 
 
@@ -2455,14 +2463,14 @@ Note: Fitter may spread logical memories into multiple blocks to improve timing.
 +---------------------------------------------+-------------------------+
 ; Routing Resource Type                       ; Usage                   ;
 +---------------------------------------------+-------------------------+
-; Block interconnects                         ; 111 / 289,320 ( < 1 % ) ;
+; Block interconnects                         ; 142 / 289,320 ( < 1 % ) ;
 ; C12 interconnects                           ; 0 / 13,420 ( 0 % )      ;
-; C2 interconnects                            ; 31 / 119,108 ( < 1 % )  ;
-; C4 interconnects                            ; 24 / 56,300 ( < 1 % )   ;
+; C2 interconnects                            ; 22 / 119,108 ( < 1 % )  ;
+; C4 interconnects                            ; 26 / 56,300 ( < 1 % )   ;
 ; DQS bus muxes                               ; 0 / 25 ( 0 % )          ;
 ; DQS-18 I/O buses                            ; 0 / 25 ( 0 % )          ;
 ; DQS-9 I/O buses                             ; 0 / 25 ( 0 % )          ;
-; Direct links                                ; 22 / 289,320 ( < 1 % )  ;
+; Direct links                                ; 33 / 289,320 ( < 1 % )  ;
 ; Global clocks                               ; 1 / 16 ( 6 % )          ;
 ; HPS SDRAM PLL inputs                        ; 0 / 1 ( 0 % )           ;
 ; HPS SDRAM PLL outputs                       ; 0 / 1 ( 0 % )           ;
@@ -2520,10 +2528,10 @@ Note: Fitter may spread logical memories into multiple blocks to improve timing.
 ; Horizontal periphery clocks                 ; 0 / 72 ( 0 % )          ;
 ; Local interconnects                         ; 27 / 84,580 ( < 1 % )   ;
 ; Quadrant clocks                             ; 0 / 66 ( 0 % )          ;
-; R14 interconnects                           ; 4 / 12,676 ( < 1 % )    ;
-; R14/C12 interconnect drivers                ; 4 / 20,720 ( < 1 % )    ;
-; R3 interconnects                            ; 67 / 130,992 ( < 1 % )  ;
-; R6 interconnects                            ; 38 / 266,960 ( < 1 % )  ;
+; R14 interconnects                           ; 2 / 12,676 ( < 1 % )    ;
+; R14/C12 interconnect drivers                ; 2 / 20,720 ( < 1 % )    ;
+; R3 interconnects                            ; 63 / 130,992 ( < 1 % )  ;
+; R6 interconnects                            ; 55 / 266,960 ( < 1 % )  ;
 ; Spine clocks                                ; 2 / 360 ( < 1 % )       ;
 ; Wire stub REs                               ; 0 / 15,858 ( 0 % )      ;
 +---------------------------------------------+-------------------------+
@@ -2879,48 +2887,46 @@ Note: Fitter may spread logical memories into multiple blocks to improve timing.
 +-----------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------+-------------------+
 ; Source Clock(s)                                                                         ; Destination Clock(s)                                                                    ; Delay Added in ns ;
 +-----------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------+-------------------+
-; video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 15.5              ;
+; video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; video_system|pll_inst|pll01_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 3.1               ;
 +-----------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------+-------------------+
 Note: For more information on problematic transfers, consider running the Fitter again with the Optimize hold timing option (Settings Menu) turned off.
 This will disable optimization of problematic paths and expose them for further analysis using the Timing Analyzer.
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Estimated Delay Added for Hold Timing Details                                                                                                                                                                           ;
-+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+-------------------+
-; Source Register                                              ; Destination Register                                                                                                                 ; Delay Added in ns ;
-+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+-------------------+
-; top_video:video_system|vga_driver:vga|h_state.H_ACTIVE_STATE ; top_video:video_system|motor_background:mem|altsyncram:tile_rom_rtl_0|altsyncram_0te1:auto_generated|ram_block1a5~porta_address_reg0 ; 0.672             ;
-; top_video:video_system|vga_driver:vga|h_counter[4]           ; top_video:video_system|motor_background:mem|altsyncram:tile_rom_rtl_0|altsyncram_0te1:auto_generated|ram_block1a5~porta_address_reg0 ; 0.649             ;
-; top_video:video_system|vga_driver:vga|h_counter[0]           ; top_video:video_system|vga_driver:vga|line_done                                                                                      ; 0.510             ;
-; top_video:video_system|vga_driver:vga|h_counter[5]           ; top_video:video_system|motor_background:mem|altsyncram:tile_rom_rtl_0|altsyncram_0te1:auto_generated|ram_block1a5~porta_address_reg0 ; 0.478             ;
-; top_video:video_system|vga_driver:vga|h_counter[7]           ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE                                                                           ; 0.473             ;
-; top_video:video_system|vga_driver:vga|h_counter[1]           ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE                                                                           ; 0.411             ;
-; top_video:video_system|vga_driver:vga|v_counter[8]           ; top_video:video_system|motor_background:mem|altsyncram:tile_rom_rtl_0|altsyncram_0te1:auto_generated|ram_block1a5~porta_address_reg0 ; 0.399             ;
-; top_video:video_system|vga_driver:vga|h_counter[6]           ; top_video:video_system|motor_background:mem|altsyncram:tile_rom_rtl_0|altsyncram_0te1:auto_generated|ram_block1a5~porta_address_reg0 ; 0.382             ;
-; top_video:video_system|vga_driver:vga|h_counter[3]           ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE                                                                           ; 0.371             ;
-; top_video:video_system|vga_driver:vga|v_state.V_BACK_STATE   ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                                                         ; 0.353             ;
-; top_video:video_system|vga_driver:vga|line_done              ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                                                         ; 0.335             ;
-; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE ; top_video:video_system|vga_driver:vga|vsync_reg                                                                                      ; 0.300             ;
-; top_video:video_system|vga_driver:vga|h_counter[9]           ; top_video:video_system|motor_background:mem|altsyncram:tile_rom_rtl_0|altsyncram_0te1:auto_generated|ram_block1a5~porta_address_reg0 ; 0.294             ;
-; top_video:video_system|vga_driver:vga|v_counter[7]           ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                                                         ; 0.292             ;
-; top_video:video_system|vga_driver:vga|v_counter[6]           ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                                                         ; 0.292             ;
-; top_video:video_system|vga_driver:vga|v_counter[4]           ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                                                         ; 0.292             ;
-; top_video:video_system|vga_driver:vga|v_counter[5]           ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                                                         ; 0.292             ;
-; top_video:video_system|vga_driver:vga|v_counter[2]           ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                                                         ; 0.292             ;
-; top_video:video_system|vga_driver:vga|v_counter[1]           ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                                                         ; 0.292             ;
-; top_video:video_system|vga_driver:vga|v_counter[0]           ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                                                         ; 0.292             ;
-; top_video:video_system|vga_driver:vga|v_counter[3]           ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                                                         ; 0.292             ;
-; top_video:video_system|vga_driver:vga|v_counter[9]           ; top_video:video_system|vga_driver:vga|v_state.V_ACTIVE_STATE                                                                         ; 0.292             ;
-; top_video:video_system|vga_driver:vga|v_state.V_FRONT_STATE  ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE                                                                          ; 0.285             ;
-; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE  ; top_video:video_system|vga_driver:vga|vsync_reg                                                                                      ; 0.284             ;
-; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE   ; top_video:video_system|vga_driver:vga|h_state.H_ACTIVE_STATE                                                                         ; 0.269             ;
-; top_video:video_system|vga_driver:vga|h_state.H_PULSE_STATE  ; top_video:video_system|vga_driver:vga|hysnc_reg                                                                                      ; 0.264             ;
-; top_video:video_system|vga_driver:vga|h_state.H_FRONT_STATE  ; top_video:video_system|vga_driver:vga|h_state.H_PULSE_STATE                                                                          ; 0.257             ;
-; top_video:video_system|vga_driver:vga|h_counter[8]           ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE                                                                           ; 0.254             ;
-; top_video:video_system|vga_driver:vga|h_counter[2]           ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE                                                                           ; 0.168             ;
-+--------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+-------------------+
-Note: This table only shows the top 29 path(s) that have the largest delay added for hold.
++-----------------------------------------------------------------------------------------------------------------------------------------------+
+; Estimated Delay Added for Hold Timing Details                                                                                                 ;
++-------------------------------------------------------------+-------------------------------------------------------------+-------------------+
+; Source Register                                             ; Destination Register                                        ; Delay Added in ns ;
++-------------------------------------------------------------+-------------------------------------------------------------+-------------------+
+; top_video:video_system|vga_driver:vga|h_counter[7]          ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE  ; 0.294             ;
+; top_video:video_system|vga_driver:vga|h_counter[8]          ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE  ; 0.294             ;
+; top_video:video_system|vga_driver:vga|h_counter[6]          ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE  ; 0.294             ;
+; top_video:video_system|vga_driver:vga|h_counter[4]          ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE  ; 0.294             ;
+; top_video:video_system|vga_driver:vga|h_counter[3]          ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE  ; 0.294             ;
+; top_video:video_system|vga_driver:vga|h_counter[2]          ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE  ; 0.294             ;
+; top_video:video_system|vga_driver:vga|h_counter[1]          ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE  ; 0.294             ;
+; top_video:video_system|vga_driver:vga|h_counter[5]          ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE  ; 0.294             ;
+; top_video:video_system|vga_driver:vga|h_counter[0]          ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE  ; 0.294             ;
+; top_video:video_system|vga_driver:vga|h_counter[9]          ; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE  ; 0.294             ;
+; top_video:video_system|vga_driver:vga|v_counter[4]          ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; 0.288             ;
+; top_video:video_system|vga_driver:vga|v_counter[3]          ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; 0.274             ;
+; top_video:video_system|vga_driver:vga|line_done             ; top_video:video_system|vga_driver:vga|v_state.V_BACK_STATE  ; 0.265             ;
+; top_video:video_system|vga_driver:vga|v_counter[9]          ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; 0.215             ;
+; top_video:video_system|vga_driver:vga|v_counter[7]          ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; 0.215             ;
+; top_video:video_system|vga_driver:vga|v_counter[6]          ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; 0.215             ;
+; top_video:video_system|vga_driver:vga|v_counter[8]          ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; 0.215             ;
+; top_video:video_system|vga_driver:vga|v_counter[5]          ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; 0.215             ;
+; top_video:video_system|vga_driver:vga|v_counter[1]          ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; 0.215             ;
+; top_video:video_system|vga_driver:vga|v_counter[0]          ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; 0.215             ;
+; top_video:video_system|vga_driver:vga|v_counter[2]          ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; 0.215             ;
+; top_video:video_system|vga_driver:vga|h_state.H_PULSE_STATE ; top_video:video_system|vga_driver:vga|hysnc_reg             ; 0.207             ;
+; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; top_video:video_system|vga_driver:vga|v_state.V_BACK_STATE  ; 0.207             ;
+; top_video:video_system|vga_driver:vga|v_state.V_BACK_STATE  ; top_video:video_system|vga_driver:vga|vsync_reg             ; 0.201             ;
+; top_video:video_system|vga_driver:vga|h_state.H_BACK_STATE  ; top_video:video_system|vga_driver:vga|hysnc_reg             ; 0.201             ;
+; top_video:video_system|vga_driver:vga|v_state.V_FRONT_STATE ; top_video:video_system|vga_driver:vga|v_state.V_PULSE_STATE ; 0.191             ;
+; top_video:video_system|vga_driver:vga|h_state.H_FRONT_STATE ; top_video:video_system|vga_driver:vga|h_state.H_PULSE_STATE ; 0.094             ;
++-------------------------------------------------------------+-------------------------------------------------------------+-------------------+
+Note: This table only shows the top 27 path(s) that have the largest delay added for hold.
 
 
 +-----------------+
@@ -2933,13 +2939,15 @@ Info (21077): Low junction temperature is 0 degrees C
 Info (21077): High junction temperature is 85 degrees C
 Warning: RST port on the PLL is not properly connected on instance top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i|general[0].gpll. The reset port on the PLL should be connected. If the PLL loses lock for any reason, you might need to manually reset the PLL in order to re-establish lock to the reference clock. File: d:/quartuslite/quartus/libraries/megafunctions/altera_pll.v Line: 749
     Info: Must be connected
+Warning (18550): Found RAM instances implemented as ROM because the write logic is disabled. One instance is listed below as an example.
+    Info (119043): Atom "top_video:video_system|motor_background:mem|palette_ram:u_palette_ram|altsyncram:altsyncram_component|altsyncram_2p62:auto_generated|ram_block1a0" is instantiated as RAM, but it is actually implemented as ROM function because the write logic is always disabled
 Info (171003): Fitter is performing an Auto Fit compilation, which may decrease Fitter effort to reduce compilation time
 Warning (292013): Feature LogicLock is only available with a valid subscription license. You can purchase a software subscription to gain full access to this feature.
 Warning (15714): Some pins have incomplete I/O assignments. Refer to the I/O Assignment Warnings report for details
 Info (176045): Design uses memory blocks. Violating setup or hold times of memory block address registers for either read or write operations could cause memory contents to be corrupted. Make sure that all memory block address registers meet the setup and hold time requirements.
 Info (184020): Starting Fitter periphery placement operations
 Info (11178): Promoted 1 clock (1 global)
-    Info (11162): top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i|outclk_wire[0]~CLKENA0 with 50 fanout uses global clock CLKCTRL_G6
+    Info (11162): top_video:video_system|pll01:pll_inst|pll01_0002:pll01_inst|altera_pll:altera_pll_i|outclk_wire[0]~CLKENA0 with 58 fanout uses global clock CLKCTRL_G6
 Info (184021): Fitter periphery placement operations ending: elapsed time is 00:00:00
 Critical Warning (332012): Synopsys Design Constraints File file not found: 'CoProcessador.sdc'. A Synopsys Design Constraints File is required by the Timing Analyzer to get proper timing constraints. Without it, the Compiler will not properly optimize the design.
 Info (332144): No user constrained generated clocks found in the design
@@ -2955,7 +2963,7 @@ Info (332130): Timing requirements not specified -- quality metrics such as perf
 Info (176233): Starting register packing
 Info (176235): Finished register packing
     Extra Info (176219): No registers were packed into other blocks
-Info (11798): Fitter preparation operations ending: elapsed time is 00:00:21
+Info (11798): Fitter preparation operations ending: elapsed time is 00:00:20
 Info (170189): Fitter placement preparation operations beginning
 Info (14951): The Fitter is using Advanced Physical Optimization.
 Info (170190): Fitter placement preparation operations ending: elapsed time is 00:00:03
@@ -2964,12 +2972,12 @@ Info (170137): Fitter placement was successful
 Info (170192): Fitter placement operations ending: elapsed time is 00:00:01
 Info (170193): Fitter routing operations beginning
 Info (170195): Router estimated average interconnect usage is 0% of the available device resources
-    Info (170196): Router estimated peak interconnect usage is 0% of the available device resources in the region that extends from location X22_Y70 to location X32_Y81
+    Info (170196): Router estimated peak interconnect usage is 0% of the available device resources in the region that extends from location X11_Y70 to location X21_Y81
 Info (170199): The Fitter performed an Auto Fit compilation.  Optimizations were skipped to reduce compilation time.
     Info (170201): Optimizations that may affect the design's routability were skipped
     Info (170200): Optimizations that may affect the design's timing were skipped
 Info (170194): Fitter routing operations ending: elapsed time is 00:00:01
-Info (11888): Total time spent on timing analysis during the Fitter is 1.09 seconds.
+Info (11888): Total time spent on timing analysis during the Fitter is 1.56 seconds.
 Info (334003): Started post-fitting delay annotation
 Info (334004): Delay annotation completed successfully
 Info (334003): Started post-fitting delay annotation
@@ -2977,113 +2985,113 @@ Info (334004): Delay annotation completed successfully
 Info (11801): Fitter post-fit operations ending: elapsed time is 00:00:09
 Warning (171167): Found invalid Fitter assignments. See the Ignored Assignments panel in the Fitter Compilation Report for more information.
 Warning (169064): Following 96 pins have no output enable or a GND or VCC output enable - later changes to this connectivity may change fitting results
-    Info (169065): Pin AUD_ADCLRCK has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 70
-    Info (169065): Pin AUD_BCLK has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 71
-    Info (169065): Pin AUD_DACLRCK has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 73
-    Info (169065): Pin DRAM_DQ[0] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[1] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[2] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[3] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[4] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[5] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[6] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[7] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[8] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[9] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[10] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[11] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[12] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[13] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[14] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin DRAM_DQ[15] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 106
-    Info (169065): Pin FPGA_I2C_SDAT has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 121
-    Info (169065): Pin GPIO_0[0] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[1] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[2] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[3] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[4] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[5] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[6] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[7] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[8] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[9] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[10] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[11] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[12] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[13] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[14] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[15] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[16] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[17] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[18] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[19] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[20] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[21] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[22] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[23] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[24] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[25] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[26] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[27] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[28] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[29] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[30] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[31] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[32] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[33] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[34] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_0[35] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 126
-    Info (169065): Pin GPIO_1[0] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[1] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[2] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[3] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[4] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[5] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[6] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[7] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[8] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[9] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[10] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[11] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[12] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[13] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[14] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[15] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[16] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[17] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[18] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[19] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[20] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[21] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[22] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[23] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[24] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[25] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[26] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[27] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[28] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[29] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[30] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[31] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[32] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[33] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[34] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin GPIO_1[35] has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 127
-    Info (169065): Pin PS2_CLK has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 215
-    Info (169065): Pin PS2_CLK2 has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 216
-    Info (169065): Pin PS2_DAT has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 217
-    Info (169065): Pin PS2_DAT2 has a permanently disabled output enable File: F:/Pbl Sd 1/DE1_SOC_golden_top.v Line: 218
-Info (144001): Generated suppressed messages file F:/Pbl Sd 1/output_files/CoProcessador.fit.smsg
-Info: Quartus Prime Fitter was successful. 0 errors, 7 warnings
-    Info: Peak virtual memory: 6661 megabytes
-    Info: Processing ended: Tue Aug 25 22:26:15 2026
-    Info: Elapsed time: 00:01:05
-    Info: Total CPU time (on all processors): 00:01:37
+    Info (169065): Pin AUD_ADCLRCK has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 70
+    Info (169065): Pin AUD_BCLK has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 71
+    Info (169065): Pin AUD_DACLRCK has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 73
+    Info (169065): Pin DRAM_DQ[0] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[1] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[2] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[3] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[4] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[5] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[6] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[7] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[8] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[9] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[10] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[11] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[12] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[13] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[14] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin DRAM_DQ[15] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 106
+    Info (169065): Pin FPGA_I2C_SDAT has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 121
+    Info (169065): Pin GPIO_0[0] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[1] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[2] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[3] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[4] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[5] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[6] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[7] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[8] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[9] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[10] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[11] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[12] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[13] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[14] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[15] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[16] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[17] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[18] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[19] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[20] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[21] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[22] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[23] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[24] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[25] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[26] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[27] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[28] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[29] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[30] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[31] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[32] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[33] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[34] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_0[35] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 126
+    Info (169065): Pin GPIO_1[0] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[1] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[2] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[3] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[4] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[5] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[6] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[7] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[8] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[9] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[10] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[11] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[12] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[13] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[14] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[15] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[16] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[17] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[18] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[19] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[20] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[21] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[22] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[23] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[24] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[25] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[26] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[27] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[28] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[29] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[30] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[31] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[32] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[33] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[34] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin GPIO_1[35] has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 127
+    Info (169065): Pin PS2_CLK has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 215
+    Info (169065): Pin PS2_CLK2 has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 216
+    Info (169065): Pin PS2_DAT has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 217
+    Info (169065): Pin PS2_DAT2 has a permanently disabled output enable File: F:/CoprocessadorGrafico/DE1_SOC_golden_top.v Line: 218
+Info (144001): Generated suppressed messages file F:/CoprocessadorGrafico/output_files/CoProcessador.fit.smsg
+Info: Quartus Prime Fitter was successful. 0 errors, 8 warnings
+    Info: Peak virtual memory: 6627 megabytes
+    Info: Processing ended: Wed Aug 26 22:48:18 2026
+    Info: Elapsed time: 00:01:06
+    Info: Total CPU time (on all processors): 00:01:44
 
 
 +----------------------------+
 ; Fitter Suppressed Messages ;
 +----------------------------+
-The suppressed messages can be found in F:/Pbl Sd 1/output_files/CoProcessador.fit.smsg.
+The suppressed messages can be found in F:/CoprocessadorGrafico/output_files/CoProcessador.fit.smsg.
 
 
