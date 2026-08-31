@@ -1,5 +1,9 @@
 # Reading pref.tcl
 # do CoProcessador_run_msim_rtl_verilog.do
+# if ![file isdirectory CoProcessador_iputf_libs] {
+# 	file mkdir CoProcessador_iputf_libs
+# }
+# 
 # if {[file exists rtl_work]} {
 # 	vdel -lib rtl_work -all
 # }
@@ -10,115 +14,130 @@
 # Copying D:/ModelSim/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
 # Modifying modelsim.ini
 # 
-# vlog -vlog01compat -work work +incdir+F:/Pbl\ Sd\ 1 {F:/Pbl Sd 1/tile_memory.v}
+###### Libraries for IPUTF cores 
+###### End libraries for IPUTF cores 
+###### MIF file copy and HDL compilation commands for IPUTF cores 
+# 
+# 
+# vlog "F:/CoprocessadorGrafico/pll01_sim/pll01.vo"
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:07:49 on Aug 25,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/Pbl Sd 1" F:/Pbl Sd 1/tile_memory.v 
-# -- Compiling module tile_memory
+# Start time: 13:41:36 on Aug 30,2026
+# vlog -reportprogress 300 F:/CoprocessadorGrafico/pll01_sim/pll01.vo 
+# -- Compiling module pll01
 # 
 # Top level modules:
-# 	tile_memory
-# End time: 14:07:50 on Aug 25,2026, Elapsed time: 0:00:01
+# 	pll01
+# End time: 13:41:36 on Aug 30,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+F:/Pbl\ Sd\ 1 {F:/Pbl Sd 1/vga_driver.v}
+# 
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico/memory_files {F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:07:50 on Aug 25,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/Pbl Sd 1" F:/Pbl Sd 1/vga_driver.v 
+# Start time: 13:41:36 on Aug 30,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico/memory_files" F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v 
+# -- Compiling module framebuffer_ram
+# 
+# Top level modules:
+# 	framebuffer_ram
+# End time: 13:41:37 on Aug 30,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/DE1_SOC_golden_top.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 13:41:37 on Aug 30,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/DE1_SOC_golden_top.v 
+# -- Compiling module DE1_SOC_golden_top
+# 
+# Top level modules:
+# 	DE1_SOC_golden_top
+# End time: 13:41:37 on Aug 30,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/vga_driver.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 13:41:37 on Aug 30,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/vga_driver.v 
 # -- Compiling module vga_driver
 # 
 # Top level modules:
 # 	vga_driver
-# End time: 14:07:50 on Aug 25,2026, Elapsed time: 0:00:00
+# End time: 13:41:37 on Aug 30,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+F:/Pbl\ Sd\ 1 {F:/Pbl Sd 1/top_video.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/top_video.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:07:50 on Aug 25,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/Pbl Sd 1" F:/Pbl Sd 1/top_video.v 
+# Start time: 13:41:37 on Aug 30,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/top_video.v 
 # -- Compiling module top_video
 # 
 # Top level modules:
 # 	top_video
-# End time: 14:07:50 on Aug 25,2026, Elapsed time: 0:00:00
+# End time: 13:41:37 on Aug 30,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# 
-vlog -reportprogress 300 -work work {F:/Pbl Sd 1/tb_vga_memory.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/fb_addr_gen.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:08:15 on Aug 25,2026
-# vlog -reportprogress 300 -work work F:/Pbl Sd 1/tb_vga_memory.v 
-# -- Compiling module tb_vga_driver
-# 
-# Top level modules:
-# 	tb_vga_driver
-# End time: 14:08:15 on Aug 25,2026, Elapsed time: 0:00:00
-# Errors: 0, Warnings: 0
-vlog -reportprogress 300 -work work {F:/Pbl Sd 1/tb_tile_memory.v}
-# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:08:17 on Aug 25,2026
-# vlog -reportprogress 300 -work work F:/Pbl Sd 1/tb_tile_memory.v 
-# -- Compiling module tb_tile_memory
+# Start time: 13:41:38 on Aug 30,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/fb_addr_gen.v 
+# -- Compiling module fb_addr_gen
 # 
 # Top level modules:
-# 	tb_tile_memory
-# End time: 14:08:17 on Aug 25,2026, Elapsed time: 0:00:00
+# 	fb_addr_gen
+# End time: 13:41:38 on Aug 30,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-vsim work.tb_vga_driver
-# vsim work.tb_vga_driver 
-# Start time: 14:08:21 on Aug 25,2026
-# Loading work.tb_vga_driver
-# Loading work.vga_driver
-add wave -position insertpoint sim:/tb_vga_driver/*
-run
-vsim work.tb_vga_driver
-# End time: 14:09:57 on Aug 25,2026, Elapsed time: 0:01:36
-# Errors: 0, Warnings: 0
-# vsim work.tb_vga_driver 
-# Start time: 14:09:57 on Aug 25,2026
-# Loading work.tb_vga_driver
-# Loading work.vga_driver
-run 100 ns
-add wave -position insertpoint sim:/tb_vga_driver/*
-run 100 ns
-run 20 ns
-restart -f
-run 1 ns
-run 20 ns
-run 50 ns
-run 200 ns
-run 500 ns
-vlog tb_tile_memory.v
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/framebuffer.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:18:15 on Aug 25,2026
-# vlog -reportprogress 300 tb_tile_memory.v 
-# ** Error: (vlog-7) Failed to open design unit file "tb_tile_memory.v" in read mode.
-# No such file or directory. (errno = ENOENT)
-# End time: 14:18:15 on Aug 25,2026, Elapsed time: 0:00:00
-# Errors: 1, Warnings: 0
-# D:/ModelSim/modelsim_ase/win32aloem/vlog failed.
-vsim work.tb_tile_memory
-# End time: 14:18:32 on Aug 25,2026, Elapsed time: 0:08:35
+# Start time: 13:41:38 on Aug 30,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/framebuffer.v 
+# -- Compiling module framebuffer
+# 
+# Top level modules:
+# 	framebuffer
+# End time: 13:41:38 on Aug 30,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vsim work.tb_tile_memory 
-# Start time: 14:18:32 on Aug 25,2026
-# Loading work.tb_tile_memory
-# Loading work.tile_memory
-add wave *
-run 100 ns
-# TESTE 1 PASSOU: tile (0,0) vermelho
-# TESTE 2 PASSOU: tile (1,0) azul
-# TESTE 3 PASSOU: tile (1,1) vermelho
-# ** Note: $stop    : F:/Pbl Sd 1/tb_tile_memory.v(57)
-#    Time: 60 ns  Iteration: 0  Instance: /tb_tile_memory
-# Break in Module tb_tile_memory at F:/Pbl Sd 1/tb_tile_memory.v line 57
-vsim work.tb_vga_driver
-# End time: 14:32:20 on Aug 25,2026, Elapsed time: 0:13:48
+# 
+vlog -reportprogress 300 -work work F:/CoprocessadorGrafico/divisor_unsigned.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 13:42:15 on Aug 30,2026
+# vlog -reportprogress 300 -work work F:/CoprocessadorGrafico/divisor_unsigned.v 
+# -- Compiling module divisor_unsigned
+# 
+# Top level modules:
+# 	divisor_unsigned
+# End time: 13:42:15 on Aug 30,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vsim work.tb_vga_driver 
-# Start time: 14:32:21 on Aug 25,2026
-# Loading work.tb_vga_driver
-# Loading work.vga_driver
-run 100 ns
-add wave *
-run 100 ns
-run 500 ns
-# End time: 14:47:32 on Aug 25,2026, Elapsed time: 0:15:11
+vlog -reportprogress 300 -work work F:/CoprocessadorGrafico/rasterizador_triangulo.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 13:42:19 on Aug 30,2026
+# vlog -reportprogress 300 -work work F:/CoprocessadorGrafico/rasterizador_triangulo.v 
+# -- Compiling module rasterizador_triangulo
+# 
+# Top level modules:
+# 	rasterizador_triangulo
+# End time: 13:42:19 on Aug 30,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+vlog -reportprogress 300 -work work F:/CoprocessadorGrafico/tb_rasterizer_triangle.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 13:42:22 on Aug 30,2026
+# vlog -reportprogress 300 -work work F:/CoprocessadorGrafico/tb_rasterizer_triangle.v 
+# -- Compiling module tb_rasterizer_triangle
+# 
+# Top level modules:
+# 	tb_rasterizer_triangle
+# End time: 13:42:23 on Aug 30,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+vsim work.tb_rasterizer_triangle
+# vsim work.tb_rasterizer_triangle 
+# Start time: 13:42:26 on Aug 30,2026
+# Loading work.tb_rasterizer_triangle
+# Loading work.rasterizador_triangulo
+# Loading work.divisor_unsigned
+add wave -position insertpoint sim:/tb_rasterizer_triangle/*
+run -all
+# PASSOU: triangulo (30,10)-(10,50)-(50,50), 861 pixels escritos
+# PASSOU: triangulo (10,10)-(50,10)-(30,50), 861 pixels escritos
+# PASSOU: triangulo (30,10)-(10,50)-(50,50), 861 pixels escritos
+# PASSOU: triangulo (100,10)-(102,100)-(150,60), 2313 pixels escritos
+# PASSOU: triangulo (10,80)-(200,82)-(100,120), 3748 pixels escritos
+# PASSOU: triangulo (200,200)-(210,200)-(205,201), 12 pixels escritos
+# Todos os testes concluidos.
+# ** Note: $stop    : F:/CoprocessadorGrafico/tb_rasterizer_triangle.v(221)
+#    Time: 186690 ns  Iteration: 1  Instance: /tb_rasterizer_triangle
+# Break in Module tb_rasterizer_triangle at F:/CoprocessadorGrafico/tb_rasterizer_triangle.v line 221
+# End time: 13:58:08 on Aug 30,2026, Elapsed time: 0:15:42
 # Errors: 0, Warnings: 0

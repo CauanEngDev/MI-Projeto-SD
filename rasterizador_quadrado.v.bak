@@ -1,0 +1,77 @@
+module rasterizador_quadrado (
+    input  wire        clk,
+    input  wire        reset,
+
+    input  wire        start,
+    input  wire [8:0]  v0x, v1x,   // dois cantos opostos, em qualquer ordem
+    input  wire [7:0]  v0y, v1y,
+    input  wire [8:0]  color,
+
+    output reg          fb_we,
+    output reg  [8:0]   fb_wr_x,
+    output reg  [7:0]   fb_wr_y,
+    output reg  [8:0]   fb_wr_data,
+
+    output wire         busy,
+    output reg          done
+);
+
+    localparam S_IDLE  = 2'd0,
+               S_SETUP = 2'd1,
+               S_FILL  = 2'd2,
+               S_DONE  = 2'd3;
+
+    reg [1:0] state;
+    assign busy = (state != S_IDLE);
+
+    reg [8:0] xL, xR, cur_x;
+    reg [7:0] yMax, cur_y;
+    reg [8:0] color_reg;
+
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= S_IDLE;
+            fb_we <= 1'b0;
+            done  <= 1'b0;
+        end else begin
+            fb_we <= 1'b0;
+            done  <= 1'b0;
+
+            case (state)
+                S_IDLE: if (start) begin
+                    color_reg <= color;
+                    state <= S_SETUP;
+                end
+
+                S_SETUP: begin
+                    xL    <= (v0x <= v1x) ? v0x : v1x;
+                    xR    <= (v0x <= v1x) ? v1x : v0x;
+                    cur_x <= (v0x <= v1x) ? v0x : v1x;
+                    cur_y <= (v0y <= v1y) ? v0y : v1y;
+                    yMax  <= (v0y >= v1y) ? v0y : v1y;
+                    state <= S_FILL;
+                end
+
+                S_FILL: begin
+                    fb_we      <= 1'b1;
+                    fb_wr_x    <= cur_x;
+                    fb_wr_y    <= cur_y;
+                    fb_wr_data <= color_reg;
+                    if (cur_x == xR) begin
+                        cur_x <= xL;
+                        if (cur_y == yMax) state <= S_DONE;
+                        else cur_y <= cur_y + 8'd1;
+                    end else cur_x <= cur_x + 9'd1;
+                end
+
+                S_DONE: begin
+                    done  <= 1'b1;
+                    state <= S_IDLE;
+                end
+
+                default: state <= S_IDLE;
+            endcase
+        end
+    end
+
+endmodule

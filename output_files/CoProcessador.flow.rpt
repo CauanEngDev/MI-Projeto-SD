@@ -1,6 +1,6 @@
 Flow report for CoProcessador
-Wed Aug 26 22:48:57 2026
-Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+Sun Aug 30 21:07:34 2026
+Quartus Prime Version 25.1std.0 Build 1129 10/21/2025 SC Lite Edition
 
 
 ---------------------
@@ -21,46 +21,46 @@ Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 ----------------
 ; Legal Notice ;
 ----------------
-Copyright (C) 2020  Intel Corporation. All rights reserved.
-Your use of Intel Corporation's design tools, logic functions 
+Copyright (C) 2025  Altera Corporation. All rights reserved.
+Your use of Altera Corporation's design tools, logic functions 
 and other software and tools, and any partner logic 
 functions, and any output files from any of the foregoing 
 (including device programming or simulation files), and any 
 associated documentation or information are expressly subject 
-to the terms and conditions of the Intel Program License 
-Subscription Agreement, the Intel Quartus Prime License Agreement,
-the Intel FPGA IP License Agreement, or other applicable license
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus Prime License Agreement,
+the Altera IP License Agreement, or other applicable license
 agreement, including, without limitation, that your use is for
 the sole purpose of programming logic devices manufactured by
-Intel and sold by Intel or its authorized distributors.  Please
-refer to the applicable agreement for further details, at
-https://fpgasoftware.intel.com/eula.
+Altera and sold by Altera or its authorized distributors.  Please
+refer to the Altera Software License Subscription Agreements 
+on the Quartus Prime software download page.
 
 
 
-+-------------------------------------------------------------------------------+
-; Flow Summary                                                                  ;
-+---------------------------------+---------------------------------------------+
-; Flow Status                     ; Successful - Wed Aug 26 22:48:57 2026       ;
-; Quartus Prime Version           ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
-; Revision Name                   ; CoProcessador                               ;
-; Top-level Entity Name           ; DE1_SOC_golden_top                          ;
-; Family                          ; Cyclone V                                   ;
-; Device                          ; 5CSEMA5F31C6                                ;
-; Timing Models                   ; Final                                       ;
-; Logic utilization (in ALMs)     ; 39 / 32,070 ( < 1 % )                       ;
-; Total registers                 ; 51                                          ;
-; Total pins                      ; 241 / 457 ( 53 % )                          ;
-; Total virtual pins              ; 0                                           ;
-; Total block memory bits         ; 11,904 / 4,065,280 ( < 1 % )                ;
-; Total DSP Blocks                ; 0 / 87 ( 0 % )                              ;
-; Total HSSI RX PCSs              ; 0                                           ;
-; Total HSSI PMA RX Deserializers ; 0                                           ;
-; Total HSSI TX PCSs              ; 0                                           ;
-; Total HSSI PMA TX Serializers   ; 0                                           ;
-; Total PLLs                      ; 1 / 6 ( 17 % )                              ;
-; Total DLLs                      ; 0 / 4 ( 0 % )                               ;
-+---------------------------------+---------------------------------------------+
++-----------------------------------------------------------------------------------+
+; Flow Summary                                                                      ;
++---------------------------------+-------------------------------------------------+
+; Flow Status                     ; Successful - Sun Aug 30 21:07:34 2026           ;
+; Quartus Prime Version           ; 25.1std.0 Build 1129 10/21/2025 SC Lite Edition ;
+; Revision Name                   ; CoProcessador                                   ;
+; Top-level Entity Name           ; DE1_SOC_golden_top                              ;
+; Family                          ; Cyclone V                                       ;
+; Device                          ; 5CSEMA5F31C6                                    ;
+; Timing Models                   ; Final                                           ;
+; Logic utilization (in ALMs)     ; 186 / 32,070 ( < 1 % )                          ;
+; Total registers                 ; 233                                             ;
+; Total pins                      ; 241 / 457 ( 53 % )                              ;
+; Total virtual pins              ; 0                                               ;
+; Total block memory bits         ; 965,630 / 4,065,280 ( 24 % )                    ;
+; Total DSP Blocks                ; 0 / 87 ( 0 % )                                  ;
+; Total HSSI RX PCSs              ; 0                                               ;
+; Total HSSI PMA RX Deserializers ; 0                                               ;
+; Total HSSI TX PCSs              ; 0                                               ;
+; Total HSSI PMA TX Serializers   ; 0                                               ;
+; Total PLLs                      ; 0 / 6 ( 0 % )                                   ;
+; Total DLLs                      ; 0 / 4 ( 0 % )                                   ;
++---------------------------------+-------------------------------------------------+
 
 
 +-----------------------------------------+
@@ -68,7 +68,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 08/26/2026 22:46:52 ;
+; Start date & time ; 08/30/2026 21:04:46 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; CoProcessador       ;
 +-------------------+---------------------+
@@ -79,16 +79,20 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------+----------------------------------------+---------------+--------------------+----------------+
 ; Assignment Name                     ; Value                                  ; Default Value ; Entity Name        ; Section Id     ;
 +-------------------------------------+----------------------------------------+---------------+--------------------+----------------+
-; COMPILER_SIGNATURE_ID               ; 2542636045266.178779521115720          ; --            ; --                 ; --             ;
+; COMPILER_SIGNATURE_ID               ; 2542636045266.178813468614432          ; --            ; --                 ; --             ;
 ; EDA_OUTPUT_DATA_FORMAT              ; Verilog Hdl                            ; --            ; --                 ; eda_simulation ;
-; EDA_SIMULATION_TOOL                 ; ModelSim-Altera (Verilog)              ; <None>        ; --                 ; --             ;
+; EDA_SIMULATION_TOOL                 ; Questa Altera FPGA (Verilog)           ; <None>        ; --                 ; --             ;
 ; EDA_TIME_SCALE                      ; 1 ps                                   ; --            ; --                 ; eda_simulation ;
 ; MAX_CORE_JUNCTION_TEMP              ; 85                                     ; --            ; --                 ; --             ;
 ; MIN_CORE_JUNCTION_TEMP              ; 0                                      ; --            ; --                 ; --             ;
-; MISC_FILE                           ; memory_files/palette_ram_bb.v          ; --            ; --                 ; --             ;
+; MISC_FILE                           ; memory_files/framebuffer_ram_bb.v      ; --            ; --                 ; --             ;
 ; MISC_FILE                           ; memory_files/bg_tile_ram_bb.v          ; --            ; --                 ; --             ;
 ; MISC_FILE                           ; pll01.cmp                              ; --            ; --                 ; --             ;
 ; MISC_FILE                           ; pll01_sim/pll01.vo                     ; --            ; --                 ; --             ;
+; MISC_FILE                           ; memory_files/sprite_attribute_ram_bb.v ; --            ; --                 ; --             ;
+; MISC_FILE                           ; memory_files/sprite_pattern_ram_bb.v   ; --            ; --                 ; --             ;
+; MISC_FILE                           ; memory_files/palette_ram_bb.v          ; --            ; --                 ; --             ;
+; MISC_FILE                           ; memory_files/bg_tile_pattern_ram_bb.v  ; --            ; --                 ; --             ;
 ; PARTITION_COLOR                     ; -- (Not supported for targeted family) ; --            ; DE1_SOC_golden_top ; Top            ;
 ; PARTITION_FITTER_PRESERVATION_LEVEL ; -- (Not supported for targeted family) ; --            ; DE1_SOC_golden_top ; Top            ;
 ; PARTITION_NETLIST_TYPE              ; -- (Not supported for targeted family) ; --            ; DE1_SOC_golden_top ; Top            ;
@@ -106,12 +110,12 @@ https://fpgasoftware.intel.com/eula.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:00:20     ; 1.0                     ; 4845 MB             ; 00:00:39                           ;
-; Fitter               ; 00:01:02     ; 1.0                     ; 6627 MB             ; 00:01:43                           ;
-; Assembler            ; 00:00:11     ; 1.0                     ; 4844 MB             ; 00:00:11                           ;
-; Timing Analyzer      ; 00:00:16     ; 1.0                     ; 5193 MB             ; 00:00:14                           ;
-; EDA Netlist Writer   ; 00:00:03     ; 1.0                     ; 4832 MB             ; 00:00:03                           ;
-; Total                ; 00:01:52     ; --                      ; --                  ; 00:02:50                           ;
+; Analysis & Synthesis ; 00:00:19     ; 1.0                     ; 4887 MB             ; 00:00:41                           ;
+; Fitter               ; 00:01:33     ; 1.1                     ; 6691 MB             ; 00:02:38                           ;
+; Assembler            ; 00:00:15     ; 1.0                     ; 4887 MB             ; 00:00:10                           ;
+; Timing Analyzer      ; 00:00:18     ; 1.5                     ; 5223 MB             ; 00:00:20                           ;
+; EDA Netlist Writer   ; 00:00:07     ; 1.0                     ; 4755 MB             ; 00:00:02                           ;
+; Total                ; 00:02:32     ; --                      ; --                  ; 00:03:51                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
