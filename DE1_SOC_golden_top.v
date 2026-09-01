@@ -252,6 +252,30 @@ module DE1_SOC_golden_top(
 
 	// Reset do sistema VGA
 	wire video_reset;
+	
+	wire ts_frame_start;
+	wire ts_frame_done;
+
+	wire ts_poly_phase;
+	wire ts_poly_layer_done;
+
+	wire ts_start_square;
+	wire ts_start_triangle;
+
+	wire [8:0] ts_v0x;
+	wire [8:0] ts_v1x;
+	wire [8:0] ts_v2x;
+
+	wire [7:0] ts_v0y;
+	wire [7:0] ts_v1y;
+	wire [7:0] ts_v2y;
+
+	wire [7:0] ts_color_index;
+	wire       ts_palette_sel;
+
+	wire ts_rast_done;
+	
+	wire ts_rast_busy;
 
 
 	//=======================================================
@@ -261,7 +285,7 @@ module DE1_SOC_golden_top(
 
 	// Mantém o sistema inicialmente fora do reset.
 	// Para teste inicial, podemos usar reset fixo em 0.
-	assign video_reset = 1'b0;
+	assign video_reset = ~KEY[0];
 
 
 	//=======================================================
@@ -272,30 +296,61 @@ module DE1_SOC_golden_top(
 		 .clock (CLOCK_50),
 		 .reset (video_reset),
 
-		 .hsync (VGA_HS), .vsync (VGA_VS),
-		 .sync  (VGA_SYNC_N), .clk (VGA_CLK), .blank (VGA_BLANK_N),
-		 .red   (VGA_R), .green (VGA_G), .blue (VGA_B),
+		 .hsync (VGA_HS),
+		 .vsync (VGA_VS),
+		 .sync  (VGA_SYNC_N),
+		 .clk   (VGA_CLK),
+		 .blank (VGA_BLANK_N),
 
-		 // Memórias: sem escrita em tempo de execução -- tudo vem dos .mif
-		 .bg_tile_wr_en (1'b0), .bg_tile_wr_addr (11'd0), .bg_tile_wr_data (8'd0),
-		 .bg_pattern_wr_en (1'b0), .bg_pattern_wr_addr (14'd0), .bg_pattern_wr_data (8'd0),
-		 .spr_attr_wr_en (1'b0), .spr_attr_wr_addr (5'd0), .spr_attr_wr_data (32'd0),
-		 .spr_pattern_wr_en (1'b0), .spr_pattern_wr_addr (14'd0), .spr_pattern_wr_data (8'd0),
-		 .palette_wr_en (1'b0), .palette_wr_addr (9'd0), .palette_wr_data (9'd0),
+		 .red   (VGA_R),
+		 .green (VGA_G),
+		 .blue  (VGA_B),
 
-		 // Scroll ao vivo pelos switches
-		 .scroll_wr_en   (1'b1),
-		 .scroll_sel     (SW[9]),   // SW[9] escolhe se SW[8:0] vira scroll_x ou scroll_y
-		 .scroll_wr_data (SW[8:0]),
+		 .bg_tile_wr_en     (1'b0),
+		 .bg_tile_wr_addr   (11'd0),
+		 .bg_tile_wr_data   (8'd0),
 
-		 // Comandos do rasterizador -- vindos do test_driver
+		 .bg_pattern_wr_en   (1'b0),
+		 .bg_pattern_wr_addr (14'd0),
+		 .bg_pattern_wr_data (8'd0),
+
+		 .spr_attr_wr_en   (1'b0),
+		 .spr_attr_wr_addr (5'd0),
+		 .spr_attr_wr_data (32'd0),
+
+		 .spr_pattern_wr_en   (1'b0),
+		 .spr_pattern_wr_addr (14'd0),
+		 .spr_pattern_wr_data (8'd0),
+
+		 .palette_wr_en   (1'b0),
+		 .palette_wr_addr (9'd0),
+		 .palette_wr_data (9'd0),
+
+		 .scroll_wr_en     (1'b0),
+		 .scroll_sel       (1'b0),
+		 .scroll_wr_data   (9'd0),
+		 .scroll_auto_en   (SW[0]),
+		 .scroll_auto_axis (SW[1]),
+		 .scroll_auto_dir  (SW[2]),
+		 .scroll_auto_step (8'd1),
+
+		 // RASTERIZADOR
 		 .rast_start_square   (ts_start_square),
 		 .rast_start_triangle (ts_start_triangle),
-		 .rast_v0x (ts_v0x), .rast_v1x (ts_v1x), .rast_v2x (ts_v2x),
-		 .rast_v0y (ts_v0y), .rast_v1y (ts_v1y), .rast_v2y (ts_v2y),
+
+		 .rast_v0x (ts_v0x),
+		 .rast_v1x (ts_v1x),
+		 .rast_v2x (ts_v2x),
+
+		 .rast_v0y (ts_v0y),
+		 .rast_v1y (ts_v1y),
+		 .rast_v2y (ts_v2y),
+
 		 .rast_color_index (ts_color_index),
 		 .rast_palette_sel (ts_palette_sel),
-		 .rast_busy (), .rast_done (ts_rast_done),
+
+		 .rast_busy (ts_rast_busy),
+		 .rast_done (ts_rast_done),
 
 		 .frame_start     (ts_frame_start),
 		 .poly_layer_done (ts_poly_layer_done),
@@ -304,19 +359,31 @@ module DE1_SOC_golden_top(
 	);
 
 	test_driver test_driver_inst (
-		 .clk (CLOCK_50), .reset (video_reset),
-		 .frame_start (ts_frame_start),
-		 .poly_phase  (ts_poly_phase),
-		 .frame_done  (ts_frame_done),
-		 .rast_start_square   (ts_start_square),
-		 .rast_start_triangle (ts_start_triangle),
-		 .rast_v0x (ts_v0x), .rast_v1x (ts_v1x), .rast_v2x (ts_v2x),
-		 .rast_v0y (ts_v0y), .rast_v1y (ts_v1y), .rast_v2y (ts_v2y),
-		 .rast_color_index (ts_color_index),
-		 .rast_palette_sel (ts_palette_sel),
-		 .rast_done (ts_rast_done),
-		 .poly_layer_done (ts_poly_layer_done)
-	);
+    .clk   (CLOCK_50),
+    .reset (video_reset),
+
+    .frame_start (ts_frame_start),
+    .poly_phase  (ts_poly_phase),
+    .frame_done  (ts_frame_done),
+
+	.rast_start_square   (ts_start_square),
+	.rast_start_triangle (ts_start_triangle),
+
+    .rast_v0x (ts_v0x),
+    .rast_v1x (ts_v1x),
+    .rast_v2x (ts_v2x),
+
+    .rast_v0y (ts_v0y),
+    .rast_v1y (ts_v1y),
+    .rast_v2y (ts_v2y),
+
+    .rast_color_index (ts_color_index),
+    .rast_palette_sel (ts_palette_sel),
+
+    .rast_done (ts_rast_done),
+
+    .poly_layer_done (ts_poly_layer_done)
+);
 
 endmodule
 

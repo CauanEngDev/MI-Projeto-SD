@@ -42,7 +42,7 @@ state.S_SETUP 0 1 0 1 0
 state.S_FILL 1 0 0 1 0 
 state.S_DONE 0 0 0 1 1 
 
-State Machine - |DE1_SOC_golden_top|top_video:video_system|subsistema_sprite:sprite_subsystem_inst|motor_sprite:u_engine|state
+State Machine - |DE1_SOC_golden_top|top_video:video_system|motor_sprite:motor_sprite_inst|state
 Name state.S_DONE state.S_NEXT_LVL state.S_NEXT_SPR state.S_NEXT_PX state.S_WRITE_PX state.S_PALETTE_RD state.S_PATTERN_RD state.S_CHECK_SPR state.S_ATTR_RD state.S_IDLE 
 state.S_IDLE 0 0 0 0 0 0 0 0 0 0 
 state.S_ATTR_RD 0 0 0 0 0 0 0 0 1 1 
@@ -56,18 +56,21 @@ state.S_NEXT_LVL 0 1 0 0 0 0 0 0 0 1
 state.S_DONE 1 0 0 0 0 0 0 0 0 1 
 
 State Machine - |DE1_SOC_golden_top|top_video:video_system|motor_background:motor_background_inst|state
-Name state.S_DONE state.S_WRITE state.S_PALETTE_WAIT state.S_PALETTE_SET state.S_PATTERN_WAIT state.S_PATTERN_SET state.S_PREFETCH_STORE state.S_PREFETCH_WAIT state.S_PREFETCH_SET state.S_ROW_CHECK state.S_IDLE 
-state.S_IDLE 0 0 0 0 0 0 0 0 0 0 0 
-state.S_ROW_CHECK 0 0 0 0 0 0 0 0 0 1 1 
-state.S_PREFETCH_SET 0 0 0 0 0 0 0 0 1 0 1 
-state.S_PREFETCH_WAIT 0 0 0 0 0 0 0 1 0 0 1 
-state.S_PREFETCH_STORE 0 0 0 0 0 0 1 0 0 0 1 
-state.S_PATTERN_SET 0 0 0 0 0 1 0 0 0 0 1 
-state.S_PATTERN_WAIT 0 0 0 0 1 0 0 0 0 0 1 
-state.S_PALETTE_SET 0 0 0 1 0 0 0 0 0 0 1 
-state.S_PALETTE_WAIT 0 0 1 0 0 0 0 0 0 0 1 
-state.S_WRITE 0 1 0 0 0 0 0 0 0 0 1 
-state.S_DONE 1 0 0 0 0 0 0 0 0 0 1 
+Name state.S_PALETTE_WAIT2 state.S_PREFETCH_WAIT2 state.S_PATTERN_WAIT2 state.S_DONE state.S_WRITE state.S_PALETTE_WAIT state.S_PALETTE_SET state.S_PATTERN_WAIT state.S_PATTERN_SET state.S_PREFETCH_STORE state.S_PREFETCH_WAIT state.S_PREFETCH_SET state.S_ROW_CHECK state.S_IDLE 
+state.S_IDLE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+state.S_ROW_CHECK 0 0 0 0 0 0 0 0 0 0 0 0 1 1 
+state.S_PREFETCH_SET 0 0 0 0 0 0 0 0 0 0 0 1 0 1 
+state.S_PREFETCH_WAIT 0 0 0 0 0 0 0 0 0 0 1 0 0 1 
+state.S_PREFETCH_STORE 0 0 0 0 0 0 0 0 0 1 0 0 0 1 
+state.S_PATTERN_SET 0 0 0 0 0 0 0 0 1 0 0 0 0 1 
+state.S_PATTERN_WAIT 0 0 0 0 0 0 0 1 0 0 0 0 0 1 
+state.S_PALETTE_SET 0 0 0 0 0 0 1 0 0 0 0 0 0 1 
+state.S_PALETTE_WAIT 0 0 0 0 0 1 0 0 0 0 0 0 0 1 
+state.S_WRITE 0 0 0 0 1 0 0 0 0 0 0 0 0 1 
+state.S_DONE 0 0 0 1 0 0 0 0 0 0 0 0 0 1 
+state.S_PATTERN_WAIT2 0 0 1 0 0 0 0 0 0 0 0 0 0 1 
+state.S_PREFETCH_WAIT2 0 1 0 0 0 0 0 0 0 0 0 0 0 1 
+state.S_PALETTE_WAIT2 1 0 0 0 0 0 0 0 0 0 0 0 0 1 
 
 State Machine - |DE1_SOC_golden_top|top_video:video_system|vga_driver:vga_driver_inst|v_state_d1
 Name v_state_d1.V_BACK_STATE v_state_d1.V_PULSE_STATE v_state_d1.V_FRONT_STATE v_state_d1.V_ACTIVE_STATE 

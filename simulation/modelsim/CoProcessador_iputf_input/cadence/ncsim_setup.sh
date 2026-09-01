@@ -1,3 +1,3 @@
 
 
-ncvlog "F:/CoprocessadorGrafico/pll01_sim/pll01.vo"
+ncvlog "E:/CoprocessadorGrafico/pll01_sim/pll01.vo"

@@ -1,3 +1,3 @@
 
 
-vlogan +v2k "F:/CoprocessadorGrafico/pll01_sim/pll01.vo"
+vlogan +v2k "E:/CoprocessadorGrafico/pll01_sim/pll01.vo"

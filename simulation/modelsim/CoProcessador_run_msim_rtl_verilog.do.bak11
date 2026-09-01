@@ -14,12 +14,26 @@ vmap work rtl_work
 ###### MIF file copy and HDL compilation commands for IPUTF cores 
 
 
-vlog "F:/CoprocessadorGrafico/pll01_sim/pll01.vo"
+vlog "E:/CoprocessadorGrafico/pll01_sim/pll01.vo"
 
-vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico/memory_files {F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v}
-vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/DE1_SOC_golden_top.v}
-vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/vga_driver.v}
-vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/top_video.v}
-vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/fb_addr_gen.v}
-vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/framebuffer.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/framebuffer_ram.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/bg_tile_ram.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/DE1_SOC_golden_top.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/vga_driver.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/top_video.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/tb_vga_memory.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/motor_background.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/motor_sprite.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/fb_addr_gen.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/framebuffer.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/rasterizador_quadrado.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/rasterizador_triangulo.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/rasterizador_top.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/divisor_unsigned.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/sprite_attribute_ram.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/sprite_pattern_ram.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/palette_ram.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/compositor.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/bg_tile_pattern_ram.v}
+vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/test_driver.v}
 

@@ -36,6 +36,7 @@ module compositor (
     localparam S_IDLE = 3'd0, S_BG = 3'd1, S_POLY = 3'd2, S_SPR = 3'd3, S_DONE = 3'd4;
     reg [2:0] state;
     assign busy = (state != S_IDLE);
+    assign poly_phase = (state == S_POLY);
 
     // ---------------- Árbitro de paleta ----------------
     // Só um motor está "busy" por vez -- mux simples por prioridade de sequenciamento

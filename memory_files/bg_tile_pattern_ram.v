@@ -93,7 +93,7 @@ module bg_tile_pattern_ram (
 		altsyncram_component.clock_enable_input_a = "BYPASS",
 		altsyncram_component.clock_enable_input_b = "BYPASS",
 		altsyncram_component.clock_enable_output_b = "BYPASS",
-		altsyncram_component.init_file = "./memory_files/initialization_files/bg_tile_pattern_ram.mif",
+		altsyncram_component.init_file = "./memory_files/initialization_files/bg_tile_pattern_praia.mif",
 		altsyncram_component.intended_device_family = "Cyclone V",
 		altsyncram_component.lpm_type = "altsyncram",
 		altsyncram_component.numwords_a = 16384,

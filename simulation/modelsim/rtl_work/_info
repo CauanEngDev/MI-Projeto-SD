@@ -8,240 +8,530 @@ z2
 !i10e 25
 !i10f 100
 cModel Technology
-Z0 dF:/CoprocessadorGrafico/simulation/modelsim
-vDE1_SOC_golden_top
-Z1 !s110 1788108097
+Z0 dE:/CoprocessadorGrafico/simulation/modelsim
+vbg_tile_pattern_ram
+!s110 1788284634
 !i10b 1
-!s100 NcX7]m<UPNb;1H^SZ]?Nd2
-Z2 !s11b Dg1SIo80bB@j0V0VzS_@n1
-IDAcLQN[8P?Ab2iniB@V8b0
-Z3 VDg1SIo80bB@j0V0VzS_@n1
+!s100 0:V1m=k]IkQEjC8MPCDe90
+Z1 !s11b Dg1SIo80bB@j0V0VzS_@n1
+Il;51<:d^Xjf?YF`^?ckkm0
+Z2 VDg1SIo80bB@j0V0VzS_@n1
 R0
-w1787794908
-8F:/CoprocessadorGrafico/DE1_SOC_golden_top.v
-FF:/CoprocessadorGrafico/DE1_SOC_golden_top.v
-!i122 2
-L0 54 242
+w1788282454
+8E:/CoprocessadorGrafico/memory_files/bg_tile_pattern_ram.v
+FE:/CoprocessadorGrafico/memory_files/bg_tile_pattern_ram.v
+!i122 19
+Z3 L0 40 75
 Z4 OV;L;2020.1;71
 r1
 !s85 0
 31
-Z5 !s108 1788108097.000000
-!s107 F:/CoprocessadorGrafico/DE1_SOC_golden_top.v|
-!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+F:/CoprocessadorGrafico|F:/CoprocessadorGrafico/DE1_SOC_golden_top.v|
+Z5 !s108 1788284634.000000
+!s107 E:/CoprocessadorGrafico/memory_files/bg_tile_pattern_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico/memory_files|E:/CoprocessadorGrafico/memory_files/bg_tile_pattern_ram.v|
 !i113 1
 Z6 o-vlog01compat -work work
-Z7 !s92 -vlog01compat -work work +incdir+F:/CoprocessadorGrafico
+Z7 !s92 -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files
 Z8 tCvgOpt 0
+vbg_tile_ram
+!s110 1788284599
+!i10b 1
+!s100 =X7ooIcYKWj9`R8N[9WKi2
+R1
+Iadf_?HlHDH]Q9fL33_`IO0
+R2
+R0
+Z9 w1788145974
+8E:/CoprocessadorGrafico/memory_files/bg_tile_ram.v
+FE:/CoprocessadorGrafico/memory_files/bg_tile_ram.v
+!i122 2
+R3
+R4
+r1
+!s85 0
+31
+!s108 1788284598.000000
+!s107 E:/CoprocessadorGrafico/memory_files/bg_tile_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico/memory_files|E:/CoprocessadorGrafico/memory_files/bg_tile_ram.v|
+!i113 1
+R6
+R7
+R8
+vcompositor
+!s110 1788284633
+!i10b 1
+!s100 `JQl]?l8iPbb?7nOUgcOj2
+R1
+IcWSdJ[A3ZjFM4;]6c7kZz3
+R2
+R0
+w1788213798
+8E:/CoprocessadorGrafico/compositor.v
+FE:/CoprocessadorGrafico/compositor.v
+!i122 18
+L0 1 84
+R4
+r1
+!s85 0
+31
+!s108 1788284633.000000
+!s107 E:/CoprocessadorGrafico/compositor.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/compositor.v|
+!i113 1
+R6
+Z10 !s92 -vlog01compat -work work +incdir+E:/CoprocessadorGrafico
+R8
+vDE1_SOC_golden_top
+Z11 !s110 1788284603
+!i10b 1
+!s100 m2a0D9KZ_^GkoUH2YKBKd3
+R1
+I@nUS_5afzm7hXYjUHzMRn0
+R2
+R0
+w1788278944
+8E:/CoprocessadorGrafico/DE1_SOC_golden_top.v
+FE:/CoprocessadorGrafico/DE1_SOC_golden_top.v
+!i122 3
+L0 54 335
+R4
+r1
+!s85 0
+31
+!s108 1788284601.000000
+!s107 E:/CoprocessadorGrafico/DE1_SOC_golden_top.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/DE1_SOC_golden_top.v|
+!i113 1
+R6
+R10
+R8
 n@d@e1_@s@o@c_golden_top
 vdivisor_unsigned
-!s110 1788108135
+!s110 1788284624
 !i10b 1
-!s100 HS<^d0KOX]0ikfNajPKcl1
+!s100 >b<hhi<cdP8`YT3=JMGH>1
+R1
+IY:gzW^_A@BCUA2T;6K@E`1
 R2
-IJ1KU1MG96Rg?FYVd_ojDa2
-R3
 R0
-w1788043876
-8F:/CoprocessadorGrafico/divisor_unsigned.v
-FF:/CoprocessadorGrafico/divisor_unsigned.v
-!i122 7
+R9
+8E:/CoprocessadorGrafico/divisor_unsigned.v
+FE:/CoprocessadorGrafico/divisor_unsigned.v
+!i122 14
 L0 1 47
 R4
 r1
 !s85 0
 31
-!s108 1788108135.000000
-!s107 F:/CoprocessadorGrafico/divisor_unsigned.v|
-!s90 -reportprogress|300|-work|work|F:/CoprocessadorGrafico/divisor_unsigned.v|
+Z12 !s108 1788284623.000000
+!s107 E:/CoprocessadorGrafico/divisor_unsigned.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/divisor_unsigned.v|
 !i113 1
-Z9 o-work work
+R6
+R10
 R8
 vfb_addr_gen
-Z10 !s110 1788108098
+!s110 1788284611
 !i10b 1
 !s100 DZGDV8WlED=cg5>G3;RiC3
+R1
+IVRWmYl2@OE>a[96X?5QM23
 R2
-I>gZE<O<QC8E7F`e@SY`PO0
-R3
 R0
-w1788041224
-8F:/CoprocessadorGrafico/fb_addr_gen.v
-FF:/CoprocessadorGrafico/fb_addr_gen.v
-!i122 5
+R9
+8E:/CoprocessadorGrafico/fb_addr_gen.v
+FE:/CoprocessadorGrafico/fb_addr_gen.v
+!i122 9
 L0 1 10
 R4
 r1
 !s85 0
 31
-Z11 !s108 1788108098.000000
-!s107 F:/CoprocessadorGrafico/fb_addr_gen.v|
-!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+F:/CoprocessadorGrafico|F:/CoprocessadorGrafico/fb_addr_gen.v|
+Z13 !s108 1788284610.000000
+!s107 E:/CoprocessadorGrafico/fb_addr_gen.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/fb_addr_gen.v|
 !i113 1
 R6
-R7
+R10
 R8
 vframebuffer
-R10
+Z14 !s110 1788284617
 !i10b 1
-!s100 fX?0A9U<z3GLc5DnGWf5F3
+!s100 mgOl0TeR>BlS0edWO[SNa2
+R1
+IDYU^2C^1F^`5EnjlB2Wa40
 R2
-IMY=[l@3`hf13>em_J^:aG0
-R3
 R0
-w1788041234
-8F:/CoprocessadorGrafico/framebuffer.v
-FF:/CoprocessadorGrafico/framebuffer.v
-!i122 6
-L0 1 41
+w1788213428
+8E:/CoprocessadorGrafico/framebuffer.v
+FE:/CoprocessadorGrafico/framebuffer.v
+!i122 10
+L0 1 64
 R4
 r1
 !s85 0
 31
-R11
-!s107 F:/CoprocessadorGrafico/framebuffer.v|
-!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+F:/CoprocessadorGrafico|F:/CoprocessadorGrafico/framebuffer.v|
+Z15 !s108 1788284617.000000
+!s107 E:/CoprocessadorGrafico/framebuffer.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/framebuffer.v|
+!i113 1
+R6
+R10
+R8
+vframebuffer_ram
+!s110 1788284598
+!i10b 1
+!s100 k5UAnZkd4DHl:lBHmE8mj0
+R1
+Ij37Dnmb`MPW1g[=flSdUP0
+R2
+R0
+R9
+8E:/CoprocessadorGrafico/memory_files/framebuffer_ram.v
+FE:/CoprocessadorGrafico/memory_files/framebuffer_ram.v
+!i122 1
+R3
+R4
+r1
+!s85 0
+31
+!s108 1788284597.000000
+!s107 E:/CoprocessadorGrafico/memory_files/framebuffer_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico/memory_files|E:/CoprocessadorGrafico/memory_files/framebuffer_ram.v|
 !i113 1
 R6
 R7
 R8
-vframebuffer_ram
-R1
+vmotor_background
+!s110 1788284609
 !i10b 1
-!s100 k5UAnZkd4DHl:lBHmE8mj0
+!s100 ]Sc=[_N@gNCOlOWoXjDm33
+R1
+IK:;J;hnkE9zA`=`NDGL<K1
 R2
-I78OaEjLQ9QQB_KFI@oR`S0
-R3
 R0
-w1788041050
-8F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v
-FF:/CoprocessadorGrafico/memory_files/framebuffer_ram.v
-!i122 1
-L0 40 75
+w1788278942
+8E:/CoprocessadorGrafico/motor_background.v
+FE:/CoprocessadorGrafico/motor_background.v
+!i122 7
+L0 4 254
 R4
 r1
 !s85 0
 31
-Z12 !s108 1788108096.000000
-!s107 F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v|
-!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+F:/CoprocessadorGrafico/memory_files|F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v|
+!s108 1788284609.000000
+!s107 E:/CoprocessadorGrafico/motor_background.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/motor_background.v|
 !i113 1
 R6
-!s92 -vlog01compat -work work +incdir+F:/CoprocessadorGrafico/memory_files
+R10
+R8
+vmotor_sprite
+!s110 1788284610
+!i10b 1
+!s100 >V0:SBF<eTH;j^9Col8l>1
+R1
+IV_Y@T?8=2`g=j6z@gdS8E3
+R2
+R0
+w1788109934
+8E:/CoprocessadorGrafico/motor_sprite.v
+FE:/CoprocessadorGrafico/motor_sprite.v
+!i122 8
+L0 1 170
+R4
+r1
+!s85 0
+31
+R13
+!s107 E:/CoprocessadorGrafico/motor_sprite.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/motor_sprite.v|
+!i113 1
+R6
+R10
+R8
+vpalette_ram
+!s110 1788284630
+!i10b 1
+!s100 =M5^m1W^0Zal][eSU9;gK1
+R1
+I1gQlN`LXSDcDcJg3c13Uz0
+R2
+R0
+w1788278474
+8E:/CoprocessadorGrafico/memory_files/palette_ram.v
+FE:/CoprocessadorGrafico/memory_files/palette_ram.v
+!i122 17
+R3
+R4
+r1
+!s85 0
+31
+!s108 1788284629.000000
+!s107 E:/CoprocessadorGrafico/memory_files/palette_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico/memory_files|E:/CoprocessadorGrafico/memory_files/palette_ram.v|
+!i113 1
+R6
+R7
 R8
 vpll01
-!s110 1788108096
+!s110 1788284597
 !i10b 1
 !s100 7fjPAe>5WCg1e7hC90T=l3
+R1
+ID9A=X>LL_Fg?9j5nO[^ij3
 R2
-IjJ8fdgd0_naYZ4LGaKYaK2
-R3
 R0
 w1787794912
-8F:/CoprocessadorGrafico/pll01_sim/pll01.vo
-FF:/CoprocessadorGrafico/pll01_sim/pll01.vo
+8E:/CoprocessadorGrafico/pll01_sim/pll01.vo
+FE:/CoprocessadorGrafico/pll01_sim/pll01.vo
 !i122 0
 L0 32 264
 R4
 r1
 !s85 0
 31
-R12
-!s107 F:/CoprocessadorGrafico/pll01_sim/pll01.vo|
-!s90 -reportprogress|300|F:/CoprocessadorGrafico/pll01_sim/pll01.vo|
+!s108 1788284593.000000
+!s107 E:/CoprocessadorGrafico/pll01_sim/pll01.vo|
+!s90 -reportprogress|300|E:/CoprocessadorGrafico/pll01_sim/pll01.vo|
 !i113 1
 R8
-vrasterizador_triangulo
-!s110 1788108139
+vrasterizador_quadrado
+R14
 !i10b 1
-!s100 H8DWXBbf=zV1z0=QN?d=H1
-R2
-ICi=Ui2al<ogggH^BCo^Cn0
-R3
-R0
-w1788107918
-8F:/CoprocessadorGrafico/rasterizador_triangulo.v
-FF:/CoprocessadorGrafico/rasterizador_triangulo.v
-!i122 8
-L0 1 232
-R4
-r1
-!s85 0
-31
-!s108 1788108139.000000
-!s107 F:/CoprocessadorGrafico/rasterizador_triangulo.v|
-!s90 -reportprogress|300|-work|work|F:/CoprocessadorGrafico/rasterizador_triangulo.v|
-!i113 1
-R9
-R8
-vtb_rasterizer_triangle
-!s110 1788108143
-!i10b 1
-!s100 _C^aWa^4@GRZPVzK>>1oO2
-R2
-IaonYDO9ZcUm=R1[aG9l;S2
-R3
-R0
-w1788096766
-8F:/CoprocessadorGrafico/tb_rasterizer_triangle.v
-FF:/CoprocessadorGrafico/tb_rasterizer_triangle.v
-!i122 9
-L0 3 222
-R4
-r1
-!s85 0
-31
-!s108 1788108142.000000
-!s107 F:/CoprocessadorGrafico/tb_rasterizer_triangle.v|
-!s90 -reportprogress|300|-work|work|F:/CoprocessadorGrafico/tb_rasterizer_triangle.v|
-!i113 1
-R9
-R8
-vtop_video
+!s100 >19eXMX:eGm860=m]XW]V2
 R1
-!i10b 1
-!s100 5o8z[5RIF38DP5iWZ7YjX1
+If<Fo_UEmDGlJIGYc5<2392
 R2
-IZC_4McFdd?2Ym7[NV_9kC1
-R3
 R0
-w1788042074
-8F:/CoprocessadorGrafico/top_video.v
-FF:/CoprocessadorGrafico/top_video.v
-!i122 4
+w1788116924
+8E:/CoprocessadorGrafico/rasterizador_quadrado.v
+FE:/CoprocessadorGrafico/rasterizador_quadrado.v
+!i122 11
 L0 1 85
 R4
 r1
 !s85 0
 31
-R5
-!s107 F:/CoprocessadorGrafico/top_video.v|
-!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+F:/CoprocessadorGrafico|F:/CoprocessadorGrafico/top_video.v|
+R15
+!s107 E:/CoprocessadorGrafico/rasterizador_quadrado.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/rasterizador_quadrado.v|
+!i113 1
+R6
+R10
+R8
+vrasterizador_top
+!s110 1788284623
+!i10b 1
+!s100 dODdTmzhJQA6^RMce4_f^2
+R1
+I7R24o6JzQWP33FWZ9R`@B3
+R2
+R0
+w1788204282
+8E:/CoprocessadorGrafico/rasterizador_top.v
+FE:/CoprocessadorGrafico/rasterizador_top.v
+!i122 13
+L0 1 59
+R4
+r1
+!s85 0
+31
+R12
+!s107 E:/CoprocessadorGrafico/rasterizador_top.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/rasterizador_top.v|
+!i113 1
+R6
+R10
+R8
+vrasterizador_triangulo
+!s110 1788284618
+!i10b 1
+!s100 >Nfoo>eRXRZlP]F;K0K:H0
+R1
+Ijn=K__;nFPb1oKP;::7dX0
+R2
+R0
+w1788116974
+8E:/CoprocessadorGrafico/rasterizador_triangulo.v
+FE:/CoprocessadorGrafico/rasterizador_triangulo.v
+!i122 12
+L0 1 239
+R4
+r1
+!s85 0
+31
+!s108 1788284618.000000
+!s107 E:/CoprocessadorGrafico/rasterizador_triangulo.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/rasterizador_triangulo.v|
+!i113 1
+R6
+R10
+R8
+vsprite_attribute_ram
+!s110 1788284626
+!i10b 1
+!s100 9;FFEEoH^eUaKMD9A__`I0
+R1
+Ie`ZzL9G3UF^5[Rc9flUU80
+R2
+R0
+R9
+8E:/CoprocessadorGrafico/memory_files/sprite_attribute_ram.v
+FE:/CoprocessadorGrafico/memory_files/sprite_attribute_ram.v
+!i122 15
+R3
+R4
+r1
+!s85 0
+31
+!s108 1788284624.000000
+!s107 E:/CoprocessadorGrafico/memory_files/sprite_attribute_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico/memory_files|E:/CoprocessadorGrafico/memory_files/sprite_attribute_ram.v|
 !i113 1
 R6
 R7
 R8
-vvga_driver
-R1
+vsprite_pattern_ram
+!s110 1788284628
 !i10b 1
-!s100 diZKfb8XccegW`Tb;8F=]1
+!s100 Uo=cJi]TRkTWkh<AeNaZW2
+R1
+ING0K8ck]QImn=QQcXWUdo1
 R2
-IITf87QfZ25^HdQRnOA_Xc0
-R3
 R0
-w1788042290
-8F:/CoprocessadorGrafico/vga_driver.v
-FF:/CoprocessadorGrafico/vga_driver.v
-!i122 3
-L0 1 181
+w1788277050
+8E:/CoprocessadorGrafico/memory_files/sprite_pattern_ram.v
+FE:/CoprocessadorGrafico/memory_files/sprite_pattern_ram.v
+!i122 16
+R3
+R4
+r1
+!s85 0
+31
+!s108 1788284628.000000
+!s107 E:/CoprocessadorGrafico/memory_files/sprite_pattern_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico/memory_files|E:/CoprocessadorGrafico/memory_files/sprite_pattern_ram.v|
+!i113 1
+R6
+R7
+R8
+vtb_motor_background
+!s110 1788284684
+!i10b 1
+!s100 ^2iP8J`_F7D869oaaB1IX3
+R1
+IOMTAjgBHe2CUnFLb>gGa@0
+R2
+R0
+w1788279396
+8E:/CoprocessadorGrafico/tb_motor_background.v
+FE:/CoprocessadorGrafico/tb_motor_background.v
+!i122 21
+L0 3 310
+R4
+r1
+!s85 0
+31
+!s108 1788284683.000000
+!s107 E:/CoprocessadorGrafico/tb_motor_background.v|
+!s90 -reportprogress|300|-work|work|E:/CoprocessadorGrafico/tb_motor_background.v|
+!i113 1
+o-work work
+R8
+vtb_vga_driver
+!s110 1788284608
+!i10b 1
+!s100 ii>ljnUWLE@a0H?O_eE_?3
+R1
+IgbKXJ[KXCojimM4ff7fik0
+R2
+R0
+R9
+8E:/CoprocessadorGrafico/tb_vga_memory.v
+FE:/CoprocessadorGrafico/tb_vga_memory.v
+!i122 6
+L0 3 135
+R4
+r1
+!s85 0
+31
+Z16 !s108 1788284604.000000
+!s107 E:/CoprocessadorGrafico/tb_vga_memory.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/tb_vga_memory.v|
+!i113 1
+R6
+R10
+R8
+vtest_driver
+!s110 1788284635
+!i10b 1
+!s100 7SVE@;9BoIMj2_dZ49WYM3
+R1
+IIK1Qh2=L[iXi]lCNXX_<c0
+R2
+R0
+w1788279586
+8E:/CoprocessadorGrafico/test_driver.v
+FE:/CoprocessadorGrafico/test_driver.v
+!i122 20
+L0 1 164
 R4
 r1
 !s85 0
 31
 R5
-!s107 F:/CoprocessadorGrafico/vga_driver.v|
-!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+F:/CoprocessadorGrafico|F:/CoprocessadorGrafico/vga_driver.v|
+!s107 E:/CoprocessadorGrafico/test_driver.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/test_driver.v|
 !i113 1
 R6
-R7
+R10
+R8
+vtop_video
+!s110 1788284604
+!i10b 1
+!s100 9zPefG9?Vg9hjK702c9bk3
+R1
+IfizX=;:EY_7_YEL63Lcci0
+R2
+R0
+w1788284140
+8E:/CoprocessadorGrafico/top_video.v
+FE:/CoprocessadorGrafico/top_video.v
+!i122 5
+L0 1 562
+R4
+r1
+!s85 0
+31
+R16
+!s107 E:/CoprocessadorGrafico/top_video.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/top_video.v|
+!i113 1
+R6
+R10
+R8
+vvga_driver
+R11
+!i10b 1
+!s100 dk1a:CBSWmLI6X[OCG0I`2
+R1
+Idk^I3d]?z8NTfD`13lB9<2
+R2
+R0
+w1788213370
+8E:/CoprocessadorGrafico/vga_driver.v
+FE:/CoprocessadorGrafico/vga_driver.v
+!i122 4
+L0 1 177
+R4
+r1
+!s85 0
+31
+!s108 1788284603.000000
+!s107 E:/CoprocessadorGrafico/vga_driver.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/CoprocessadorGrafico|E:/CoprocessadorGrafico/vga_driver.v|
+!i113 1
+R6
+R10
 R8

@@ -13,7 +13,9 @@ module vga_driver (
     output [7:0] blue,     // Canal azul
     output sync,           // SYNC (composto, não usado — fixo em 0)
     output clk,            // CLK repassado ao conector VGA
-    output blank           // BLANK — ativo quando fora da área ativa de exibição
+    output blank,          // BLANK — ativo quando fora da área ativa de exibição
+
+    output wire vblank_tick // NOVO: pulso de 1 ciclo no início do blanking vertical
 );
 
     // ---------------------------------------------------------------
@@ -53,6 +55,7 @@ module vga_driver (
     reg [7:0] red_reg, green_reg, blue_reg;
 
     reg line_done; // pulso: fim de uma linha horizontal completa
+    reg vblank_tick_reg; // NOVO: pulso de início de blanking vertical
 
     // Contadores/estado "de posição" — não sofrem o atraso extra,
     // pois são justamente a base usada para gerar next_x/next_y
@@ -77,8 +80,12 @@ module vga_driver (
             line_done  <= LOW;
             h_state_d1 <= H_ACTIVE_STATE;
             v_state_d1 <= V_ACTIVE_STATE;
+            vblank_tick_reg <= LOW;
         end
         else begin
+            // NOVO: default — só fica em HIGH no ciclo exato do pulso
+            vblank_tick_reg <= LOW;
+
             //////////////////////////////////////////////////////////
             //////////////////// HORIZONTAL ////////////////////////////
             //////////////////////////////////////////////////////////
@@ -119,6 +126,8 @@ module vga_driver (
                 v_counter <= (line_done==HIGH) ? ((v_counter==V_ACTIVE) ? 10'd0 : (v_counter+10'd1)) : v_counter;
                 vsync_pre <= HIGH;
                 v_state   <= (line_done==HIGH) ? ((v_counter==V_ACTIVE) ? V_FRONT_STATE : V_ACTIVE_STATE) : V_ACTIVE_STATE;
+                // NOVO: dispara o pulso exatamente quando a última linha ativa termina
+                vblank_tick_reg <= (line_done==HIGH && v_counter==V_ACTIVE) ? HIGH : LOW;
             end
             if (v_state == V_FRONT_STATE) begin
                 v_counter <= (line_done==HIGH) ? ((v_counter==V_FRONT) ? 10'd0 : (v_counter+10'd1)) : v_counter;
@@ -140,22 +149,11 @@ module vga_driver (
             //////////////////////////////////////////////////////////
             //////// ESTÁGIO EXTRA DE ATRASO (correção de latência) ////
             //////////////////////////////////////////////////////////
-            // next_x/next_y (abaixo) são gerados a partir de h_counter/v_counter
-            // SEM atraso, pois servem de endereço de leitura pro framebuffer.
-            // A RAM do framebuffer tem saída registrada (1 ciclo de latência),
-            // então o dado (color_in) só chega 1 ciclo depois do endereço ser
-            // aplicado. Por isso, hsync/vsync e o gate de cor precisam de
-            // mais 1 ciclo de atraso além do que a FSM já naturalmente tem,
-            // para ficarem alinhados com o color_in atrasado.
             h_state_d1 <= h_state;       // versão atrasada do estado horizontal
             v_state_d1 <= v_state;       // versão atrasada do estado vertical
             hysnc_reg  <= hysnc_pre;     // hsync final, 1 ciclo depois do "pre"
             vsync_reg  <= vsync_pre;     // vsync final, 1 ciclo depois do "pre"
 
-            // Cor final: usa o estado JÁ ATRASADO (h_state_d1/v_state_d1),
-            // não o estado corrente — assim a cor amostrada de color_in
-            // corresponde exatamente à posição que hsync/vsync estão
-            // sinalizando neste mesmo ciclo.
             red_reg   <= (h_state_d1==H_ACTIVE_STATE) ? ((v_state_d1==V_ACTIVE_STATE) ? {color_in[8:6],5'd0} : 8'd0) : 8'd0;
             green_reg <= (h_state_d1==H_ACTIVE_STATE) ? ((v_state_d1==V_ACTIVE_STATE) ? {color_in[5:3],5'd0} : 8'd0) : 8'd0;
             blue_reg  <= (h_state_d1==H_ACTIVE_STATE) ? ((v_state_d1==V_ACTIVE_STATE) ? {color_in[2:0],5'd0} : 8'd0) : 8'd0;
@@ -171,10 +169,8 @@ module vga_driver (
     assign clk   = clock;
     assign sync  = 1'b0;               // sync composto não utilizado nesse DAC
     assign blank = hysnc_reg & vsync_reg;
+    assign vblank_tick = vblank_tick_reg; // NOVO
 
-    // Endereço de leitura para memória externa (framebuffer): coordenada
-    // do PRÓXIMO pixel a ser desenhado, usada crua (sem o atraso extra),
-    // pois precisa "sair na frente" para compensar a latência de leitura da RAM
     assign next_x = (h_state==H_ACTIVE_STATE) ? h_counter : 10'd0;
     assign next_y = (v_state==V_ACTIVE_STATE) ? v_counter : 10'd0;
 

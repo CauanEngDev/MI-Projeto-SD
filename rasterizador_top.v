@@ -57,3 +57,4 @@ module rasterizador_top (
     assign done        = done_sq | done_tr;
 
 endmodule
+
