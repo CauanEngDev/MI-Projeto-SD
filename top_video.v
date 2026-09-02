@@ -74,6 +74,7 @@ module top_video (
 
     output wire       rast_busy,
     output wire       rast_done,
+	 output wire       rast_invalid_cmd, 
 
     // ============================================================
     // Controle de frame
@@ -430,7 +431,8 @@ module top_video (
         .fb_wr_data (poly_fb_wr_data),
 
         .busy (rast_busy),
-        .done (rast_done)
+        .done (rast_done),
+		  .invalid_cmd (rast_invalid_cmd) 
     );
 
     // ============================================================

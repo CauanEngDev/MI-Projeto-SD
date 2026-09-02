@@ -287,103 +287,121 @@ module DE1_SOC_golden_top(
 	// Para teste inicial, podemos usar reset fixo em 0.
 	assign video_reset = ~KEY[0];
 
+	// ============================================================
+	// Sprite controlável (mover + espelhar) e spawner
+	// ============================================================
+	wire        mover_wr_en, spawner_wr_en;
+	wire [4:0]  mover_wr_addr, spawner_wr_addr;
+	wire [31:0] mover_wr_data, spawner_wr_data;
 
-	//=======================================================
-	//  VIDEO VGA
-	//=======================================================
+	wire        arb_spr_attr_wr_en   = mover_wr_en | spawner_wr_en;
+	wire [4:0]  arb_spr_attr_wr_addr = mover_wr_en ? mover_wr_addr : spawner_wr_addr;
+	wire [31:0] arb_spr_attr_wr_data = mover_wr_en ? mover_wr_data : spawner_wr_data;
+	
+	wire flip_h_pulse = ~KEY[2] & ~SW[5];
+	wire flip_v_pulse = ~KEY[2] &  SW[5];
 
+		sprite_mover_flip sprite_mover_flip_inst (
+		 .clk (CLOCK_50), .reset (video_reset),
+		 .move_pulse   (~KEY[1]),   // ativo-baixo -> inverte pra ativo-alto
+		 .direction    (SW[4:3]),
+		 .flip_h_pulse (flip_h_pulse),
+		 .flip_v_pulse (flip_v_pulse),
+		 .attr_wr_en   (mover_wr_en),
+		 .attr_wr_addr (mover_wr_addr),
+		 .attr_wr_data (mover_wr_data)
+	);
+
+		sprite_spawner sprite_spawner_inst (
+		 .clk (CLOCK_50), .reset (video_reset),
+		 .spawn_pulse (~KEY[3]),
+		 .spawn_x     (SW[8:0]),
+		 .attr_wr_en   (spawner_wr_en),
+		 .attr_wr_addr (spawner_wr_addr),
+		 .attr_wr_data (spawner_wr_data)
+	);
+
+	// ============================================================
+	// VIDEO VGA
+	// ============================================================
 	top_video video_system (
-		 .clock (CLOCK_50),
-		 .reset (video_reset),
+		  .clock (CLOCK_50),
+		  .reset (video_reset),
+		  .hsync (VGA_HS),
+		  .vsync (VGA_VS),
+		  .sync  (VGA_SYNC_N),
+		  .clk   (VGA_CLK),
+		  .blank (VGA_BLANK_N),
+		  .red   (VGA_R),
+		  .green (VGA_G),
+		  .blue  (VGA_B),
 
-		 .hsync (VGA_HS),
-		 .vsync (VGA_VS),
-		 .sync  (VGA_SYNC_N),
-		 .clk   (VGA_CLK),
-		 .blank (VGA_BLANK_N),
+		  .bg_tile_wr_en     (1'b0),
+		  .bg_tile_wr_addr   (11'd0),
+		  .bg_tile_wr_data   (8'd0),
+		  .bg_pattern_wr_en   (1'b0),
+		  .bg_pattern_wr_addr (14'd0),
+		  .bg_pattern_wr_data (8'd0),
 
-		 .red   (VGA_R),
-		 .green (VGA_G),
-		 .blue  (VGA_B),
+		  // ---------------- Escrita de atributos de sprite: agora vem dos módulos de teste ----------------
+		  .spr_attr_wr_en   (arb_spr_attr_wr_en),
+		  .spr_attr_wr_addr (arb_spr_attr_wr_addr),
+		  .spr_attr_wr_data (arb_spr_attr_wr_data),
 
-		 .bg_tile_wr_en     (1'b0),
-		 .bg_tile_wr_addr   (11'd0),
-		 .bg_tile_wr_data   (8'd0),
+		  .spr_pattern_wr_en   (1'b0),
+		  .spr_pattern_wr_addr (14'd0),
+		  .spr_pattern_wr_data (8'd0),
+		  .palette_wr_en   (1'b0),
+		  .palette_wr_addr (9'd0),
+		  .palette_wr_data (9'd0),
+		  .scroll_wr_en     (1'b0),
+		  .scroll_sel       (1'b0),
+		  .scroll_wr_data   (9'd0),
+		  .scroll_auto_en   (SW[0]),
+		  .scroll_auto_axis (SW[1]),
+		  .scroll_auto_dir  (SW[2]),
+		  .scroll_auto_step (8'd1),
 
-		 .bg_pattern_wr_en   (1'b0),
-		 .bg_pattern_wr_addr (14'd0),
-		 .bg_pattern_wr_data (8'd0),
+		  // RASTERIZADOR
+		  .rast_start_square   (ts_start_square),
+		  .rast_start_triangle (ts_start_triangle),
+		  .rast_v0x (ts_v0x),
+		  .rast_v1x (ts_v1x),
+		  .rast_v2x (ts_v2x),
+		  .rast_v0y (ts_v0y),
+		  .rast_v1y (ts_v1y),
+		  .rast_v2y (ts_v2y),
+		  .rast_color_index (ts_color_index),
+		  .rast_palette_sel (ts_palette_sel),
+		  .rast_busy (ts_rast_busy),
+		  .rast_done (ts_rast_done),
 
-		 .spr_attr_wr_en   (1'b0),
-		 .spr_attr_wr_addr (5'd0),
-		 .spr_attr_wr_data (32'd0),
-
-		 .spr_pattern_wr_en   (1'b0),
-		 .spr_pattern_wr_addr (14'd0),
-		 .spr_pattern_wr_data (8'd0),
-
-		 .palette_wr_en   (1'b0),
-		 .palette_wr_addr (9'd0),
-		 .palette_wr_data (9'd0),
-
-		 .scroll_wr_en     (1'b0),
-		 .scroll_sel       (1'b0),
-		 .scroll_wr_data   (9'd0),
-		 .scroll_auto_en   (SW[0]),
-		 .scroll_auto_axis (SW[1]),
-		 .scroll_auto_dir  (SW[2]),
-		 .scroll_auto_step (8'd1),
-
-		 // RASTERIZADOR
-		 .rast_start_square   (ts_start_square),
-		 .rast_start_triangle (ts_start_triangle),
-
-		 .rast_v0x (ts_v0x),
-		 .rast_v1x (ts_v1x),
-		 .rast_v2x (ts_v2x),
-
-		 .rast_v0y (ts_v0y),
-		 .rast_v1y (ts_v1y),
-		 .rast_v2y (ts_v2y),
-
-		 .rast_color_index (ts_color_index),
-		 .rast_palette_sel (ts_palette_sel),
-
-		 .rast_busy (ts_rast_busy),
-		 .rast_done (ts_rast_done),
-
-		 .frame_start     (ts_frame_start),
-		 .poly_layer_done (ts_poly_layer_done),
-		 .poly_phase      (ts_poly_phase),
-		 .frame_done      (ts_frame_done)
+		  .frame_start     (ts_frame_start),
+		  .poly_layer_done (ts_poly_layer_done),
+		  .poly_phase      (ts_poly_phase),
+		  .frame_done      (ts_frame_done)
 	);
 
 	test_driver test_driver_inst (
-    .clk   (CLOCK_50),
-    .reset (video_reset),
-
-    .frame_start (ts_frame_start),
-    .poly_phase  (ts_poly_phase),
-    .frame_done  (ts_frame_done),
-
-	.rast_start_square   (ts_start_square),
-	.rast_start_triangle (ts_start_triangle),
-
-    .rast_v0x (ts_v0x),
-    .rast_v1x (ts_v1x),
-    .rast_v2x (ts_v2x),
-
-    .rast_v0y (ts_v0y),
-    .rast_v1y (ts_v1y),
-    .rast_v2y (ts_v2y),
-
-    .rast_color_index (ts_color_index),
-    .rast_palette_sel (ts_palette_sel),
-
-    .rast_done (ts_rast_done),
-
-    .poly_layer_done (ts_poly_layer_done)
-);
+		 .clk   (CLOCK_50),
+		 .reset (video_reset),
+		 .add_poly_en (SW[9]),          // <-- NOVO
+		 .frame_start (ts_frame_start),
+		 .poly_phase  (ts_poly_phase),
+		 .frame_done  (ts_frame_done),
+		 .rast_start_square   (ts_start_square),
+		 .rast_start_triangle (ts_start_triangle),
+		 .rast_v0x (ts_v0x),
+		 .rast_v1x (ts_v1x),
+		 .rast_v2x (ts_v2x),
+		 .rast_v0y (ts_v0y),
+		 .rast_v1y (ts_v1y),
+		 .rast_v2y (ts_v2y),
+		 .rast_color_index (ts_color_index),
+		 .rast_palette_sel (ts_palette_sel),
+		 .rast_done (ts_rast_done),
+		 .poly_layer_done (ts_poly_layer_done)
+	);
 
 endmodule
 

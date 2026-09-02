@@ -19,264 +19,601 @@
 ###### MIF file copy and HDL compilation commands for IPUTF cores 
 # 
 # 
-# vlog "E:/CoprocessadorGrafico/pll01_sim/pll01.vo"
+# vlog "F:/CoprocessadorGrafico/pll01_sim/pll01.vo"
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:13 on Sep 01,2026
-# vlog -reportprogress 300 E:/CoprocessadorGrafico/pll01_sim/pll01.vo 
+# Start time: 22:26:42 on Sep 01,2026
+# vlog -reportprogress 300 F:/CoprocessadorGrafico/pll01_sim/pll01.vo 
 # -- Compiling module pll01
 # 
 # Top level modules:
 # 	pll01
-# End time: 14:43:17 on Sep 01,2026, Elapsed time: 0:00:04
+# End time: 22:26:42 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # 
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/framebuffer_ram.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico/memory_files {F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:17 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico/memory_files" E:/CoprocessadorGrafico/memory_files/framebuffer_ram.v 
+# Start time: 22:26:42 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico/memory_files" F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v 
 # -- Compiling module framebuffer_ram
 # 
 # Top level modules:
 # 	framebuffer_ram
-# End time: 14:43:18 on Sep 01,2026, Elapsed time: 0:00:01
+# End time: 22:26:42 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/bg_tile_ram.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico/memory_files {F:/CoprocessadorGrafico/memory_files/bg_tile_ram.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:18 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico/memory_files" E:/CoprocessadorGrafico/memory_files/bg_tile_ram.v 
+# Start time: 22:26:42 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico/memory_files" F:/CoprocessadorGrafico/memory_files/bg_tile_ram.v 
 # -- Compiling module bg_tile_ram
 # 
 # Top level modules:
 # 	bg_tile_ram
-# End time: 14:43:21 on Sep 01,2026, Elapsed time: 0:00:03
+# End time: 22:26:43 on Sep 01,2026, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/DE1_SOC_golden_top.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/DE1_SOC_golden_top.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:21 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/DE1_SOC_golden_top.v 
+# Start time: 22:26:43 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/DE1_SOC_golden_top.v 
 # -- Compiling module DE1_SOC_golden_top
 # 
 # Top level modules:
 # 	DE1_SOC_golden_top
-# End time: 14:43:23 on Sep 01,2026, Elapsed time: 0:00:02
+# End time: 22:26:43 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/vga_driver.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/vga_driver.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:23 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/vga_driver.v 
+# Start time: 22:26:43 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/vga_driver.v 
 # -- Compiling module vga_driver
 # 
 # Top level modules:
 # 	vga_driver
-# End time: 14:43:24 on Sep 01,2026, Elapsed time: 0:00:01
+# End time: 22:26:43 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/top_video.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/top_video.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:24 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/top_video.v 
+# Start time: 22:26:43 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/top_video.v 
 # -- Compiling module top_video
 # 
 # Top level modules:
 # 	top_video
-# End time: 14:43:24 on Sep 01,2026, Elapsed time: 0:00:00
+# End time: 22:26:44 on Sep 01,2026, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/tb_vga_memory.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/tb_vga_memory.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:24 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/tb_vga_memory.v 
+# Start time: 22:26:44 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/tb_vga_memory.v 
 # -- Compiling module tb_vga_driver
 # 
 # Top level modules:
 # 	tb_vga_driver
-# End time: 14:43:29 on Sep 01,2026, Elapsed time: 0:00:05
+# End time: 22:26:44 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/motor_background.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/motor_background.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:29 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/motor_background.v 
+# Start time: 22:26:44 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/motor_background.v 
 # -- Compiling module motor_background
 # 
 # Top level modules:
 # 	motor_background
-# End time: 14:43:30 on Sep 01,2026, Elapsed time: 0:00:01
+# End time: 22:26:44 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/motor_sprite.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/motor_sprite.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:30 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/motor_sprite.v 
+# Start time: 22:26:44 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/motor_sprite.v 
 # -- Compiling module motor_sprite
 # 
 # Top level modules:
 # 	motor_sprite
-# End time: 14:43:30 on Sep 01,2026, Elapsed time: 0:00:00
+# End time: 22:26:44 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/fb_addr_gen.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/fb_addr_gen.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:30 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/fb_addr_gen.v 
+# Start time: 22:26:44 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/fb_addr_gen.v 
 # -- Compiling module fb_addr_gen
 # 
 # Top level modules:
 # 	fb_addr_gen
-# End time: 14:43:37 on Sep 01,2026, Elapsed time: 0:00:07
+# End time: 22:26:45 on Sep 01,2026, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/framebuffer.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/framebuffer.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:37 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/framebuffer.v 
+# Start time: 22:26:45 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/framebuffer.v 
 # -- Compiling module framebuffer
 # 
 # Top level modules:
 # 	framebuffer
-# End time: 14:43:37 on Sep 01,2026, Elapsed time: 0:00:00
+# End time: 22:26:45 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/rasterizador_quadrado.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/rasterizador_quadrado.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:37 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/rasterizador_quadrado.v 
+# Start time: 22:26:45 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/rasterizador_quadrado.v 
 # -- Compiling module rasterizador_quadrado
 # 
 # Top level modules:
 # 	rasterizador_quadrado
-# End time: 14:43:38 on Sep 01,2026, Elapsed time: 0:00:01
+# End time: 22:26:45 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/rasterizador_triangulo.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/rasterizador_triangulo.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:38 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/rasterizador_triangulo.v 
+# Start time: 22:26:45 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/rasterizador_triangulo.v 
 # -- Compiling module rasterizador_triangulo
 # 
 # Top level modules:
 # 	rasterizador_triangulo
-# End time: 14:43:42 on Sep 01,2026, Elapsed time: 0:00:04
+# End time: 22:26:46 on Sep 01,2026, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/rasterizador_top.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/rasterizador_top.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:43 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/rasterizador_top.v 
+# Start time: 22:26:46 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/rasterizador_top.v 
 # -- Compiling module rasterizador_top
 # 
 # Top level modules:
 # 	rasterizador_top
-# End time: 14:43:43 on Sep 01,2026, Elapsed time: 0:00:00
+# End time: 22:26:46 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/divisor_unsigned.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/divisor_unsigned.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:43 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/divisor_unsigned.v 
+# Start time: 22:26:46 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/divisor_unsigned.v 
 # -- Compiling module divisor_unsigned
 # 
 # Top level modules:
 # 	divisor_unsigned
-# End time: 14:43:44 on Sep 01,2026, Elapsed time: 0:00:01
+# End time: 22:26:46 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/sprite_attribute_ram.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico/memory_files {F:/CoprocessadorGrafico/memory_files/sprite_attribute_ram.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:44 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico/memory_files" E:/CoprocessadorGrafico/memory_files/sprite_attribute_ram.v 
+# Start time: 22:26:46 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico/memory_files" F:/CoprocessadorGrafico/memory_files/sprite_attribute_ram.v 
 # -- Compiling module sprite_attribute_ram
 # 
 # Top level modules:
 # 	sprite_attribute_ram
-# End time: 14:43:47 on Sep 01,2026, Elapsed time: 0:00:03
+# End time: 22:26:46 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/sprite_pattern_ram.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico/memory_files {F:/CoprocessadorGrafico/memory_files/sprite_pattern_ram.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:48 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico/memory_files" E:/CoprocessadorGrafico/memory_files/sprite_pattern_ram.v 
+# Start time: 22:26:46 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico/memory_files" F:/CoprocessadorGrafico/memory_files/sprite_pattern_ram.v 
 # -- Compiling module sprite_pattern_ram
 # 
 # Top level modules:
 # 	sprite_pattern_ram
-# End time: 14:43:49 on Sep 01,2026, Elapsed time: 0:00:01
+# End time: 22:26:47 on Sep 01,2026, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/palette_ram.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico/memory_files {F:/CoprocessadorGrafico/memory_files/palette_ram.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:49 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico/memory_files" E:/CoprocessadorGrafico/memory_files/palette_ram.v 
+# Start time: 22:26:47 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico/memory_files" F:/CoprocessadorGrafico/memory_files/palette_ram.v 
 # -- Compiling module palette_ram
 # 
 # Top level modules:
 # 	palette_ram
-# End time: 14:43:52 on Sep 01,2026, Elapsed time: 0:00:03
+# End time: 22:26:47 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/compositor.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/compositor.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:53 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/compositor.v 
+# Start time: 22:26:47 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/compositor.v 
 # -- Compiling module compositor
 # 
 # Top level modules:
 # 	compositor
-# End time: 14:43:54 on Sep 01,2026, Elapsed time: 0:00:01
+# End time: 22:26:47 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico/memory_files {E:/CoprocessadorGrafico/memory_files/bg_tile_pattern_ram.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico/memory_files {F:/CoprocessadorGrafico/memory_files/bg_tile_pattern_ram.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:54 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico/memory_files" E:/CoprocessadorGrafico/memory_files/bg_tile_pattern_ram.v 
+# Start time: 22:26:47 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico/memory_files" F:/CoprocessadorGrafico/memory_files/bg_tile_pattern_ram.v 
 # -- Compiling module bg_tile_pattern_ram
 # 
 # Top level modules:
 # 	bg_tile_pattern_ram
-# End time: 14:43:54 on Sep 01,2026, Elapsed time: 0:00:00
+# End time: 22:26:48 on Sep 01,2026, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
-# vlog -vlog01compat -work work +incdir+E:/CoprocessadorGrafico {E:/CoprocessadorGrafico/test_driver.v}
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/test_driver.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:43:54 on Sep 01,2026
-# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/CoprocessadorGrafico" E:/CoprocessadorGrafico/test_driver.v 
+# Start time: 22:26:48 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/test_driver.v 
 # -- Compiling module test_driver
 # 
 # Top level modules:
 # 	test_driver
-# End time: 14:43:59 on Sep 01,2026, Elapsed time: 0:00:05
+# End time: 22:26:48 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# 
-vlog -reportprogress 300 -work work E:/CoprocessadorGrafico/tb_motor_background.v
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/sprite_mover_flip.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 14:44:43 on Sep 01,2026
-# vlog -reportprogress 300 -work work E:/CoprocessadorGrafico/tb_motor_background.v 
-# -- Compiling module tb_motor_background
+# Start time: 22:26:48 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/sprite_mover_flip.v 
+# -- Compiling module sprite_mover_flip
 # 
 # Top level modules:
-# 	tb_motor_background
-# End time: 14:44:44 on Sep 01,2026, Elapsed time: 0:00:01
+# 	sprite_mover_flip
+# End time: 22:26:49 on Sep 01,2026, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
-vsim work.tb_motor_background
-# vsim work.tb_motor_background 
-# Start time: 14:44:47 on Sep 01,2026
-# Loading work.tb_motor_background
+# vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/sprite_spawner.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 22:26:49 on Sep 01,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+F:/CoprocessadorGrafico" F:/CoprocessadorGrafico/sprite_spawner.v 
+# -- Compiling module sprite_spawner
+# 
+# Top level modules:
+# 	sprite_spawner
+# End time: 22:26:49 on Sep 01,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+vlog -reportprogress 300 -work work F:/CoprocessadorGrafico/tb_top_video_integracao.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 22:27:44 on Sep 01,2026
+# vlog -reportprogress 300 -work work F:/CoprocessadorGrafico/tb_top_video_integracao.v 
+# -- Compiling module tb_top_video_integration
+# 
+# Top level modules:
+# 	tb_top_video_integration
+# End time: 22:27:45 on Sep 01,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+vsim work.tb_top_video_integration
+# vsim work.tb_top_video_integration 
+# Start time: 22:27:52 on Sep 01,2026
+# Loading work.tb_top_video_integration
+# Loading work.top_video
+# Loading work.pll01
+# ** Error: (vsim-3033) Instantiation of 'altera_pll' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/pll01_inst File: F:/CoprocessadorGrafico/pll01_sim/pll01.vo Line: 46
+#         Searched libraries:
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.vga_driver
+# Loading work.framebuffer
+# Loading work.fb_addr_gen
+# Loading work.framebuffer_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/framebuffer_inst/framebuffer_ram_bank0 File: F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v Line: 68
+#         Searched libraries:
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/framebuffer_inst/framebuffer_ram_bank1 File: F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v Line: 68
+#         Searched libraries:
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.palette_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/palette_ram_inst File: F:/CoprocessadorGrafico/memory_files/palette_ram.v Line: 66
+#         Searched libraries:
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.bg_tile_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/bg_tile_ram_inst File: F:/CoprocessadorGrafico/memory_files/bg_tile_ram.v Line: 66
+#         Searched libraries:
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.bg_tile_pattern_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/bg_tile_pattern_ram_inst File: F:/CoprocessadorGrafico/memory_files/bg_tile_pattern_ram.v Line: 66
+#         Searched libraries:
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
 # Loading work.motor_background
-add wave -position insertpoint sim:/tb_motor_background/*
-run -all
+# Loading work.sprite_attribute_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/sprite_attribute_ram_inst File: F:/CoprocessadorGrafico/memory_files/sprite_attribute_ram.v Line: 66
+#         Searched libraries:
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.sprite_pattern_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/sprite_pattern_ram_inst File: F:/CoprocessadorGrafico/memory_files/sprite_pattern_ram.v Line: 66
+#         Searched libraries:
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.motor_sprite
+# Loading work.rasterizador_top
+# Loading work.rasterizador_quadrado
+# Loading work.rasterizador_triangulo
+# Loading work.divisor_unsigned
+# Loading work.compositor
+# Error loading design
+# End time: 22:27:53 on Sep 01,2026, Elapsed time: 0:00:01
+# Errors: 8, Warnings: 0
+vlib altera_mf_ver
+# ** Warning: (vlib-34) Library already exists at "altera_mf_ver".
+vlog -work altera_mf_ver F:/quartus/eda/fv_lib/verilog/altera_mf.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 22:29:00 on Sep 01,2026
+# vlog -reportprogress 300 -work altera_mf_ver F:/quartus/eda/fv_lib/verilog/altera_mf.v 
+# ** Error: (vlog-7) Failed to open design unit file "F:/quartus/eda/fv_lib/verilog/altera_mf.v" in read mode.
+# No such file or directory. (errno = ENOENT)
+# End time: 22:29:00 on Sep 01,2026, Elapsed time: 0:00:00
+# Errors: 1, Warnings: 0
+# D:/ModelSim/modelsim_ase/win32aloem/vlog failed.
+vsim work.tb_top_video_integration -L altera_mf_ver
+# vsim work.tb_top_video_integration -L altera_mf_ver 
+# Start time: 22:29:13 on Sep 01,2026
+# Loading work.tb_top_video_integration
+# Loading work.top_video
+# Loading work.pll01
+# ** Error: (vsim-3033) Instantiation of 'altera_pll' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/pll01_inst File: F:/CoprocessadorGrafico/pll01_sim/pll01.vo Line: 46
+#         Searched libraries:
+#             D:/ModelSim/modelsim_ase/altera/verilog/altera_mf
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.vga_driver
+# Loading work.framebuffer
+# Loading work.fb_addr_gen
+# Loading work.framebuffer_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/framebuffer_inst/framebuffer_ram_bank0 File: F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v Line: 68
+#         Searched libraries:
+#             D:/ModelSim/modelsim_ase/altera/verilog/altera_mf
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/framebuffer_inst/framebuffer_ram_bank1 File: F:/CoprocessadorGrafico/memory_files/framebuffer_ram.v Line: 68
+#         Searched libraries:
+#             D:/ModelSim/modelsim_ase/altera/verilog/altera_mf
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.palette_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/palette_ram_inst File: F:/CoprocessadorGrafico/memory_files/palette_ram.v Line: 66
+#         Searched libraries:
+#             D:/ModelSim/modelsim_ase/altera/verilog/altera_mf
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.bg_tile_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/bg_tile_ram_inst File: F:/CoprocessadorGrafico/memory_files/bg_tile_ram.v Line: 66
+#         Searched libraries:
+#             D:/ModelSim/modelsim_ase/altera/verilog/altera_mf
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.bg_tile_pattern_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/bg_tile_pattern_ram_inst File: F:/CoprocessadorGrafico/memory_files/bg_tile_pattern_ram.v Line: 66
+#         Searched libraries:
+#             D:/ModelSim/modelsim_ase/altera/verilog/altera_mf
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.motor_background
+# Loading work.sprite_attribute_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/sprite_attribute_ram_inst File: F:/CoprocessadorGrafico/memory_files/sprite_attribute_ram.v Line: 66
+#         Searched libraries:
+#             D:/ModelSim/modelsim_ase/altera/verilog/altera_mf
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.sprite_pattern_ram
+# ** Error: (vsim-3033) Instantiation of 'altsyncram' failed. The design unit was not found.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/sprite_pattern_ram_inst File: F:/CoprocessadorGrafico/memory_files/sprite_pattern_ram.v Line: 66
+#         Searched libraries:
+#             D:/ModelSim/modelsim_ase/altera/verilog/altera_mf
+#             F:/CoprocessadorGrafico/simulation/modelsim/rtl_work
+# Loading work.motor_sprite
+# Loading work.rasterizador_top
+# Loading work.rasterizador_quadrado
+# Loading work.rasterizador_triangulo
+# Loading work.divisor_unsigned
+# Loading work.compositor
+# Error loading design
+# End time: 22:29:14 on Sep 01,2026, Elapsed time: 0:00:01
+# Errors: 8, Warnings: 0
+vlog -work altera_mf_ver F:/quartus/eda/fv_lib/verilog/altera_mf/altsyncram.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 22:31:22 on Sep 01,2026
+# vlog -reportprogress 300 -work altera_mf_ver F:/quartus/eda/fv_lib/verilog/altera_mf/altsyncram.v 
+# ** Error: (vlog-7) Failed to open design unit file "F:/quartus/eda/fv_lib/verilog/altera_mf/altsyncram.v" in read mode.
+# No such file or directory. (errno = ENOENT)
+# End time: 22:31:22 on Sep 01,2026, Elapsed time: 0:00:00
+# Errors: 1, Warnings: 0
+# D:/ModelSim/modelsim_ase/win32aloem/vlog failed.
+vlog -work altera_mf_ver F:/quartus/eda/fv_lib/verilog/altera_mf/altsyncram.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 22:31:29 on Sep 01,2026
+# vlog -reportprogress 300 -work altera_mf_ver F:/quartus/eda/fv_lib/verilog/altera_mf/altsyncram.v 
+# ** Error: (vlog-7) Failed to open design unit file "F:/quartus/eda/fv_lib/verilog/altera_mf/altsyncram.v" in read mode.
+# No such file or directory. (errno = ENOENT)
+# End time: 22:31:29 on Sep 01,2026, Elapsed time: 0:00:00
+# Errors: 1, Warnings: 0
+# D:/ModelSim/modelsim_ase/win32aloem/vlog failed.
+pwd
+# F:/CoprocessadorGrafico/simulation/modelsim
+file exists F:/quartus/eda/fv_lib/verilog/altera_mf/altsyncram.v
+# 0
+file exists {F:\quartus\eda\fv_lib\verilog\altera_mf\altsyncram.v}
+# 0
+file normalize {F:\quartus\eda\fv_lib\verilog\altera_mf\altsyncram.v}
+# F:/quartus/eda/fv_lib/verilog/altera_mf/altsyncram.v
+cd F:/quartus/eda/fv_lib/verilog/altera_mf
+# couldn't change working directory to "F:/quartus/eda/fv_lib/verilog/altera_mf": no such file or directory
+cd F:/quartus/eda/fv_lib/verilog/alterasyncram.v
+# couldn't change working directory to "F:/quartus/eda/fv_lib/verilog/alterasyncram.v": no such file or directory
+cd F:/quartus/eda/fv_lib/verilog/altsyncram.v
+# couldn't change working directory to "F:/quartus/eda/fv_lib/verilog/altsyncram.v": not a directory
+vlog -work altera_mf_ver F:/quartus/eda/fv_lib/verilog/altsyncram.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 22:34:26 on Sep 01,2026
+# vlog -reportprogress 300 -work altera_mf_ver F:/quartus/eda/fv_lib/verilog/altsyncram.v 
+# -- Compiling module altsyncram
 # 
-# ==============================================
-#  TESTE MOTOR BACKGROUND - SCROLL AUTOMATICO
-# ==============================================
-# Modo      : Horizontal
-# Direcao   : Direita
-# Step      : 1 pixel/frame
-# ==============================================
-# 
-#   FB WRITE: x=0 y=0 data=1c0
-# FRAME 1 terminado | scroll_x = 318 | frame_scroll_x = 318
-#   FB WRITE: x=0 y=0 data=1c0
-# FRAME 2 terminado | scroll_x = 317 | frame_scroll_x = 317
-#   FB WRITE: x=0 y=0 data=1c0
-# FRAME 3 terminado | scroll_x = 316 | frame_scroll_x = 316
-#   FB WRITE: x=0 y=0 data=1c0
-# FRAME 4 terminado | scroll_x = 315 | frame_scroll_x = 315
-#   FB WRITE: x=0 y=0 data=1c0
-# FRAME 5 terminado | scroll_x = 314 | frame_scroll_x = 314
-# 
-# ==============================================
-#  TESTE FINALIZADO
-# ==============================================
-# FAIL: scroll_x esperado = 5
-#       scroll_x encontrado = 314
-# ==============================================
-# 
-# ** Note: $stop    : E:/CoprocessadorGrafico/tb_motor_background.v(283)
-#    Time: 54264231 ns  Iteration: 0  Instance: /tb_motor_background
-# Break in Module tb_motor_background at E:/CoprocessadorGrafico/tb_motor_background.v line 283
-# End time: 14:46:50 on Sep 01,2026, Elapsed time: 0:02:03
+# Top level modules:
+# 	altsyncram
+# End time: 22:34:26 on Sep 01,2026, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
+file exists F:/quartus/eda/fv_lib/verilog/altsyncram.v
+# 1
+vlog -work altera_mf_ver F:/quartus/eda/fv_lib/verilog/altsyncram.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 22:34:43 on Sep 01,2026
+# vlog -reportprogress 300 -work altera_mf_ver F:/quartus/eda/fv_lib/verilog/altsyncram.v 
+# -- Compiling module altsyncram
+# 
+# Top level modules:
+# 	altsyncram
+# End time: 22:34:43 on Sep 01,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+vlog -work altera_lnsim_ver F:/quartus/libraries/megafunctions/altera_pll.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 22:37:56 on Sep 01,2026
+# vlog -reportprogress 300 -work altera_lnsim_ver F:/quartus/libraries/megafunctions/altera_pll.v 
+# -- Compiling module altera_pll
+# ** Error: (vlog-13036) F:/quartus/libraries/megafunctions/altera_pll.v(332): near "::": Operator only allowed in SystemVerilog.
+# ** Error: (vlog-13032) F:/quartus/libraries/megafunctions/altera_pll.v(332): near "::": Syntax error.
+# -- Compiling module dps_extra_kick
+# -- Compiling module dprio_init
+# -- Compiling module dps_pulse_gen
+# End time: 22:37:56 on Sep 01,2026, Elapsed time: 0:00:00
+# Errors: 2, Warnings: 0
+# D:/ModelSim/modelsim_ase/win32aloem/vlog failed.
+vsim work.tb_top_video_integration -L altera_mf_ver -L altera_lnsim_ver
+# vsim work.tb_top_video_integration -L altera_mf_ver -L altera_lnsim_ver 
+# Start time: 22:38:43 on Sep 01,2026
+# Loading work.tb_top_video_integration
+# Loading work.top_video
+# Loading work.pll01
+# Loading sv_std.std
+# Loading altera_lnsim_ver.altera_lnsim_functions
+# Loading altera_lnsim_ver.altera_pll
+# Loading work.vga_driver
+# Loading work.framebuffer
+# Loading work.fb_addr_gen
+# Loading work.framebuffer_ram
+# Loading altera_mf_ver.altsyncram
+# Loading work.palette_ram
+# Loading work.bg_tile_ram
+# Loading work.bg_tile_pattern_ram
+# Loading work.motor_background
+# Loading work.sprite_attribute_ram
+# Loading work.sprite_pattern_ram
+# Loading work.motor_sprite
+# Loading work.rasterizador_top
+# Loading work.rasterizador_quadrado
+# Loading work.rasterizador_triangulo
+# Loading work.divisor_unsigned
+# Loading work.compositor
+# Loading altera_lnsim_ver.dps_extra_kick
+# Loading altera_lnsim_ver.dprio_init
+# Loading altera_lnsim_ver.altera_generic_pll_functions
+# Loading altera_lnsim_ver.generic_pll
+# ** Warning: (vsim-3008) [CNNODP] - Component name (mem) is not on a downward path.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration File: F:/CoprocessadorGrafico/tb_top_video_integracao.v Line: 96
+# ** Error: (vsim-3043) Unresolved reference to 'mem' in dut.framebuffer_inst.framebuffer_ram_bank0.mem.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration File: F:/CoprocessadorGrafico/tb_top_video_integracao.v Line: 96
+# ** Warning: (vsim-3008) [CNNODP] - Component name (mem) is not on a downward path.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration File: F:/CoprocessadorGrafico/tb_top_video_integracao.v Line: 98
+# ** Error: (vsim-3043) Unresolved reference to 'mem' in dut.framebuffer_inst.framebuffer_ram_bank1.mem.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration File: F:/CoprocessadorGrafico/tb_top_video_integracao.v Line: 98
+# ** Warning: (vsim-2685) [TFMPC] - Too few port connections for 'pll01_altera_pll_altera_pll_i_639'.  Expected 26, found 5.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/pll01_inst/pll01_altera_pll_altera_pll_i_639 File: F:/CoprocessadorGrafico/pll01_sim/pll01.vo Line: 46
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'refclk1'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'phase_en'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'updn'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'num_phase_shifts'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'scanclk'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'cntsel'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'reconfig_to_pll'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'extswitch'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'adjpllin'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'cclk'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'fboutclk'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'phase_done'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'reconfig_from_pll'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'activeclk'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'clkbad'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'phout'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'lvds_clk'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'loaden'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'extclk_out'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'cascade_out'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'zdbfbclk'.
+# Error loading design
+# End time: 22:38:45 on Sep 01,2026, Elapsed time: 0:00:02
+# Errors: 2, Warnings: 24
+vlog -sv -work altera_lnsim_ver F:/quartus/libraries/megafunctions/altera_pll.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 22:39:17 on Sep 01,2026
+# vlog -reportprogress 300 -sv -work altera_lnsim_ver F:/quartus/libraries/megafunctions/altera_pll.v 
+# -- Compiling module altera_pll
+# -- Importing package altera_lnsim_functions
+# -- Compiling module dps_extra_kick
+# -- Compiling module dprio_init
+# -- Compiling module dps_pulse_gen
+# 
+# Top level modules:
+# 	altera_pll
+# End time: 22:39:18 on Sep 01,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+vsim work.tb_top_video_integration -L altera_mf_ver -L altera_lnsim_ver
+# vsim work.tb_top_video_integration -L altera_mf_ver -L altera_lnsim_ver 
+# Start time: 22:39:23 on Sep 01,2026
+# Loading work.tb_top_video_integration
+# Loading work.top_video
+# Loading work.pll01
+# Loading sv_std.std
+# Loading altera_lnsim_ver.altera_lnsim_functions
+# Loading altera_lnsim_ver.altera_pll
+# Loading work.vga_driver
+# Loading work.framebuffer
+# Loading work.fb_addr_gen
+# Loading work.framebuffer_ram
+# Loading altera_mf_ver.altsyncram
+# Loading work.palette_ram
+# Loading work.bg_tile_ram
+# Loading work.bg_tile_pattern_ram
+# Loading work.motor_background
+# Loading work.sprite_attribute_ram
+# Loading work.sprite_pattern_ram
+# Loading work.motor_sprite
+# Loading work.rasterizador_top
+# Loading work.rasterizador_quadrado
+# Loading work.rasterizador_triangulo
+# Loading work.divisor_unsigned
+# Loading work.compositor
+# Loading altera_lnsim_ver.dps_extra_kick
+# Loading altera_lnsim_ver.dprio_init
+# Loading altera_lnsim_ver.altera_generic_pll_functions
+# Loading altera_lnsim_ver.generic_pll
+# ** Warning: (vsim-3008) [CNNODP] - Component name (mem) is not on a downward path.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration File: F:/CoprocessadorGrafico/tb_top_video_integracao.v Line: 96
+# ** Error: (vsim-3043) Unresolved reference to 'mem' in dut.framebuffer_inst.framebuffer_ram_bank0.mem.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration File: F:/CoprocessadorGrafico/tb_top_video_integracao.v Line: 96
+# ** Warning: (vsim-3008) [CNNODP] - Component name (mem) is not on a downward path.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration File: F:/CoprocessadorGrafico/tb_top_video_integracao.v Line: 98
+# ** Error: (vsim-3043) Unresolved reference to 'mem' in dut.framebuffer_inst.framebuffer_ram_bank1.mem.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration File: F:/CoprocessadorGrafico/tb_top_video_integracao.v Line: 98
+# ** Warning: (vsim-2685) [TFMPC] - Too few port connections for 'pll01_altera_pll_altera_pll_i_639'.  Expected 26, found 5.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_top_video_integration/dut/pll01_inst/pll01_altera_pll_altera_pll_i_639 File: F:/CoprocessadorGrafico/pll01_sim/pll01.vo Line: 46
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'refclk1'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'phase_en'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'updn'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'num_phase_shifts'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'scanclk'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'cntsel'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'reconfig_to_pll'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'extswitch'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'adjpllin'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'cclk'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'fboutclk'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'phase_done'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'reconfig_from_pll'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'activeclk'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'clkbad'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'phout'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'lvds_clk'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'loaden'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'extclk_out'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'cascade_out'.
+# ** Warning: (vsim-3722) F:/CoprocessadorGrafico/pll01_sim/pll01.vo(46): [TFMPC] - Missing connection for port 'zdbfbclk'.
+# Error loading design
+# End time: 22:39:24 on Sep 01,2026, Elapsed time: 0:00:01
+# Errors: 2, Warnings: 24
+vdel -lib altera_lnsim_ver -all
+vlog -sv -work altera_lnsim_ver D:/QuartusLite/quartus/libraries/megafunctions/altera_pll.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 22:44:57 on Sep 01,2026
+# vlog -reportprogress 300 -sv -work altera_lnsim_ver D:/QuartusLite/quartus/libraries/megafunctions/altera_pll.v 
+# -- Compiling module altera_pll
+# ** Error: D:/QuartusLite/quartus/libraries/megafunctions/altera_pll.v(332): (vlib-13006) Could not find the package (altera_lnsim_functions).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+# ** Error: D:/QuartusLite/quartus/libraries/megafunctions/altera_pll.v(463): (vlib-2730) Undefined variable: 'MAX_NUMBER_OF_CLOCKS'.
+# -- Compiling module dps_extra_kick
+# -- Compiling module dprio_init
+# -- Compiling module dps_pulse_gen
+# End time: 22:44:57 on Sep 01,2026, Elapsed time: 0:00:00
+# Errors: 2, Warnings: 0
+# D:/ModelSim/modelsim_ase/win32aloem/vlog failed.

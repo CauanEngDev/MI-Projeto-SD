@@ -1,5 +1,5 @@
 EDA Netlist Writer report for CoProcessador
-Tue Sep 01 14:42:01 2026
+Tue Sep 01 22:25:41 2026
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -37,7 +37,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------+
 ; EDA Netlist Writer Summary                                        ;
 +---------------------------+---------------------------------------+
-; EDA Netlist Writer Status ; Successful - Tue Sep 01 14:42:01 2026 ;
+; EDA Netlist Writer Status ; Successful - Tue Sep 01 22:25:41 2026 ;
 ; Revision Name             ; CoProcessador                         ;
 ; Top-level Entity Name     ; DE1_SOC_golden_top                    ;
 ; Family                    ; Cyclone V                             ;
@@ -72,7 +72,7 @@ https://fpgasoftware.intel.com/eula.
 +--------------------------------------------------------------+
 ; Generated Files                                              ;
 +--------------------------------------------------------------+
-; E:/CoprocessadorGrafico/simulation/modelsim/CoProcessador.vo ;
+; F:/CoprocessadorGrafico/simulation/modelsim/CoProcessador.vo ;
 +--------------------------------------------------------------+
 
 
@@ -82,15 +82,15 @@ https://fpgasoftware.intel.com/eula.
 Info: *******************************************************************
 Info: Running Quartus Prime EDA Netlist Writer
     Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-    Info: Processing started: Tue Sep 01 14:41:23 2026
+    Info: Processing started: Tue Sep 01 22:25:26 2026
 Info: Command: quartus_eda --read_settings_files=off --write_settings_files=off CoProcessador -c CoProcessador
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Warning (10905): Generated the EDA functional simulation netlist because it is the only supported netlist type for this device.
-Info (204019): Generated file CoProcessador.vo in folder "E:/CoprocessadorGrafico/simulation/modelsim/" for EDA simulation tool
+Info (204019): Generated file CoProcessador.vo in folder "F:/CoprocessadorGrafico/simulation/modelsim/" for EDA simulation tool
 Info: Quartus Prime EDA Netlist Writer was successful. 0 errors, 2 warnings
-    Info: Peak virtual memory: 4911 megabytes
-    Info: Processing ended: Tue Sep 01 14:42:05 2026
-    Info: Elapsed time: 00:00:42
-    Info: Total CPU time (on all processors): 00:00:04
+    Info: Peak virtual memory: 4914 megabytes
+    Info: Processing ended: Tue Sep 01 22:25:42 2026
+    Info: Elapsed time: 00:00:16
+    Info: Total CPU time (on all processors): 00:00:05
 
 

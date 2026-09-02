@@ -18,8 +18,29 @@ module rasterizador_top (
     output wire [8:0]   fb_wr_data,
 
     output wire         busy,
-    output wire         done
+    output wire         done,
+    output reg          invalid_cmd   // NOVO: pulso de 1 ciclo, comando rejeitado
 );
+
+    // ---------------- Validação de limites (0-319 / 0-239) ----------------
+    wire v0_ok = (v0x < 9'd320) && (v0y < 8'd240);
+    wire v1_ok = (v1x < 9'd320) && (v1y < 8'd240);
+    wire v2_ok = (v2x < 9'd320) && (v2y < 8'd240);
+
+    // Quadrado usa só v0/v1; triangulo usa os 3
+    wire square_valid   = v0_ok && v1_ok;
+    wire triangle_valid = v0_ok && v1_ok && v2_ok;
+
+    wire reject_square   = start_square   && !square_valid;
+    wire reject_triangle = start_triangle && !triangle_valid;
+
+    wire gated_start_square   = start_square   && square_valid;
+    wire gated_start_triangle = start_triangle && triangle_valid;
+
+    always @(posedge clk) begin
+        if (reset) invalid_cmd <= 1'b0;
+        else       invalid_cmd <= reject_square || reject_triangle;
+    end
 
     wire fb_we_sq, fb_we_tr, done_sq, done_tr, busy_sq, busy_tr;
     wire [8:0] fb_x_sq, fb_x_tr, fb_data_sq, fb_data_tr;
@@ -28,7 +49,7 @@ module rasterizador_top (
 
     rasterizador_quadrado u_square (
         .clk(clk), .reset(reset),
-        .start(start_square),
+        .start(gated_start_square),   // ANTES: start_square direto
         .v0x(v0x), .v1x(v1x), .v0y(v0y), .v1y(v1y),
         .color_index(color_index), .palette_sel(palette_sel),
         .palette_rd_addr(pal_addr_sq), .palette_rd_data(palette_rd_data),
@@ -38,7 +59,7 @@ module rasterizador_top (
 
     rasterizador_triangulo u_triangle (
         .clk(clk), .reset(reset),
-        .start(start_triangle),
+        .start(gated_start_triangle), // ANTES: start_triangle direto
         .v0x(v0x), .v1x(v1x), .v2x(v2x),
         .v0y(v0y), .v1y(v1y), .v2y(v2y),
         .color_index(color_index), .palette_sel(palette_sel),
@@ -48,7 +69,6 @@ module rasterizador_top (
     );
 
     assign palette_rd_addr = busy_tr ? pal_addr_tr : pal_addr_sq;
-
     assign fb_we      = busy_tr ? fb_we_tr     : fb_we_sq;
     assign fb_wr_x    = busy_tr ? fb_x_tr      : fb_x_sq;
     assign fb_wr_y    = busy_tr ? fb_y_tr      : fb_y_sq;
@@ -57,4 +77,3 @@ module rasterizador_top (
     assign done        = done_sq | done_tr;
 
 endmodule
-

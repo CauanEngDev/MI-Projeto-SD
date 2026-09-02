@@ -1,3 +1,3 @@
 
 
-vlog "E:/CoprocessadorGrafico/pll01_sim/pll01.vo"
+vlog "F:/CoprocessadorGrafico/pll01_sim/pll01.vo"

@@ -1,14 +1,15 @@
 
 State Machine - |DE1_SOC_golden_top|test_driver:test_driver_inst|state
-Name state.T_SIGNAL_DONE state.T_WAIT_TRIANGLE state.T_DRAW_TRIANGLE state.T_WAIT_SQUARE state.T_DRAW_SQUARE state.T_WAIT_POLY state.T_IDLE state.T_WAIT_FRAME 
-state.T_IDLE 0 0 0 0 0 0 0 0 
-state.T_WAIT_POLY 0 0 0 0 0 1 1 0 
-state.T_DRAW_SQUARE 0 0 0 0 1 0 1 0 
-state.T_WAIT_SQUARE 0 0 0 1 0 0 1 0 
-state.T_DRAW_TRIANGLE 0 0 1 0 0 0 1 0 
-state.T_WAIT_TRIANGLE 0 1 0 0 0 0 1 0 
-state.T_SIGNAL_DONE 1 0 0 0 0 0 1 0 
-state.T_WAIT_FRAME 0 0 0 0 0 0 1 1 
+Name state.T_WAIT_FRAME state.T_SIGNAL_DONE state.T_WAIT_TRIANGLE state.T_DRAW_TRIANGLE state.T_WAIT_SQUARE state.T_DRAW_SQUARE state.T_CHECK_EN state.T_WAIT_POLY state.T_IDLE 
+state.T_IDLE 0 0 0 0 0 0 0 0 0 
+state.T_WAIT_POLY 0 0 0 0 0 0 0 1 1 
+state.T_CHECK_EN 0 0 0 0 0 0 1 0 1 
+state.T_DRAW_SQUARE 0 0 0 0 0 1 0 0 1 
+state.T_WAIT_SQUARE 0 0 0 0 1 0 0 0 1 
+state.T_DRAW_TRIANGLE 0 0 0 1 0 0 0 0 1 
+state.T_WAIT_TRIANGLE 0 0 1 0 0 0 0 0 1 
+state.T_SIGNAL_DONE 0 1 0 0 0 0 0 0 1 
+state.T_WAIT_FRAME 1 0 0 0 0 0 0 0 1 
 
 State Machine - |DE1_SOC_golden_top|top_video:video_system|compositor:compositor_inst|state
 Name state.S_SPR state.S_POLY state.S_BG state.S_IDLE state.S_DONE 
