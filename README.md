@@ -79,18 +79,9 @@
 
 * [10. Controles da Demonstração na FPGA](#10-controles-da-demonstração-na-fpga)
 
-* [11. Estrutura dos Recursos Gráficos](#11-estrutura-dos-recursos-gráficos)
+* [11. Equipe do Desenvolvimento](#12-equipe-do-desenvolvimento)
 
-* [12. Equipe do Desenvolvimento](#12-equipe-do-desenvolvimento)
-
-* [13. Referências](#13-referências)
-
-* [14. Estado Resumido da Implementação](#14-estado-resumido-da-implementação)
-
-* [15. Observação Final](#15-observação-final)
-
-
-
+* [12. Referências](#13-referências)
 
 Projeto desenvolvido para o Problema #1 - 2026.2 / Sistema Digital, com o objetivo de implementar, em FPGA, um nucleo de coprocessamento grafico inspirado na arquitetura de consoles de 16 bits. A solucao implementa geracao de background por tiles, sprites com atributos e prioridade, rasterizacao de poligonos, framebuffer com double buffering e saida VGA.
 
@@ -1766,68 +1757,7 @@ Habilita demonstracao de poligonos
 
 Esses controles servem apenas como interface de demonstracao da etapa FPGA e nao substituem a interface por software prevista para a evolucao do projeto.
 
-
-
-# 11. Estrutura DOS RECURSOS GRAFICOS
-
-## 11.1 Background
-
-Tilemap:
-
-40 x 30 entradas
-1200 posicoes
-8 bits por entrada
-
-Tile:
-
-8 x 8 pixels
-8 bits por pixel
-
-Memoria de padroes:
-
-256 tiles x 64 pixels
-16384 posicoes
-
-
-## 11.2 Sprites
-
-Quantidade maxima:
-
-32 sprites
-
-Dimensao:
-
-16 x 16 pixels
-
-Atributos:
-
-32 bits por sprite
-
-
-## 11.3 Paleta
-
-A memoria de paleta possui:
-
-512 entradas x 9 bits
-
-Na arquitetura implementada, ela pode ser vista como dois conjuntos de 256 posicoes, selecionados pelo sinal de escolha de paleta.
-
-
-## 11.4 Framebuffer
-
-Cada banco armazena:
-
-320 x 240 = 76800 pixels
-
-com:
-
-9 bits por pixel
-
-Sao utilizados dois bancos para implementacao do double buffering.
-
-
-
-# 12. Equipe DO DESENVOLVIMENTO
+# 11. Equipe DO DESENVOLVIMENTO
 
 Preencher com os integrantes oficiais do grupo:
 
@@ -1847,7 +1777,7 @@ Periodo:
 
 
 
-# 13. Referências
+# 12. Referências
 
 - TERASIC. DE1-SoC Development and Education Board - documentacao e recursos oficiais.
 - INTEL. Cyclone V Device Documentation.
@@ -1859,84 +1789,3 @@ Periodo:
 
 
 
-# 14. Estado RESUMIDO DA IMPLEMENTACAO
-
-Sistema VGA 640 x 480:
-CONCLUIDO
-
-Resolucao logica 320 x 240:
-CONCLUIDO
-
-Framebuffer:
-CONCLUIDO
-
-Double buffering:
-CONCLUIDO
-
-Background por tiles:
-CONCLUIDO
-
-Scroll horizontal e vertical:
-CONCLUIDO
-
-Wraparound:
-CONCLUIDO
-
-Sprites 16 x 16:
-CONCLUIDO
-
-32 slots de sprites:
-CONCLUIDO
-
-Prioridade de sprites:
-CONCLUIDO
-
-Transparencia de sprites:
-CONCLUIDO
-
-Flip horizontal e vertical:
-CONCLUIDO
-
-Rasterizacao de retangulos:
-CONCLUIDO
-
-Rasterizacao de triangulos:
-CONCLUIDO
-
-Paleta indexada:
-CONCLUIDO
-
-Testes dos principais modulos:
-IMPLEMENTADOS
-
-Demonstracao em hardware:
-IMPLEMENTADA NO TOP-LEVEL
-
-Interface Linux/HPS:
-ETAPA FUTURA
-
-Driver ARM Assembly:
-ETAPA FUTURA
-
-Jogo em C:
-ETAPA FUTURA
-
-
-
-# 15. Observação FINAL
-
-Este repositorio representa a implementacao do nucleo grafico em FPGA do sistema proposto.
-
-A arquitetura ja possui os principais blocos necessarios para a geracao de cenas:
-
-- Background.
-- Sprites.
-- Poligonos.
-- Paletas.
-- Framebuffer.
-- VGA.
-
-A implementacao estabelece uma base para a futura integracao com o HPS da DE1-SoC e com uma camada de software responsavel pelo envio de comandos graficos
----
-
-.
