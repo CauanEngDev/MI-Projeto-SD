@@ -2,6 +2,8 @@
 
 ## Sumário
 
+## Sumário
+
 * [1. Visão Geral do Projeto](#1-visão-geral-do-projeto)
 
   * [1.1 Conceito Geral](#11-conceito-geral)
@@ -12,10 +14,12 @@
   * [1.6 Double Buffering](#16-double-buffering)
   * [1.7 Organizacao Modular](#17-organizacao-modular)
   * [1.8 Estrutura Principal do Projeto](#18-estrutura-principal-do-projeto)
+
 * [2. Levantamento de Requisitos](#2-levantamento-de-requisitos)
 
   * [2.1 Requisitos Funcionais](#21-requisitos-funcionais)
   * [2.2 Requisitos de Memória](#22-requisitos-de-memória)
+
 * [3. Fundamentação Teórica](#3-fundamentação-teórica)
 
   * [3.1 Representação Gráfica Indexada](#31-representação-gráfica-indexada)
@@ -26,13 +30,27 @@
   * [3.6 Rasterização](#36-rasterização)
   * [3.7 Double Buffering](#37-double-buffering)
   * [3.8 VGA](#38-vga)
+
 * [4. Arquitetura do Sistema](#4-arquitetura-do-sistema)
 
   * [4.1 Fluxo de Composição](#41-fluxo-de-composição)
   * [4.2 Principais Módulos](#42-principais-módulos)
+  * [4.3 Memórias do Sistema](#43-memórias-do-sistema)
+
+    * [4.3.1 `bg_tile_ram` — 1200 × 8 bits](#431-bg_tile_ram--1200--8-bits)
+    * [4.3.2 `bg_tile_pattern_ram` — 16384 × 8 bits](#432-bg_tile_pattern_ram--16384--8-bits)
+    * [4.3.3 `sprite_attribute_ram` — 32 × 32 bits](#433-sprite_attribute_ram--32--32-bits)
+    * [4.3.4 `sprite_pattern_ram` — 16384 × 8 bits](#434-sprite_pattern_ram--16384--8-bits)
+    * [4.3.5 `palette_ram` — 512 × 9 bits](#435-palette_ram--512--9-bits)
+    * [4.3.6 `framebuffer_ram` — 2 bancos de 76800 × 9 bits](#436-framebuffer_ram--2-bancos-de-76800--9-bits)
+  * [4.4 Organização do Armazenamento](#44-organização-do-armazenamento)
+
 * [5. Especificação de Hardware e Software](#5-especificação-de-hardware-e-software)
+
 * [6. Processo de Desenvolvimento](#6-processo-de-desenvolvimento)
+
 * [7. Instalação e Configuração](#7-instalação-e-configuração)
+
 * [8. Testes e Erros](#8-testes-e-erros)
 
   * [8.1 Testes do Rasterizador de Quadrados](#81-testes-do-rasterizador-de-quadrados)
@@ -48,6 +66,7 @@
     * [8.9.1 Módulos Auxiliares para Demonstração](#891-módulos-auxiliares-para-demonstração)
     * [8.9.2 Problema Identificado na Demonstração](#892-problema-identificado-na-demonstração)
     * [8.9.3 Comandos Inválidos](#893-comandos-inválidos)
+
 * [9. Análise do Resultado](#9-análise-do-resultado)
 
   * [9.1 Resultados de Simulação](#91-resultados-de-simulação)
@@ -57,12 +76,19 @@
   * [9.5 Gargalos e Limitações](#95-gargalos-e-limitações)
   * [9.6 Melhorias Possíveis](#96-melhorias-possíveis)
   * [9.7 Funcionalidades Não Atendidas](#97-funcionalidades-não-atendidas)
+
 * [10. Controles da Demonstração na FPGA](#10-controles-da-demonstração-na-fpga)
+
 * [11. Estrutura dos Recursos Gráficos](#11-estrutura-dos-recursos-gráficos)
+
 * [12. Equipe do Desenvolvimento](#12-equipe-do-desenvolvimento)
+
 * [13. Referências](#13-referências)
+
 * [14. Estado Resumido da Implementação](#14-estado-resumido-da-implementação)
+
 * [15. Observação Final](#15-observação-final)
+
 
 
 
@@ -838,49 +864,49 @@ A geração do clock utilizado pelo subsistema VGA também está integrada ao `t
 A organização da arquitetura pode ser representada pelo seguinte fluxo:
 
 ```text
-                                                                             frame_start
-                                                                                  |
-                                                                                  v
-                                                                         +----------------+
-                                                                         |   COMPOSITOR   |
-                                                                         |                |
-                                                                         | FSM de         |
-                                                                         | composição     |
-                                                                         +-------+--------+
-                                                                                 |
-                                                                  controla      |      controla
-                                                                 start/done     |      arbitragem
-                                                                                 |
-                                                           +---------------------+---------------------+
-                                                           |                     |                     |
-                                                           v                     v                     v
-                                                    +-------------+       +-------------+       +-------------+
-                                                    |  Background |       |Rasterizador |       |   Sprites   |
-                                                    |    Motor    |       |             |       |    Motor    |
-                                                    +------+------+       +------+------+       +------+------+
-                                                           |                     |                     |
-                                                           +---------------------+---------------------+
-                                                                                 |
-                                                                          requisições de
-                                                                        palette / framebuffer
-                                                                                 |
-                                                                                 v
-                                                                         +---------------+
-                                                                         |   COMPOSITOR  |
-                                                                         |   Arbitragem  |
-                                                                         +-------+-------+
-                                                                                 |
-                                                                                 v
-                                                                         +---------------+
-                                                                         |   Framebuffer |
-                                                                         | Double Buffer |
-                                                                         +-------+-------+
-                                                                                 |
-                                                                                 v
-                                                                            VGA Driver
-                                                                                 |
-                                                                                 v
-                                                                                VGA
+                                  frame_start
+                                       |
+                                       v
+                              +----------------+
+                              |   COMPOSITOR   |
+                              |                |
+                              | FSM de         |
+                              | composição     |
+                              +-------+--------+
+                                      |
+                       controla      |      controla
+                      start/done     |      arbitragem
+                                      |
+                +---------------------+---------------------+
+                |                     |                     |
+                v                     v                     v
+         +-------------+       +-------------+       +-------------+
+         |  Background |       |Rasterizador |       |   Sprites   |
+         |    Motor    |       |             |       |    Motor    |
+         +------+------+       +------+------+       +------+------+
+                |                     |                     |
+                +---------------------+---------------------+
+                                      |
+                               requisições de
+                             palette / framebuffer
+                                      |
+                                      v
+                              +---------------+
+                              |   COMPOSITOR  |
+                              |   Arbitragem   |
+                              +-------+-------+
+                                      |
+                                      v
+                              +---------------+
+                              |   Framebuffer |
+                              | Double Buffer |
+                              +-------+-------+
+                                      |
+                                      v
+                                 VGA Driver
+                                      |
+                                      v
+                                     VGA
 ```
 
 O processo de composição é controlado pelo módulo `compositor.v`, que determina a ordem de execução dos três motores gráficos. Ao receber `frame_start`, o compositor inicia inicialmente o motor de background. Após a conclusão dessa etapa, inicia o processamento da camada de polígonos e, posteriormente, o motor de sprites. Dessa maneira, os elementos são incorporados ao framebuffer de forma sequencial, estabelecendo uma ordem de sobreposição determinística. No `top_video`, essa sequência é explicitamente conectada aos sinais `bg_start`, `poly_start` e `spr_start`, enquanto os sinais de conclusão dos respectivos motores são utilizados pelo compositor para determinar as transições entre as etapas.
@@ -950,6 +976,169 @@ O `vga_driver.v` é responsável pela geração dos sinais de temporização da 
 Por fim, o `fb_addr_gen.v` é responsável pela transformação das coordenadas bidimensionais do framebuffer em um endereço linear de memória. Considerando a resolução lógica de 320×240 pixels, o endereço é obtido pela relação `address = y × 320 + x`. Essa transformação permite que os pixels sejam armazenados de forma sequencial na memória, mantendo uma representação linear da imagem bidimensional.
 
 A arquitetura resultante separa claramente as responsabilidades entre **geração dos elementos gráficos, armazenamento, composição e apresentação**. Os motores produzem os pixels de suas respectivas camadas, o compositor controla a ordem de execução e arbitra os recursos compartilhados, o framebuffer mantém os frames em buffers separados e o controlador VGA realiza a apresentação do conteúdo armazenado. Essa organização permite que novos motores ou primitivas gráficas sejam incorporados posteriormente sem modificar diretamente a lógica responsável pela saída VGA, mantendo a estrutura modular do subsistema gráfico.
+
+### 4.3 Memórias do Sistema
+
+O projeto utiliza **seis memórias principais**, todas implementadas como RAMs de porta dupla simples (*simple dual-port RAM*), geradas por meio do **IP Catalog do Quartus** utilizando a megafunction `altsyncram`. Nesse modo de operação, a **porta A é utilizada exclusivamente para escrita**, enquanto a **porta B é utilizada exclusivamente para leitura**.
+
+Cinco das memórias utilizam um único domínio de clock, compartilhado pela CPU e pelos motores gráficos. A exceção é o **framebuffer**, que utiliza dois domínios de clock, pois sua escrita ocorre no clock de sistema de 50 MHz, enquanto sua leitura ocorre no domínio do *pixel clock* de 25 MHz utilizado pelo controlador VGA.
+
+A organização das memórias é apresentada a seguir.
+
+#### 4.3.1 `bg_tile_ram` — 1200 × 8 bits
+
+A memória `bg_tile_ram` armazena o **tilemap do background**. A tela lógica possui resolução de 320×240 pixels e é dividida em tiles de 8×8 pixels, resultando em uma organização de 40×30 tiles, ou seja, **1200 posições de memória**.
+
+Cada posição armazena um `pattern_id` de 8 bits, permitindo selecionar um dos **256 padrões gráficos disponíveis**. Essa memória não armazena diretamente a cor dos pixels, mas apenas indica qual padrão deve ser utilizado em cada posição do tilemap.
+
+Como o tilemap possui exatamente 40×30 tiles, correspondendo à área total da tela lógica, o deslocamento (*scroll*) do background é realizado por **enrolamento (*wraparound*)**. Dessa forma, quando uma região deixa a tela por uma das bordas, ela pode reaparecer pela borda oposta.
+
+#### 4.3.2 `bg_tile_pattern_ram` — 16384 × 8 bits
+
+A `bg_tile_pattern_ram` armazena os **padrões gráficos utilizados pelo background**. Sua capacidade de 16384 posições corresponde a:
+
+**256 padrões × 64 pixels por padrão = 16384 posições.**
+
+Cada padrão possui dimensões de 8×8 pixels. Para cada pixel é armazenado um **índice de cor de 8 bits**, em vez da cor RGB diretamente.
+
+Assim, existe uma separação entre a seleção do padrão e a definição da cor:
+
+* `bg_tile_ram` determina **qual padrão** deve ser utilizado;
+* `bg_tile_pattern_ram` determina **qual índice de cor** cada pixel desse padrão possui;
+* `palette_ram` converte o índice de cor na representação RGB utilizada pelo framebuffer.
+
+#### 4.3.3 `sprite_attribute_ram` — 32 × 32 bits
+
+A `sprite_attribute_ram` armazena os atributos dos **32 sprites disponíveis** no sistema. Cada sprite possui uma entrada de 32 bits contendo todas as informações necessárias para sua composição.
+
+| Campo           | Bits | Função                              |
+| --------------- | ---: | ----------------------------------- |
+| `enable`        |    1 | Habilita ou desabilita o sprite     |
+| `priority`      |    5 | Define a prioridade de sobreposição |
+| `flip_v`        |    1 | Espelhamento vertical               |
+| `flip_h`        |    1 | Espelhamento horizontal             |
+| `palette_sel`   |    1 | Seleciona uma das duas paletas      |
+| `pattern_index` |    6 | Seleciona o padrão 16×16            |
+| `pos_y`         |    8 | Posição vertical                    |
+| `pos_x`         |    9 | Posição horizontal                  |
+
+A memória funciona, portanto, como uma tabela de atributos, permitindo que o motor de sprites obtenha as informações necessárias para determinar **onde**, **como** e **com qual padrão** cada sprite deve ser desenhado.
+
+#### 4.3.4 `sprite_pattern_ram` — 16384 × 8 bits
+
+A `sprite_pattern_ram` armazena os padrões gráficos utilizados pelos sprites. Assim como no background, os padrões são organizados em tiles de **8×8 pixels**.
+
+Sua capacidade permite armazenar **256 tiles**, totalizando:
+
+**256 tiles × 64 pixels = 16384 posições.**
+
+Esses tiles são utilizados para formar os padrões de sprites de 16×16 pixels. Dessa forma, cada sprite pode ser composto por quatro tiles de 8×8 pixels.
+
+Cada posição armazena um índice de cor de 8 bits. Nesse caso, o **índice 0 é reservado para transparência**. Quando o motor de sprites encontra esse índice, o pixel não é escrito no framebuffer, permitindo que o conteúdo das camadas inferiores permaneça visível.
+
+#### 4.3.5 `palette_ram` — 512 × 9 bits
+
+A `palette_ram` armazena as cores utilizadas pelo sistema gráfico. Ela possui **512 entradas de 9 bits**, organizadas como duas paletas independentes de 256 cores.
+
+O endereço da memória é formado pela concatenação de `palette_sel` com `color_index`:
+
+```text
+{palette_sel, color_index}
+```
+
+Dessa forma, o bit `palette_sel` seleciona uma das duas paletas, enquanto os oito bits restantes selecionam uma das 256 cores daquela paleta.
+
+Cada entrada armazena diretamente a cor no formato RGB de 9 bits:
+
+```text
+RRR GGG BBB
+```
+
+O índice 0 de cada paleta é reservado como marcador associado à transparência. Durante a depuração, esse índice recebe a cor magenta, permitindo identificar visualmente situações em que um pixel transparente tenha sido tratado incorretamente como uma cor válida.
+
+#### 4.3.6 `framebuffer_ram` — 2 bancos de 76800 × 9 bits
+
+O `framebuffer_ram` armazena o resultado final da composição gráfica. Cada posição contém diretamente uma cor RGB de **9 bits**, não sendo necessário realizar uma nova consulta à paleta durante a leitura para o vídeo.
+
+Cada banco possui:
+
+**320 × 240 = 76800 pixels**
+
+e cada pixel utiliza 9 bits.
+
+O sistema utiliza **dois bancos de framebuffer**, implementando a técnica de **double buffering**. Enquanto um banco é utilizado pelos motores gráficos para construir o próximo frame, o outro é utilizado pelo controlador VGA para exibir o frame atualmente pronto.
+
+Ao final da composição, a troca entre os bancos ocorre durante o período de **VBlank**, evitando que a mudança aconteça no meio da atualização da imagem e reduzindo o risco de *tearing*.
+
+O framebuffer é também a única memória do projeto que opera em **dois domínios de clock**:
+
+* **50 MHz:** escrita realizada pelos motores gráficos;
+* **25 MHz:** leitura realizada pelo controlador de vídeo VGA.
+
+### 4.4 Organização do Armazenamento
+
+As seis memórias possuem funções distintas dentro do pipeline gráfico:
+
+```text
+                 BACKGROUND
+                     │
+          ┌──────────┴──────────┐
+          │                     │
+   bg_tile_ram        bg_tile_pattern_ram
+   tilemap             pixels do tile
+          │                     │
+          └──────────┬──────────┘
+                     │
+                     ▼
+                 índice de cor
+                     │
+                     ▼
+              ┌─────────────┐
+              │ palette_ram │
+              └──────┬──────┘
+                     │
+                     ▼
+               cor RGB (9 bits)
+
+
+                  SPRITES
+                     │
+          ┌──────────┴──────────┐
+          │                     │
+ sprite_attribute_ram   sprite_pattern_ram
+  atributos             pixels dos padrões
+          │                     │
+          └──────────┬──────────┘
+                     │
+                     ▼
+                 índice de cor
+                     │
+                     ▼
+              ┌─────────────┐
+              │ palette_ram │
+              └──────┬──────┘
+                     │
+                     ▼
+               cor RGB (9 bits)
+
+
+       BACKGROUND ─┐
+       POLÍGONOS  ─┼──► COMPOSITOR ───► FRAMEBUFFER
+       SPRITES    ─┘                         │
+                                             │
+                                  ┌──────────┴──────────┐
+                                  │                     │
+                              Banco 0               Banco 1
+                                  │                     │
+                                  └──── Double Buffer ──┘
+                                             │
+                                             ▼
+                                        Controlador
+                                           VGA
+```
+
+Essa organização mantém separadas as informações de **descrição da cena**, **dados gráficos**, **cores** e **imagem final**, permitindo que cada motor gráfico acesse somente as memórias necessárias para executar sua função. O `framebuffer_ram` funciona como ponto de convergência das diferentes camadas, armazenando o resultado produzido pelo compositor antes de sua leitura pelo sistema de vídeo.
+
 
 # 5. ESPECIFICACAO DE HARDWARE E SOFTWARE
 
