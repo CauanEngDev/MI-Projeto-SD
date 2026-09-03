@@ -89,7 +89,7 @@ Estado atual do projeto:
 Esta versao implementa o nucleo grafico em FPGA e sua demonstracao diretamente na placa DE1-SoC. A integracao posterior com Linux, driver em ARM Assembly e jogo em C faz parte da continuidade proposta para o sistema, mas nao esta presente nesta versao do repositorio.
 
 
-# 1. Visão GERAL DO PROJETO
+# 1. VISAO GERAL DO PROJETO
 
 Este projeto consiste no desenvolvimento de um sistema grafico dedicado implementado em FPGA, capaz de receber parametros de objetos graficos, processa-los em hardware e construir uma imagem destinada a exibicao em um monitor VGA.
 
@@ -99,7 +99,7 @@ Em vez de utilizar o processador principal para determinar e escrever individual
 
 Dessa forma, o projeto pode ser entendido como uma pequena pipeline grafica em hardware, na qual diferentes componentes cooperam para transformar informacoes abstratas sobre a cena em uma imagem efetivamente exibida no monitor.
 
-## 1.1 Conceito GERAL
+## 1.1 Conceito Geral
 
 A arquitetura foi organizada com base na separacao entre controle, processamento grafico, armazenamento e saida de video.
 
@@ -119,7 +119,7 @@ Entre os principais recursos implementados estao:
 
 A organizacao desses componentes permite que cada etapa possua uma responsabilidade especifica, formando uma arquitetura modular e extensivel.
 
-## 1.2 Da DESCRICAO da CENA ao PIXEL
+## 1.2 Da Descricao da Cena ao Pixel
 
 Um dos principais objetivos do projeto e demonstrar a transformacao de uma descricao relativamente abstrata da cena em uma sequencia de pixels.
 
@@ -155,7 +155,7 @@ Esses elementos sao posteriormente submetidos a logica de composicao, que determ
 
 O resultado e entao armazenado no framebuffer e disponibilizado ao controlador VGA.
 
-## 1.3 Resolucao e REPRESENTACAO DA IMAGEM
+## 1.3 Resolucao e Representacao da Imagem
 
 A imagem e construida internamente em uma resolucao logica de 320 x 240 pixels.
 
@@ -174,7 +174,7 @@ Para a saida VGA em 640 x 480 pixels, cada pixel logico e representado por um bl
 
 Assim, o sistema mantem uma representacao grafica mais compacta internamente, enquanto produz uma imagem compativel com o modo VGA utilizado pelo projeto.
 
-## 1.4 Arquitetura GRAFICA EM HARDWARE
+## 1.4 Arquitetura Grafica em Hardware
 
 Um dos aspectos centrais do projeto e a implementacao das operacoes graficas diretamente na logica programavel da FPGA.
 
@@ -193,7 +193,7 @@ Essa abordagem permite explorar caracteristicas proprias de uma FPGA, como:
 
 O resultado e uma arquitetura na qual software e hardware possuem responsabilidades distintas: o software pode definir o que deve ser desenhado, enquanto o hardware executa como esse desenho sera convertido em pixels.
 
-## 1.5 Composicao e MEMORIA DE VIDEO
+## 1.5 Composicao e Memoria de Video
 
 Depois que os diferentes elementos graficos sao gerados, eles precisam ser combinados para formar um unico quadro.
 
@@ -203,23 +203,23 @@ O resultado da composicao e armazenado em um framebuffer, que funciona como a re
 
 O framebuffer estabelece, portanto, a interface entre o processamento grafico e a saida de video:
 
-Motores graficos
-       |
-       v
-   Compositor
-       |
-       v
-  Framebuffer
-       |
-       v
- Controlador VGA
-       |
-       v
-    Monitor
+    Motores graficos
+           |
+           v
+       Compositor
+           |
+           v
+      Framebuffer
+           |
+           v
+     Controlador VGA
+           |
+           v
+        Monitor
 
 Essa separacao permite que a geracao da imagem e sua exibicao ocorram de maneira organizada e sincronizada.
 
-## 1.6 Double BUFFERING
+## 1.6 Double Buffering
 
 Para evitar que o quadro exibido seja alterado enquanto ainda esta sendo lido pelo controlador VGA, o sistema utiliza double buffering.
 
@@ -243,7 +243,7 @@ Quando um novo quadro esta pronto, os buffers sao alternados de forma sincroniza
 
 Esse mecanismo reduz artefatos visuais decorrentes da leitura de uma imagem enquanto ela ainda esta sendo modificada.
 
-## 1.7 Organizacao MODULAR
+## 1.7 Organizacao Modular
 
 A implementacao foi estruturada de maneira modular, permitindo separar as diferentes responsabilidades do sistema grafico.
 
@@ -276,7 +276,7 @@ Em uma visao macro, a arquitetura pode ser organizada da seguinte forma:
 
 Essa modularizacao facilita a implementacao, os testes individuais, a depuracao e a expansao da arquitetura, permitindo que novos recursos graficos possam ser incorporados sem a necessidade de reestruturar completamente o sistema.
 
-## 1.8 Estrutura PRINCIPAL DO PROJETO
+## 1.8 Estrutura Principal do Projeto
 
 O modulo de nivel superior utilizado na integracao com a plataforma e:
 
@@ -292,7 +292,7 @@ As proximas secoes apresentam cada uma dessas partes em maior profundidade, deta
 
 
 
-# 2. Levantamento DE REQUISITOS
+# 2. Levantamento de Requisitos
 
 A partir do enunciado do Problema #1, foram identificados os seguintes requisitos principais.
 
@@ -1258,7 +1258,7 @@ De forma simplificada:
 ```
 
 
-# 6. Processo DE DESENVOLVIMENTO
+# 6. Processo de Desenvolvimento
 
 ## 6.1 Sistema VGA
 
