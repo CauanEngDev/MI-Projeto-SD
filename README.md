@@ -310,49 +310,49 @@ A geração do clock utilizado pelo subsistema VGA também está integrada ao `t
 A organização da arquitetura pode ser representada pelo seguinte fluxo:
 
 ```text
-                                                                                                                                               frame_start
-                                                                                                                                                    |
-                                                                                                                                                    v
-                                                                                                                                           +----------------+
-                                                                                                                                           |   COMPOSITOR   |
-                                                                                                                                           |                |
-                                                                                                                                           | FSM de         |
-                                                                                                                                           | composição     |
-                                                                                                                                           +-------+--------+
-                                                                                                                                                   |
-                                                                                                                                    controla      |      controla
-                                                                                                                                   start/done     |      arbitragem
-                                                                                                                                                   |
-                                                                                                                             +---------------------+---------------------+
-                                                                                                                             |                     |                     |
-                                                                                                                             v                     v                     v
-                                                                                                                      +-------------+       +-------------+       +-------------+
-                                                                                                                      |  Background |       | Rasterizador|       |   Sprites   |
-                                                                                                                      |    Motor    |       |             |       |    Motor    |
-                                                                                                                      +------+------+       +------+------+       +------+------+
-                                                                                                                             |                     |                     |
-                                                                                                                             +---------------------+---------------------+
-                                                                                                                                                   |
-                                                                                                                                            requisições de
-                                                                                                                                          palette / framebuffer
-                                                                                                                                                   |
-                                                                                                                                                   v
-                                                                                                                                           +---------------+
-                                                                                                                                           |   COMPOSITOR  |
-                                                                                                                                           |   Arbitragem  |
-                                                                                                                                           +-------+-------+
-                                                                                                                                                   |
-                                                                                                                                                   v
-                                                                                                                                           +---------------+
-                                                                                                                                           |   Framebuffer |
-                                                                                                                                           | Double Buffer |
-                                                                                                                                           +-------+-------+
-                                                                                                                                                   |
-                                                                                                                                                   v
-                                                                                                                                              VGA Driver
-                                                                                                                                                   |
-                                                                                                                                                   v
-                                                                                                                                                  VGA
+                                                                             frame_start
+                                                                                  |
+                                                                                  v
+                                                                         +----------------+
+                                                                         |   COMPOSITOR   |
+                                                                         |                |
+                                                                         | FSM de         |
+                                                                         | composição     |
+                                                                         +-------+--------+
+                                                                                 |
+                                                                  controla      |      controla
+                                                                 start/done     |      arbitragem
+                                                                                 |
+                                                           +---------------------+---------------------+
+                                                           |                     |                     |
+                                                           v                     v                     v
+                                                    +-------------+       +-------------+       +-------------+
+                                                    |  Background |       |Rasterizador |       |   Sprites   |
+                                                    |    Motor    |       |             |       |    Motor    |
+                                                    +------+------+       +------+------+       +------+------+
+                                                           |                     |                     |
+                                                           +---------------------+---------------------+
+                                                                                 |
+                                                                          requisições de
+                                                                        palette / framebuffer
+                                                                                 |
+                                                                                 v
+                                                                         +---------------+
+                                                                         |   COMPOSITOR  |
+                                                                         |   Arbitragem  |
+                                                                         +-------+-------+
+                                                                                 |
+                                                                                 v
+                                                                         +---------------+
+                                                                         |   Framebuffer |
+                                                                         | Double Buffer |
+                                                                         +-------+-------+
+                                                                                 |
+                                                                                 v
+                                                                            VGA Driver
+                                                                                 |
+                                                                                 v
+                                                                                VGA
 ```
 
 O processo de composição é controlado pelo módulo `compositor.v`, que determina a ordem de execução dos três motores gráficos. Ao receber `frame_start`, o compositor inicia inicialmente o motor de background. Após a conclusão dessa etapa, inicia o processamento da camada de polígonos e, posteriormente, o motor de sprites. Dessa maneira, os elementos são incorporados ao framebuffer de forma sequencial, estabelecendo uma ordem de sobreposição determinística. No `top_video`, essa sequência é explicitamente conectada aos sinais `bg_start`, `poly_start` e `spr_start`, enquanto os sinais de conclusão dos respectivos motores são utilizados pelo compositor para determinar as transições entre as etapas.
