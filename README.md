@@ -3,6 +3,14 @@
 ## Sumário
 
 - [1. Visão Geral do Projeto](#1-visão-geral-do-projeto)
+  - [1.1 Conceito Geral](#11-conceito-geral)
+  - [1.2 Da Descricao da Cena ao Pixel](#12-da-descricao-da-cena-ao-pixel)
+  - [1.3 Resolucao e Representacao da Imagem](#13-resolucao-e-representacao-da-imagem)
+  - [1.4 Arquitetura Grafica em Hardware](#14-arquitetura-grafica-em-hardware)
+  - [1.5 Composicao e Memoria de Video](#15-composicao-e-memoria-de-video)
+  - [1.6 Double Buffering](#16-double-buffering)
+  - [1.7 Organizacao Modular](#17-organizacao-modular)
+  - [1.8 Estrutura Principal do Projeto](#18-estrutura-principal-do-projeto)
 - [2. Levantamento de Requisitos](#2-levantamento-de-requisitos)
   - [2.1 Requisitos Funcionais](#21-requisitos-funcionais)
   - [2.2 Requisitos de Memória](#22-requisitos-de-memória)
@@ -39,29 +47,204 @@ Esta versao implementa o nucleo grafico em FPGA e sua demonstracao diretamente n
 
 # 1. Visão GERAL DO PROJETO
 
-O projeto consiste no desenvolvimento de um coprocessador grafico em FPGA capaz de executar operacoes graficas sem depender do processador principal para desenhar individualmente cada pixel da imagem.
+Este projeto consiste no desenvolvimento de um sistema grafico dedicado implementado em FPGA, capaz de receber parametros de objetos graficos, processa-los em hardware e construir uma imagem destinada a exibicao em um monitor VGA.
 
-A proposta segue o principio de arquiteturas graficas utilizadas em consoles classicos, nas quais circuitos especializados sao responsaveis por gerar background, sprites e primitivas geometricas.
+A ideia central do projeto e explorar como funcionalidades normalmente associadas a um sistema grafico podem ser implementadas diretamente em hardware digital reconfiguravel, utilizando modulos especializados para executar diferentes etapas do processo de renderizacao.
 
-A imagem e construida logicamente em resolucao de 320 x 240 pixels. Para exibicao em um monitor VGA de 640 x 480 pixels, cada pixel logico e reproduzido em um bloco de 2 x 2 pixels fisicos.
+Em vez de utilizar o processador principal para determinar e escrever individualmente cada pixel da imagem, o sistema trabalha com elementos graficos e seus respectivos parametros, permitindo que a FPGA execute as operacoes necessarias para gerar, rasterizar, compor e armazenar os pixels da cena.
 
-A implementacao foi organizada em tres camadas graficas principais:
+Dessa forma, o projeto pode ser entendido como uma pequena pipeline grafica em hardware, na qual diferentes componentes cooperam para transformar informacoes abstratas sobre a cena em uma imagem efetivamente exibida no monitor.
 
-# 1. Background baseado em tiles.
-# 2. Poligonos rasterizados, atualmente retangulos e triangulos preenchidos.
-# 3. Sprites, com suporte a posicao, padrao grafico, prioridade, selecao de paleta e espelhamento horizontal e vertical.
+## 1.1 Conceito GERAL
 
-O resultado dessas etapas e armazenado em um framebuffer.
+A arquitetura foi organizada com base na separacao entre controle, processamento grafico, armazenamento e saida de video.
 
-O sistema utiliza double buffering, mantendo dois buffers. Enquanto um e exibido pelo controlador VGA, o outro pode ser atualizado pelos motores graficos. A troca dos buffers ocorre durante o intervalo de vertical blanking, reduzindo artefatos visuais causados pela alteracao de pixels durante a leitura da imagem.
+O processador e os modulos de controle fornecem informacoes como posicoes, dimensoes, padroes graficos, cores, prioridades e demais parametros necessarios para a construcao da cena.
 
-O modulo de nivel superior utilizado no projeto e:
+A partir dessas informacoes, unidades especializadas da FPGA realizam o processamento correspondente a cada tipo de elemento grafico.
+
+Entre os principais recursos implementados estao:
+
+- Background baseado em tiles, utilizado para a construcao do cenario;
+- Primitivas geometricas rasterizadas, atualmente com suporte a retangulos e triangulos preenchidos;
+- Sprites, com parametros de posicao, padrao grafico, prioridade, paleta e espelhamento;
+- Composicao grafica, responsavel por combinar os diferentes elementos da cena;
+- Framebuffer, utilizado para armazenar os pixels do quadro produzido;
+- Double buffering, permitindo a construcao de um quadro enquanto outro e exibido;
+- Controlador VGA, responsavel pela leitura do framebuffer e geracao dos sinais necessarios para a exibicao.
+
+A organizacao desses componentes permite que cada etapa possua uma responsabilidade especifica, formando uma arquitetura modular e extensivel.
+
+## 1.2 Da DESCRICAO da CENA ao PIXEL
+
+Um dos principais objetivos do projeto e demonstrar a transformacao de uma descricao relativamente abstrata da cena em uma sequencia de pixels.
+
+De forma simplificada, o processo pode ser representado como:
+
+PARAMETROS DA CENA
+        |
+        v
++---------------------+
+|    MOTORES GRAFICOS |
++---------------------+
+   |       |       |
+   v       v       v
+BACKGROUND POLIGONOS SPRITES
+   |       |       |
+   +-------+-------+
+           |
+           v
+      COMPOSICAO
+           |
+           v
+      FRAMEBUFFER
+           |
+           v
+     CONTROLADOR VGA
+           |
+           v
+        MONITOR
+
+Cada motor grafico interpreta seus respectivos parametros e produz os elementos necessarios para a construcao do quadro.
+
+Esses elementos sao posteriormente submetidos a logica de composicao, que determina como eles devem coexistir na imagem final, considerando aspectos como sobreposicao e prioridade grafica.
+
+O resultado e entao armazenado no framebuffer e disponibilizado ao controlador VGA.
+
+## 1.3 Resolucao e REPRESENTACAO DA IMAGEM
+
+A imagem e construida internamente em uma resolucao logica de 320 x 240 pixels.
+
+Essa resolucao foi adotada como representacao interna da cena, reduzindo a quantidade de pixels que precisam ser processados e armazenados pelos circuitos graficos.
+
+Para a saida VGA em 640 x 480 pixels, cada pixel logico e representado por um bloco de 2 x 2 pixels fisicos:
+
+Pixel logico
++---+---+
+|   |   |
++---+---+
+|   |   |
++---+---+
+
+     2 x 2
+
+Assim, o sistema mantem uma representacao grafica mais compacta internamente, enquanto produz uma imagem compativel com o modo VGA utilizado pelo projeto.
+
+## 1.4 Arquitetura GRAFICA EM HARDWARE
+
+Um dos aspectos centrais do projeto e a implementacao das operacoes graficas diretamente na logica programavel da FPGA.
+
+Em uma abordagem convencional, o processador poderia ser responsavel por calcular as posicoes, determinar os pixels pertencentes a cada objeto e realizar sucessivas escritas na memoria de video.
+
+Neste projeto, parte significativa desse trabalho e transferida para modulos de hardware especializados.
+
+Essa abordagem permite explorar caracteristicas proprias de uma FPGA, como:
+
+- Processamento dedicado;
+- Paralelismo entre diferentes blocos de hardware;
+- Maquinas de estados para controle de operacoes;
+- Acesso estruturado as memorias graficas;
+- Processamento orientado a pixels;
+- Modularizacao dos componentes de renderizacao.
+
+O resultado e uma arquitetura na qual software e hardware possuem responsabilidades distintas: o software pode definir o que deve ser desenhado, enquanto o hardware executa como esse desenho sera convertido em pixels.
+
+## 1.5 Composicao e MEMORIA DE VIDEO
+
+Depois que os diferentes elementos graficos sao gerados, eles precisam ser combinados para formar um unico quadro.
+
+Essa etapa e realizada pela logica de composicao, que organiza os elementos provenientes dos diferentes motores graficos e determina o conteudo final de cada posicao da imagem.
+
+O resultado da composicao e armazenado em um framebuffer, que funciona como a representacao em memoria do quadro que sera exibido.
+
+O framebuffer estabelece, portanto, a interface entre o processamento grafico e a saida de video:
+
+Motores graficos
+       |
+       v
+   Compositor
+       |
+       v
+  Framebuffer
+       |
+       v
+ Controlador VGA
+       |
+       v
+    Monitor
+
+Essa separacao permite que a geracao da imagem e sua exibicao ocorram de maneira organizada e sincronizada.
+
+## 1.6 Double BUFFERING
+
+Para evitar que o quadro exibido seja alterado enquanto ainda esta sendo lido pelo controlador VGA, o sistema utiliza double buffering.
+
+Sao mantidos dois buffers de imagem:
+
+    +------------------+
+    |    BUFFER A      |
+    |                  |
+    |     EXIBICAO     |
+    +------------------+
+
+    +------------------+
+    |    BUFFER B      |
+    |                  |
+    |    RENDERIZACAO  |
+    +------------------+
+
+Enquanto um buffer fornece os dados para a saida VGA, o outro pode ser atualizado pelos motores graficos.
+
+Quando um novo quadro esta pronto, os buffers sao alternados de forma sincronizada com o sinal de video, utilizando o periodo de vertical blanking como momento adequado para a troca.
+
+Esse mecanismo reduz artefatos visuais decorrentes da leitura de uma imagem enquanto ela ainda esta sendo modificada.
+
+## 1.7 Organizacao MODULAR
+
+A implementacao foi estruturada de maneira modular, permitindo separar as diferentes responsabilidades do sistema grafico.
+
+Em uma visao macro, a arquitetura pode ser organizada da seguinte forma:
+
+                    SISTEMA DE VIDEO
+                           |
+          +----------------+----------------+
+          |                |                |
+          v                v                v
+     BACKGROUND        POLIGONOS         SPRITES
+       ENGINE            ENGINE           ENGINE
+          |                |                |
+          +----------------+----------------+
+                           |
+                           v
+                      COMPOSITOR
+                           |
+                           v
+                     FRAMEBUFFER
+                           |
+                           v
+                  DOUBLE BUFFERING
+                           |
+                           v
+                    CONTROLADOR VGA
+                           |
+                           v
+                        MONITOR
+
+Essa modularizacao facilita a implementacao, os testes individuais, a depuracao e a expansao da arquitetura, permitindo que novos recursos graficos possam ser incorporados sem a necessidade de reestruturar completamente o sistema.
+
+## 1.8 Estrutura PRINCIPAL DO PROJETO
+
+O modulo de nivel superior utilizado na integracao com a plataforma e:
 
 DE1_SOC_golden_top.v
 
-A integracao principal do sistema de video e realizada em:
+A integracao principal do sistema grafico e realizada em:
 
 top_video.v
+
+A partir desses modulos sao conectados os diferentes componentes responsaveis pelo processamento grafico, armazenamento e geracao da saida de video.
+
+As proximas secoes apresentam cada uma dessas partes em maior profundidade, detalhando o funcionamento dos motores graficos, organizacao da memoria, rasterizacao, sprites, composicao, framebuffer, double buffering e controlador VGA.
 
 
 
