@@ -1,0 +1,31 @@
+module top_video (
+    input  wire clock,
+    input  wire reset,
+    output wire hsync, vsync, sync, clk, blank,
+    output wire [7:0] red, green, blue
+);
+
+    wire [9:0] next_x, next_y;
+    wire [8:0] logical_x = next_x[9:1]; // upscale 2x2
+    wire [8:0] logical_y = next_y[9:1];
+    wire [8:0] color_out;
+
+    tile_memory mem (
+        .clock(clock),
+        .logical_x(logical_x),
+        .logical_y(logical_y),
+        .color_out(color_out)
+    );
+
+    vga_driver vga (
+        .clock(clock),
+        .reset(reset),
+        .color_in(color_out),
+        .next_x(next_x),
+        .next_y(next_y),
+        .hsync(hsync), .vsync(vsync),
+        .red(red), .green(green), .blue(blue),
+        .sync(sync), .clk(clk), .blank(blank)
+    );
+
+endmodule

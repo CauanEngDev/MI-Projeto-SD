@@ -1,0 +1,24 @@
+transcript on
+if ![file isdirectory CoProcessador_iputf_libs] {
+	file mkdir CoProcessador_iputf_libs
+}
+
+if {[file exists rtl_work]} {
+	vdel -lib rtl_work -all
+}
+vlib rtl_work
+vmap work rtl_work
+
+###### Libraries for IPUTF cores 
+###### End libraries for IPUTF cores 
+###### MIF file copy and HDL compilation commands for IPUTF cores 
+
+
+vlog "F:/CoprocessadorGrafico/pll01_sim/pll01.vo"
+
+vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/DE1_SOC_golden_top.v}
+vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/vga_driver.v}
+vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/top_video.v}
+vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/tb_vga_memory.v}
+vlog -vlog01compat -work work +incdir+F:/CoprocessadorGrafico {F:/CoprocessadorGrafico/motor_background.v}
+

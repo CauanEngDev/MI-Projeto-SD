@@ -1,0 +1,889 @@
+# Reading pref.tcl
+# do CoProcessador_run_msim_rtl_verilog.do
+# if ![file isdirectory CoProcessador_iputf_libs] {
+# 	file mkdir CoProcessador_iputf_libs
+# }
+# 
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Model Technology ModelSim - Intel FPGA Edition vmap 2020.1 Lib Mapping Utility 2020.02 Feb 28 2020
+# vmap work rtl_work 
+# Copying D:/ModelSim/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+###### Libraries for IPUTF cores 
+###### End libraries for IPUTF cores 
+###### MIF file copy and HDL compilation commands for IPUTF cores 
+# 
+# 
+# vlog "E:/FINAL/pll01_sim/pll01.vo"
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:07 on Sep 02,2026
+# vlog -reportprogress 300 E:/FINAL/pll01_sim/pll01.vo 
+# -- Compiling module pll01
+# 
+# Top level modules:
+# 	pll01
+# End time: 20:55:11 on Sep 02,2026, Elapsed time: 0:00:04
+# Errors: 0, Warnings: 0
+# 
+# vlog -vlog01compat -work work +incdir+E:/FINAL/memory_files {E:/FINAL/memory_files/framebuffer_ram.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:11 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL/memory_files" E:/FINAL/memory_files/framebuffer_ram.v 
+# -- Compiling module framebuffer_ram
+# 
+# Top level modules:
+# 	framebuffer_ram
+# End time: 20:55:11 on Sep 02,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL/memory_files {E:/FINAL/memory_files/bg_tile_ram.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:11 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL/memory_files" E:/FINAL/memory_files/bg_tile_ram.v 
+# -- Compiling module bg_tile_ram
+# 
+# Top level modules:
+# 	bg_tile_ram
+# End time: 20:55:17 on Sep 02,2026, Elapsed time: 0:00:06
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/DE1_SOC_golden_top.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:18 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/DE1_SOC_golden_top.v 
+# -- Compiling module DE1_SOC_golden_top
+# 
+# Top level modules:
+# 	DE1_SOC_golden_top
+# End time: 20:55:22 on Sep 02,2026, Elapsed time: 0:00:04
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/vga_driver.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:22 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/vga_driver.v 
+# -- Compiling module vga_driver
+# 
+# Top level modules:
+# 	vga_driver
+# End time: 20:55:24 on Sep 02,2026, Elapsed time: 0:00:02
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/top_video.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:24 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/top_video.v 
+# -- Compiling module top_video
+# 
+# Top level modules:
+# 	top_video
+# End time: 20:55:25 on Sep 02,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/motor_background.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:25 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/motor_background.v 
+# -- Compiling module motor_background
+# 
+# Top level modules:
+# 	motor_background
+# End time: 20:55:29 on Sep 02,2026, Elapsed time: 0:00:04
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/motor_sprite.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:31 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/motor_sprite.v 
+# -- Compiling module motor_sprite
+# 
+# Top level modules:
+# 	motor_sprite
+# End time: 20:55:37 on Sep 02,2026, Elapsed time: 0:00:06
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/fb_addr_gen.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:37 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/fb_addr_gen.v 
+# -- Compiling module fb_addr_gen
+# 
+# Top level modules:
+# 	fb_addr_gen
+# End time: 20:55:38 on Sep 02,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/framebuffer.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:38 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/framebuffer.v 
+# -- Compiling module framebuffer
+# 
+# Top level modules:
+# 	framebuffer
+# End time: 20:55:39 on Sep 02,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/rasterizador_quadrado.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:39 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/rasterizador_quadrado.v 
+# -- Compiling module rasterizador_quadrado
+# 
+# Top level modules:
+# 	rasterizador_quadrado
+# End time: 20:55:41 on Sep 02,2026, Elapsed time: 0:00:02
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/rasterizador_triangulo.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:42 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/rasterizador_triangulo.v 
+# -- Compiling module rasterizador_triangulo
+# 
+# Top level modules:
+# 	rasterizador_triangulo
+# End time: 20:55:46 on Sep 02,2026, Elapsed time: 0:00:04
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/rasterizador_top.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:46 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/rasterizador_top.v 
+# -- Compiling module rasterizador_top
+# 
+# Top level modules:
+# 	rasterizador_top
+# End time: 20:55:49 on Sep 02,2026, Elapsed time: 0:00:03
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/divisor_unsigned.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:49 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/divisor_unsigned.v 
+# -- Compiling module divisor_unsigned
+# 
+# Top level modules:
+# 	divisor_unsigned
+# End time: 20:55:54 on Sep 02,2026, Elapsed time: 0:00:05
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL/memory_files {E:/FINAL/memory_files/sprite_attribute_ram.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:54 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL/memory_files" E:/FINAL/memory_files/sprite_attribute_ram.v 
+# -- Compiling module sprite_attribute_ram
+# 
+# Top level modules:
+# 	sprite_attribute_ram
+# End time: 20:55:55 on Sep 02,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL/memory_files {E:/FINAL/memory_files/sprite_pattern_ram.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:55 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL/memory_files" E:/FINAL/memory_files/sprite_pattern_ram.v 
+# -- Compiling module sprite_pattern_ram
+# 
+# Top level modules:
+# 	sprite_pattern_ram
+# End time: 20:55:55 on Sep 02,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL/memory_files {E:/FINAL/memory_files/palette_ram.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:55:55 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL/memory_files" E:/FINAL/memory_files/palette_ram.v 
+# -- Compiling module palette_ram
+# 
+# Top level modules:
+# 	palette_ram
+# End time: 20:56:01 on Sep 02,2026, Elapsed time: 0:00:06
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/compositor.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:56:02 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/compositor.v 
+# -- Compiling module compositor
+# 
+# Top level modules:
+# 	compositor
+# End time: 20:56:05 on Sep 02,2026, Elapsed time: 0:00:03
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL/memory_files {E:/FINAL/memory_files/bg_tile_pattern_ram.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:56:06 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL/memory_files" E:/FINAL/memory_files/bg_tile_pattern_ram.v 
+# -- Compiling module bg_tile_pattern_ram
+# 
+# Top level modules:
+# 	bg_tile_pattern_ram
+# End time: 20:56:07 on Sep 02,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/test_driver.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:56:07 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/test_driver.v 
+# -- Compiling module test_driver
+# 
+# Top level modules:
+# 	test_driver
+# End time: 20:56:10 on Sep 02,2026, Elapsed time: 0:00:03
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/sprite_mover_flip.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:56:10 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/sprite_mover_flip.v 
+# -- Compiling module sprite_mover_flip
+# 
+# Top level modules:
+# 	sprite_mover_flip
+# End time: 20:56:11 on Sep 02,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+E:/FINAL {E:/FINAL/sprite_spawner.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:56:11 on Sep 02,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+E:/FINAL" E:/FINAL/sprite_spawner.v 
+# -- Compiling module sprite_spawner
+# 
+# Top level modules:
+# 	sprite_spawner
+# End time: 20:56:12 on Sep 02,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# 
+vlog -reportprogress 300 -work work E:/FINAL/tb_motor_sprite_prioridade.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:56:34 on Sep 02,2026
+# vlog -reportprogress 300 -work work E:/FINAL/tb_motor_sprite_prioridade.v 
+# -- Compiling module tb_motor_sprite_prioridade
+# 
+# Top level modules:
+# 	tb_motor_sprite_prioridade
+# End time: 20:56:38 on Sep 02,2026, Elapsed time: 0:00:04
+# Errors: 0, Warnings: 0
+vlog -reportprogress 300 -work work E:/FINAL/tb_framebuffer_troca_buffers.v
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:56:40 on Sep 02,2026
+# vlog -reportprogress 300 -work work E:/FINAL/tb_framebuffer_troca_buffers.v 
+# -- Compiling module tb_framebuffer_troca_buffers
+# 
+# Top level modules:
+# 	tb_framebuffer_troca_buffers
+# End time: 20:56:44 on Sep 02,2026, Elapsed time: 0:00:04
+# Errors: 0, Warnings: 0
+vsim work.tb_framebuffer_troca_buffers
+# vsim work.tb_framebuffer_troca_buffers 
+# Start time: 20:56:47 on Sep 02,2026
+# Loading work.tb_framebuffer_troca_buffers
+add wave -position insertpoint sim:/tb_framebuffer_troca_buffers/*
+run -all
+# 
+# ====================================================
+# TESTE: TROCA DE BUFFERS
+# ====================================================
+# 
+# Posicao utilizada:
+#   X = 100
+#   Y = 100
+# 
+# BUFFER 0 -> VERMELHO
+# BUFFER 1 -> AZUL
+# 
+# ----------------------------------------------------
+# PASSO 1: escrevendo RED no BUFFER 0
+# ----------------------------------------------------
+# PASSOU: BUFFER 0 recebeu RED.
+# 
+# ----------------------------------------------------
+# PASSO 2: escrevendo BLUE no BUFFER 1
+# ----------------------------------------------------
+# PASSOU: BUFFER 1 recebeu BLUE.
+# 
+# ----------------------------------------------------
+# PASSO 3: selecionando BUFFER 0
+# ----------------------------------------------------
+# PASSOU: BUFFER 0 esta sendo exibido. q = 111000000
+# 
+# ----------------------------------------------------
+# PASSO 4: realizando troca para BUFFER 1
+# ----------------------------------------------------
+# PASSOU: BUFFER 1 esta sendo exibido. q = 000000111
+# 
+# ----------------------------------------------------
+# PASSO 5: retornando para BUFFER 0
+# ----------------------------------------------------
+# PASSOU: BUFFER 0 voltou a ser exibido. q = 111000000
+# 
+# ----------------------------------------------------
+# PASSO 6: verificando independencia dos buffers
+# ----------------------------------------------------
+# PASSOU: BUFFER 0 continua com RED.
+# PASSOU: BUFFER 1 continua com BLUE.
+# 
+# ====================================================
+# >>> TESTE DE TROCA DE BUFFERS: PASSOU <<<
+# ====================================================
+# ** Note: $stop    : E:/FINAL/tb_framebuffer_troca_buffers.v(453)
+#    Time: 281 ns  Iteration: 0  Instance: /tb_framebuffer_troca_buffers
+# Break in Module tb_framebuffer_troca_buffers at E:/FINAL/tb_framebuffer_troca_buffers.v line 453
+vsim work.tb_motor_sprite_prioridade
+# End time: 20:57:24 on Sep 02,2026, Elapsed time: 0:00:37
+# Errors: 0, Warnings: 0
+# vsim work.tb_motor_sprite_prioridade 
+# Start time: 20:57:24 on Sep 02,2026
+# Loading work.tb_motor_sprite_prioridade
+# Loading work.motor_sprite
+add wave -position insertpoint sim:/tb_motor_sprite_prioridade/*
+run -all
+# 
+# ====================================================
+# TESTE: PRIORIDADE DOS SPRITES
+# ====================================================
+# 
+# Sprite 0:
+#   Posicao    : (50,50)
+#   Prioridade : 0
+#   Cor        : VERMELHO
+# 
+# Sprite 1:
+#   Posicao    : (50,50)
+#   Prioridade : 1
+#   Cor        : AZUL
+# 
+# Os dois sprites ocupam a mesma regiao.
+# 
+# Resultado esperado:
+#   Sprite 0 escreve 256 pixels.
+#   Sprite 1 escreve 256 pixels.
+#   Total = 512 escritas.
+#   Framebuffer final = AZUL.
+# 
+# WRITE #1: X=50 Y=50 DATA=111000000
+# WRITE #2: X=51 Y=50 DATA=111000000
+# WRITE #3: X=52 Y=50 DATA=111000000
+# WRITE #4: X=53 Y=50 DATA=111000000
+# WRITE #5: X=54 Y=50 DATA=111000000
+# WRITE #6: X=55 Y=50 DATA=111000000
+# WRITE #7: X=56 Y=50 DATA=111000000
+# WRITE #8: X=57 Y=50 DATA=111000000
+# WRITE #9: X=58 Y=50 DATA=111000000
+# WRITE #10: X=59 Y=50 DATA=111000000
+# WRITE #11: X=60 Y=50 DATA=111000000
+# WRITE #12: X=61 Y=50 DATA=111000000
+# WRITE #13: X=62 Y=50 DATA=111000000
+# WRITE #14: X=63 Y=50 DATA=111000000
+# WRITE #15: X=64 Y=50 DATA=111000000
+# WRITE #16: X=65 Y=50 DATA=111000000
+# WRITE #17: X=50 Y=51 DATA=111000000
+# WRITE #18: X=51 Y=51 DATA=111000000
+# WRITE #19: X=52 Y=51 DATA=111000000
+# WRITE #20: X=53 Y=51 DATA=111000000
+# WRITE #21: X=54 Y=51 DATA=111000000
+# WRITE #22: X=55 Y=51 DATA=111000000
+# WRITE #23: X=56 Y=51 DATA=111000000
+# WRITE #24: X=57 Y=51 DATA=111000000
+# WRITE #25: X=58 Y=51 DATA=111000000
+# WRITE #26: X=59 Y=51 DATA=111000000
+# WRITE #27: X=60 Y=51 DATA=111000000
+# WRITE #28: X=61 Y=51 DATA=111000000
+# WRITE #29: X=62 Y=51 DATA=111000000
+# WRITE #30: X=63 Y=51 DATA=111000000
+# WRITE #31: X=64 Y=51 DATA=111000000
+# WRITE #32: X=65 Y=51 DATA=111000000
+# WRITE #33: X=50 Y=52 DATA=111000000
+# WRITE #34: X=51 Y=52 DATA=111000000
+# WRITE #35: X=52 Y=52 DATA=111000000
+# WRITE #36: X=53 Y=52 DATA=111000000
+# WRITE #37: X=54 Y=52 DATA=111000000
+# WRITE #38: X=55 Y=52 DATA=111000000
+# WRITE #39: X=56 Y=52 DATA=111000000
+# WRITE #40: X=57 Y=52 DATA=111000000
+# WRITE #41: X=58 Y=52 DATA=111000000
+# WRITE #42: X=59 Y=52 DATA=111000000
+# WRITE #43: X=60 Y=52 DATA=111000000
+# WRITE #44: X=61 Y=52 DATA=111000000
+# WRITE #45: X=62 Y=52 DATA=111000000
+# WRITE #46: X=63 Y=52 DATA=111000000
+# WRITE #47: X=64 Y=52 DATA=111000000
+# WRITE #48: X=65 Y=52 DATA=111000000
+# WRITE #49: X=50 Y=53 DATA=111000000
+# WRITE #50: X=51 Y=53 DATA=111000000
+# WRITE #51: X=52 Y=53 DATA=111000000
+# WRITE #52: X=53 Y=53 DATA=111000000
+# WRITE #53: X=54 Y=53 DATA=111000000
+# WRITE #54: X=55 Y=53 DATA=111000000
+# WRITE #55: X=56 Y=53 DATA=111000000
+# WRITE #56: X=57 Y=53 DATA=111000000
+# WRITE #57: X=58 Y=53 DATA=111000000
+# WRITE #58: X=59 Y=53 DATA=111000000
+# WRITE #59: X=60 Y=53 DATA=111000000
+# WRITE #60: X=61 Y=53 DATA=111000000
+# WRITE #61: X=62 Y=53 DATA=111000000
+# WRITE #62: X=63 Y=53 DATA=111000000
+# WRITE #63: X=64 Y=53 DATA=111000000
+# WRITE #64: X=65 Y=53 DATA=111000000
+# WRITE #65: X=50 Y=54 DATA=111000000
+# WRITE #66: X=51 Y=54 DATA=111000000
+# WRITE #67: X=52 Y=54 DATA=111000000
+# WRITE #68: X=53 Y=54 DATA=111000000
+# WRITE #69: X=54 Y=54 DATA=111000000
+# WRITE #70: X=55 Y=54 DATA=111000000
+# WRITE #71: X=56 Y=54 DATA=111000000
+# WRITE #72: X=57 Y=54 DATA=111000000
+# WRITE #73: X=58 Y=54 DATA=111000000
+# WRITE #74: X=59 Y=54 DATA=111000000
+# WRITE #75: X=60 Y=54 DATA=111000000
+# WRITE #76: X=61 Y=54 DATA=111000000
+# WRITE #77: X=62 Y=54 DATA=111000000
+# WRITE #78: X=63 Y=54 DATA=111000000
+# WRITE #79: X=64 Y=54 DATA=111000000
+# WRITE #80: X=65 Y=54 DATA=111000000
+# WRITE #81: X=50 Y=55 DATA=111000000
+# WRITE #82: X=51 Y=55 DATA=111000000
+# WRITE #83: X=52 Y=55 DATA=111000000
+# WRITE #84: X=53 Y=55 DATA=111000000
+# WRITE #85: X=54 Y=55 DATA=111000000
+# WRITE #86: X=55 Y=55 DATA=111000000
+# WRITE #87: X=56 Y=55 DATA=111000000
+# WRITE #88: X=57 Y=55 DATA=111000000
+# WRITE #89: X=58 Y=55 DATA=111000000
+# WRITE #90: X=59 Y=55 DATA=111000000
+# WRITE #91: X=60 Y=55 DATA=111000000
+# WRITE #92: X=61 Y=55 DATA=111000000
+# WRITE #93: X=62 Y=55 DATA=111000000
+# WRITE #94: X=63 Y=55 DATA=111000000
+# WRITE #95: X=64 Y=55 DATA=111000000
+# WRITE #96: X=65 Y=55 DATA=111000000
+# WRITE #97: X=50 Y=56 DATA=111000000
+# WRITE #98: X=51 Y=56 DATA=111000000
+# WRITE #99: X=52 Y=56 DATA=111000000
+# WRITE #100: X=53 Y=56 DATA=111000000
+# WRITE #101: X=54 Y=56 DATA=111000000
+# WRITE #102: X=55 Y=56 DATA=111000000
+# WRITE #103: X=56 Y=56 DATA=111000000
+# WRITE #104: X=57 Y=56 DATA=111000000
+# WRITE #105: X=58 Y=56 DATA=111000000
+# WRITE #106: X=59 Y=56 DATA=111000000
+# WRITE #107: X=60 Y=56 DATA=111000000
+# WRITE #108: X=61 Y=56 DATA=111000000
+# WRITE #109: X=62 Y=56 DATA=111000000
+# WRITE #110: X=63 Y=56 DATA=111000000
+# WRITE #111: X=64 Y=56 DATA=111000000
+# WRITE #112: X=65 Y=56 DATA=111000000
+# WRITE #113: X=50 Y=57 DATA=111000000
+# WRITE #114: X=51 Y=57 DATA=111000000
+# WRITE #115: X=52 Y=57 DATA=111000000
+# WRITE #116: X=53 Y=57 DATA=111000000
+# WRITE #117: X=54 Y=57 DATA=111000000
+# WRITE #118: X=55 Y=57 DATA=111000000
+# WRITE #119: X=56 Y=57 DATA=111000000
+# WRITE #120: X=57 Y=57 DATA=111000000
+# WRITE #121: X=58 Y=57 DATA=111000000
+# WRITE #122: X=59 Y=57 DATA=111000000
+# WRITE #123: X=60 Y=57 DATA=111000000
+# WRITE #124: X=61 Y=57 DATA=111000000
+# WRITE #125: X=62 Y=57 DATA=111000000
+# WRITE #126: X=63 Y=57 DATA=111000000
+# WRITE #127: X=64 Y=57 DATA=111000000
+# WRITE #128: X=65 Y=57 DATA=111000000
+# WRITE #129: X=50 Y=58 DATA=111000000
+# WRITE #130: X=51 Y=58 DATA=111000000
+# WRITE #131: X=52 Y=58 DATA=111000000
+# WRITE #132: X=53 Y=58 DATA=111000000
+# WRITE #133: X=54 Y=58 DATA=111000000
+# WRITE #134: X=55 Y=58 DATA=111000000
+# WRITE #135: X=56 Y=58 DATA=111000000
+# WRITE #136: X=57 Y=58 DATA=111000000
+# WRITE #137: X=58 Y=58 DATA=111000000
+# WRITE #138: X=59 Y=58 DATA=111000000
+# WRITE #139: X=60 Y=58 DATA=111000000
+# WRITE #140: X=61 Y=58 DATA=111000000
+# WRITE #141: X=62 Y=58 DATA=111000000
+# WRITE #142: X=63 Y=58 DATA=111000000
+# WRITE #143: X=64 Y=58 DATA=111000000
+# WRITE #144: X=65 Y=58 DATA=111000000
+# WRITE #145: X=50 Y=59 DATA=111000000
+# WRITE #146: X=51 Y=59 DATA=111000000
+# WRITE #147: X=52 Y=59 DATA=111000000
+# WRITE #148: X=53 Y=59 DATA=111000000
+# WRITE #149: X=54 Y=59 DATA=111000000
+# WRITE #150: X=55 Y=59 DATA=111000000
+# WRITE #151: X=56 Y=59 DATA=111000000
+# WRITE #152: X=57 Y=59 DATA=111000000
+# WRITE #153: X=58 Y=59 DATA=111000000
+# WRITE #154: X=59 Y=59 DATA=111000000
+# WRITE #155: X=60 Y=59 DATA=111000000
+# WRITE #156: X=61 Y=59 DATA=111000000
+# WRITE #157: X=62 Y=59 DATA=111000000
+# WRITE #158: X=63 Y=59 DATA=111000000
+# WRITE #159: X=64 Y=59 DATA=111000000
+# WRITE #160: X=65 Y=59 DATA=111000000
+# WRITE #161: X=50 Y=60 DATA=111000000
+# WRITE #162: X=51 Y=60 DATA=111000000
+# WRITE #163: X=52 Y=60 DATA=111000000
+# WRITE #164: X=53 Y=60 DATA=111000000
+# WRITE #165: X=54 Y=60 DATA=111000000
+# WRITE #166: X=55 Y=60 DATA=111000000
+# WRITE #167: X=56 Y=60 DATA=111000000
+# WRITE #168: X=57 Y=60 DATA=111000000
+# WRITE #169: X=58 Y=60 DATA=111000000
+# WRITE #170: X=59 Y=60 DATA=111000000
+# WRITE #171: X=60 Y=60 DATA=111000000
+# WRITE #172: X=61 Y=60 DATA=111000000
+# WRITE #173: X=62 Y=60 DATA=111000000
+# WRITE #174: X=63 Y=60 DATA=111000000
+# WRITE #175: X=64 Y=60 DATA=111000000
+# WRITE #176: X=65 Y=60 DATA=111000000
+# WRITE #177: X=50 Y=61 DATA=111000000
+# WRITE #178: X=51 Y=61 DATA=111000000
+# WRITE #179: X=52 Y=61 DATA=111000000
+# WRITE #180: X=53 Y=61 DATA=111000000
+# WRITE #181: X=54 Y=61 DATA=111000000
+# WRITE #182: X=55 Y=61 DATA=111000000
+# WRITE #183: X=56 Y=61 DATA=111000000
+# WRITE #184: X=57 Y=61 DATA=111000000
+# WRITE #185: X=58 Y=61 DATA=111000000
+# WRITE #186: X=59 Y=61 DATA=111000000
+# WRITE #187: X=60 Y=61 DATA=111000000
+# WRITE #188: X=61 Y=61 DATA=111000000
+# WRITE #189: X=62 Y=61 DATA=111000000
+# WRITE #190: X=63 Y=61 DATA=111000000
+# WRITE #191: X=64 Y=61 DATA=111000000
+# WRITE #192: X=65 Y=61 DATA=111000000
+# WRITE #193: X=50 Y=62 DATA=111000000
+# WRITE #194: X=51 Y=62 DATA=111000000
+# WRITE #195: X=52 Y=62 DATA=111000000
+# WRITE #196: X=53 Y=62 DATA=111000000
+# WRITE #197: X=54 Y=62 DATA=111000000
+# WRITE #198: X=55 Y=62 DATA=111000000
+# WRITE #199: X=56 Y=62 DATA=111000000
+# WRITE #200: X=57 Y=62 DATA=111000000
+# WRITE #201: X=58 Y=62 DATA=111000000
+# WRITE #202: X=59 Y=62 DATA=111000000
+# WRITE #203: X=60 Y=62 DATA=111000000
+# WRITE #204: X=61 Y=62 DATA=111000000
+# WRITE #205: X=62 Y=62 DATA=111000000
+# WRITE #206: X=63 Y=62 DATA=111000000
+# WRITE #207: X=64 Y=62 DATA=111000000
+# WRITE #208: X=65 Y=62 DATA=111000000
+# WRITE #209: X=50 Y=63 DATA=111000000
+# WRITE #210: X=51 Y=63 DATA=111000000
+# WRITE #211: X=52 Y=63 DATA=111000000
+# WRITE #212: X=53 Y=63 DATA=111000000
+# WRITE #213: X=54 Y=63 DATA=111000000
+# WRITE #214: X=55 Y=63 DATA=111000000
+# WRITE #215: X=56 Y=63 DATA=111000000
+# WRITE #216: X=57 Y=63 DATA=111000000
+# WRITE #217: X=58 Y=63 DATA=111000000
+# WRITE #218: X=59 Y=63 DATA=111000000
+# WRITE #219: X=60 Y=63 DATA=111000000
+# WRITE #220: X=61 Y=63 DATA=111000000
+# WRITE #221: X=62 Y=63 DATA=111000000
+# WRITE #222: X=63 Y=63 DATA=111000000
+# WRITE #223: X=64 Y=63 DATA=111000000
+# WRITE #224: X=65 Y=63 DATA=111000000
+# WRITE #225: X=50 Y=64 DATA=111000000
+# WRITE #226: X=51 Y=64 DATA=111000000
+# WRITE #227: X=52 Y=64 DATA=111000000
+# WRITE #228: X=53 Y=64 DATA=111000000
+# WRITE #229: X=54 Y=64 DATA=111000000
+# WRITE #230: X=55 Y=64 DATA=111000000
+# WRITE #231: X=56 Y=64 DATA=111000000
+# WRITE #232: X=57 Y=64 DATA=111000000
+# WRITE #233: X=58 Y=64 DATA=111000000
+# WRITE #234: X=59 Y=64 DATA=111000000
+# WRITE #235: X=60 Y=64 DATA=111000000
+# WRITE #236: X=61 Y=64 DATA=111000000
+# WRITE #237: X=62 Y=64 DATA=111000000
+# WRITE #238: X=63 Y=64 DATA=111000000
+# WRITE #239: X=64 Y=64 DATA=111000000
+# WRITE #240: X=65 Y=64 DATA=111000000
+# WRITE #241: X=50 Y=65 DATA=111000000
+# WRITE #242: X=51 Y=65 DATA=111000000
+# WRITE #243: X=52 Y=65 DATA=111000000
+# WRITE #244: X=53 Y=65 DATA=111000000
+# WRITE #245: X=54 Y=65 DATA=111000000
+# WRITE #246: X=55 Y=65 DATA=111000000
+# WRITE #247: X=56 Y=65 DATA=111000000
+# WRITE #248: X=57 Y=65 DATA=111000000
+# WRITE #249: X=58 Y=65 DATA=111000000
+# WRITE #250: X=59 Y=65 DATA=111000000
+# WRITE #251: X=60 Y=65 DATA=111000000
+# WRITE #252: X=61 Y=65 DATA=111000000
+# WRITE #253: X=62 Y=65 DATA=111000000
+# WRITE #254: X=63 Y=65 DATA=111000000
+# WRITE #255: X=64 Y=65 DATA=111000000
+# WRITE #256: X=65 Y=65 DATA=111000000
+# WRITE #257: X=50 Y=50 DATA=000000111
+# WRITE #258: X=51 Y=50 DATA=000000111
+# WRITE #259: X=52 Y=50 DATA=000000111
+# WRITE #260: X=53 Y=50 DATA=000000111
+# WRITE #261: X=54 Y=50 DATA=000000111
+# WRITE #262: X=55 Y=50 DATA=000000111
+# WRITE #263: X=56 Y=50 DATA=000000111
+# WRITE #264: X=57 Y=50 DATA=000000111
+# WRITE #265: X=58 Y=50 DATA=000000111
+# WRITE #266: X=59 Y=50 DATA=000000111
+# WRITE #267: X=60 Y=50 DATA=000000111
+# WRITE #268: X=61 Y=50 DATA=000000111
+# WRITE #269: X=62 Y=50 DATA=000000111
+# WRITE #270: X=63 Y=50 DATA=000000111
+# WRITE #271: X=64 Y=50 DATA=000000111
+# WRITE #272: X=65 Y=50 DATA=000000111
+# WRITE #273: X=50 Y=51 DATA=000000111
+# WRITE #274: X=51 Y=51 DATA=000000111
+# WRITE #275: X=52 Y=51 DATA=000000111
+# WRITE #276: X=53 Y=51 DATA=000000111
+# WRITE #277: X=54 Y=51 DATA=000000111
+# WRITE #278: X=55 Y=51 DATA=000000111
+# WRITE #279: X=56 Y=51 DATA=000000111
+# WRITE #280: X=57 Y=51 DATA=000000111
+# WRITE #281: X=58 Y=51 DATA=000000111
+# WRITE #282: X=59 Y=51 DATA=000000111
+# WRITE #283: X=60 Y=51 DATA=000000111
+# WRITE #284: X=61 Y=51 DATA=000000111
+# WRITE #285: X=62 Y=51 DATA=000000111
+# WRITE #286: X=63 Y=51 DATA=000000111
+# WRITE #287: X=64 Y=51 DATA=000000111
+# WRITE #288: X=65 Y=51 DATA=000000111
+# WRITE #289: X=50 Y=52 DATA=000000111
+# WRITE #290: X=51 Y=52 DATA=000000111
+# WRITE #291: X=52 Y=52 DATA=000000111
+# WRITE #292: X=53 Y=52 DATA=000000111
+# WRITE #293: X=54 Y=52 DATA=000000111
+# WRITE #294: X=55 Y=52 DATA=000000111
+# WRITE #295: X=56 Y=52 DATA=000000111
+# WRITE #296: X=57 Y=52 DATA=000000111
+# WRITE #297: X=58 Y=52 DATA=000000111
+# WRITE #298: X=59 Y=52 DATA=000000111
+# WRITE #299: X=60 Y=52 DATA=000000111
+# WRITE #300: X=61 Y=52 DATA=000000111
+# WRITE #301: X=62 Y=52 DATA=000000111
+# WRITE #302: X=63 Y=52 DATA=000000111
+# WRITE #303: X=64 Y=52 DATA=000000111
+# WRITE #304: X=65 Y=52 DATA=000000111
+# WRITE #305: X=50 Y=53 DATA=000000111
+# WRITE #306: X=51 Y=53 DATA=000000111
+# WRITE #307: X=52 Y=53 DATA=000000111
+# WRITE #308: X=53 Y=53 DATA=000000111
+# WRITE #309: X=54 Y=53 DATA=000000111
+# WRITE #310: X=55 Y=53 DATA=000000111
+# WRITE #311: X=56 Y=53 DATA=000000111
+# WRITE #312: X=57 Y=53 DATA=000000111
+# WRITE #313: X=58 Y=53 DATA=000000111
+# WRITE #314: X=59 Y=53 DATA=000000111
+# WRITE #315: X=60 Y=53 DATA=000000111
+# WRITE #316: X=61 Y=53 DATA=000000111
+# WRITE #317: X=62 Y=53 DATA=000000111
+# WRITE #318: X=63 Y=53 DATA=000000111
+# WRITE #319: X=64 Y=53 DATA=000000111
+# WRITE #320: X=65 Y=53 DATA=000000111
+# WRITE #321: X=50 Y=54 DATA=000000111
+# WRITE #322: X=51 Y=54 DATA=000000111
+# WRITE #323: X=52 Y=54 DATA=000000111
+# WRITE #324: X=53 Y=54 DATA=000000111
+# WRITE #325: X=54 Y=54 DATA=000000111
+# WRITE #326: X=55 Y=54 DATA=000000111
+# WRITE #327: X=56 Y=54 DATA=000000111
+# WRITE #328: X=57 Y=54 DATA=000000111
+# WRITE #329: X=58 Y=54 DATA=000000111
+# WRITE #330: X=59 Y=54 DATA=000000111
+# WRITE #331: X=60 Y=54 DATA=000000111
+# WRITE #332: X=61 Y=54 DATA=000000111
+# WRITE #333: X=62 Y=54 DATA=000000111
+# WRITE #334: X=63 Y=54 DATA=000000111
+# WRITE #335: X=64 Y=54 DATA=000000111
+# WRITE #336: X=65 Y=54 DATA=000000111
+# WRITE #337: X=50 Y=55 DATA=000000111
+# WRITE #338: X=51 Y=55 DATA=000000111
+# WRITE #339: X=52 Y=55 DATA=000000111
+# WRITE #340: X=53 Y=55 DATA=000000111
+# WRITE #341: X=54 Y=55 DATA=000000111
+# WRITE #342: X=55 Y=55 DATA=000000111
+# WRITE #343: X=56 Y=55 DATA=000000111
+# WRITE #344: X=57 Y=55 DATA=000000111
+# WRITE #345: X=58 Y=55 DATA=000000111
+# WRITE #346: X=59 Y=55 DATA=000000111
+# WRITE #347: X=60 Y=55 DATA=000000111
+# WRITE #348: X=61 Y=55 DATA=000000111
+# WRITE #349: X=62 Y=55 DATA=000000111
+# WRITE #350: X=63 Y=55 DATA=000000111
+# WRITE #351: X=64 Y=55 DATA=000000111
+# WRITE #352: X=65 Y=55 DATA=000000111
+# WRITE #353: X=50 Y=56 DATA=000000111
+# WRITE #354: X=51 Y=56 DATA=000000111
+# WRITE #355: X=52 Y=56 DATA=000000111
+# WRITE #356: X=53 Y=56 DATA=000000111
+# WRITE #357: X=54 Y=56 DATA=000000111
+# WRITE #358: X=55 Y=56 DATA=000000111
+# WRITE #359: X=56 Y=56 DATA=000000111
+# WRITE #360: X=57 Y=56 DATA=000000111
+# WRITE #361: X=58 Y=56 DATA=000000111
+# WRITE #362: X=59 Y=56 DATA=000000111
+# WRITE #363: X=60 Y=56 DATA=000000111
+# WRITE #364: X=61 Y=56 DATA=000000111
+# WRITE #365: X=62 Y=56 DATA=000000111
+# WRITE #366: X=63 Y=56 DATA=000000111
+# WRITE #367: X=64 Y=56 DATA=000000111
+# WRITE #368: X=65 Y=56 DATA=000000111
+# WRITE #369: X=50 Y=57 DATA=000000111
+# WRITE #370: X=51 Y=57 DATA=000000111
+# WRITE #371: X=52 Y=57 DATA=000000111
+# WRITE #372: X=53 Y=57 DATA=000000111
+# WRITE #373: X=54 Y=57 DATA=000000111
+# WRITE #374: X=55 Y=57 DATA=000000111
+# WRITE #375: X=56 Y=57 DATA=000000111
+# WRITE #376: X=57 Y=57 DATA=000000111
+# WRITE #377: X=58 Y=57 DATA=000000111
+# WRITE #378: X=59 Y=57 DATA=000000111
+# WRITE #379: X=60 Y=57 DATA=000000111
+# WRITE #380: X=61 Y=57 DATA=000000111
+# WRITE #381: X=62 Y=57 DATA=000000111
+# WRITE #382: X=63 Y=57 DATA=000000111
+# WRITE #383: X=64 Y=57 DATA=000000111
+# WRITE #384: X=65 Y=57 DATA=000000111
+# WRITE #385: X=50 Y=58 DATA=000000111
+# WRITE #386: X=51 Y=58 DATA=000000111
+# WRITE #387: X=52 Y=58 DATA=000000111
+# WRITE #388: X=53 Y=58 DATA=000000111
+# WRITE #389: X=54 Y=58 DATA=000000111
+# WRITE #390: X=55 Y=58 DATA=000000111
+# WRITE #391: X=56 Y=58 DATA=000000111
+# WRITE #392: X=57 Y=58 DATA=000000111
+# WRITE #393: X=58 Y=58 DATA=000000111
+# WRITE #394: X=59 Y=58 DATA=000000111
+# WRITE #395: X=60 Y=58 DATA=000000111
+# WRITE #396: X=61 Y=58 DATA=000000111
+# WRITE #397: X=62 Y=58 DATA=000000111
+# WRITE #398: X=63 Y=58 DATA=000000111
+# WRITE #399: X=64 Y=58 DATA=000000111
+# WRITE #400: X=65 Y=58 DATA=000000111
+# WRITE #401: X=50 Y=59 DATA=000000111
+# WRITE #402: X=51 Y=59 DATA=000000111
+# WRITE #403: X=52 Y=59 DATA=000000111
+# WRITE #404: X=53 Y=59 DATA=000000111
+# WRITE #405: X=54 Y=59 DATA=000000111
+# WRITE #406: X=55 Y=59 DATA=000000111
+# WRITE #407: X=56 Y=59 DATA=000000111
+# WRITE #408: X=57 Y=59 DATA=000000111
+# WRITE #409: X=58 Y=59 DATA=000000111
+# WRITE #410: X=59 Y=59 DATA=000000111
+# WRITE #411: X=60 Y=59 DATA=000000111
+# WRITE #412: X=61 Y=59 DATA=000000111
+# WRITE #413: X=62 Y=59 DATA=000000111
+# WRITE #414: X=63 Y=59 DATA=000000111
+# WRITE #415: X=64 Y=59 DATA=000000111
+# WRITE #416: X=65 Y=59 DATA=000000111
+# WRITE #417: X=50 Y=60 DATA=000000111
+# WRITE #418: X=51 Y=60 DATA=000000111
+# WRITE #419: X=52 Y=60 DATA=000000111
+# WRITE #420: X=53 Y=60 DATA=000000111
+# WRITE #421: X=54 Y=60 DATA=000000111
+# WRITE #422: X=55 Y=60 DATA=000000111
+# WRITE #423: X=56 Y=60 DATA=000000111
+# WRITE #424: X=57 Y=60 DATA=000000111
+# WRITE #425: X=58 Y=60 DATA=000000111
+# WRITE #426: X=59 Y=60 DATA=000000111
+# WRITE #427: X=60 Y=60 DATA=000000111
+# WRITE #428: X=61 Y=60 DATA=000000111
+# WRITE #429: X=62 Y=60 DATA=000000111
+# WRITE #430: X=63 Y=60 DATA=000000111
+# WRITE #431: X=64 Y=60 DATA=000000111
+# WRITE #432: X=65 Y=60 DATA=000000111
+# WRITE #433: X=50 Y=61 DATA=000000111
+# WRITE #434: X=51 Y=61 DATA=000000111
+# WRITE #435: X=52 Y=61 DATA=000000111
+# WRITE #436: X=53 Y=61 DATA=000000111
+# WRITE #437: X=54 Y=61 DATA=000000111
+# WRITE #438: X=55 Y=61 DATA=000000111
+# WRITE #439: X=56 Y=61 DATA=000000111
+# WRITE #440: X=57 Y=61 DATA=000000111
+# WRITE #441: X=58 Y=61 DATA=000000111
+# WRITE #442: X=59 Y=61 DATA=000000111
+# WRITE #443: X=60 Y=61 DATA=000000111
+# WRITE #444: X=61 Y=61 DATA=000000111
+# WRITE #445: X=62 Y=61 DATA=000000111
+# WRITE #446: X=63 Y=61 DATA=000000111
+# WRITE #447: X=64 Y=61 DATA=000000111
+# WRITE #448: X=65 Y=61 DATA=000000111
+# WRITE #449: X=50 Y=62 DATA=000000111
+# WRITE #450: X=51 Y=62 DATA=000000111
+# WRITE #451: X=52 Y=62 DATA=000000111
+# WRITE #452: X=53 Y=62 DATA=000000111
+# WRITE #453: X=54 Y=62 DATA=000000111
+# WRITE #454: X=55 Y=62 DATA=000000111
+# WRITE #455: X=56 Y=62 DATA=000000111
+# WRITE #456: X=57 Y=62 DATA=000000111
+# WRITE #457: X=58 Y=62 DATA=000000111
+# WRITE #458: X=59 Y=62 DATA=000000111
+# WRITE #459: X=60 Y=62 DATA=000000111
+# WRITE #460: X=61 Y=62 DATA=000000111
+# WRITE #461: X=62 Y=62 DATA=000000111
+# WRITE #462: X=63 Y=62 DATA=000000111
+# WRITE #463: X=64 Y=62 DATA=000000111
+# WRITE #464: X=65 Y=62 DATA=000000111
+# WRITE #465: X=50 Y=63 DATA=000000111
+# WRITE #466: X=51 Y=63 DATA=000000111
+# WRITE #467: X=52 Y=63 DATA=000000111
+# WRITE #468: X=53 Y=63 DATA=000000111
+# WRITE #469: X=54 Y=63 DATA=000000111
+# WRITE #470: X=55 Y=63 DATA=000000111
+# WRITE #471: X=56 Y=63 DATA=000000111
+# WRITE #472: X=57 Y=63 DATA=000000111
+# WRITE #473: X=58 Y=63 DATA=000000111
+# WRITE #474: X=59 Y=63 DATA=000000111
+# WRITE #475: X=60 Y=63 DATA=000000111
+# WRITE #476: X=61 Y=63 DATA=000000111
+# WRITE #477: X=62 Y=63 DATA=000000111
+# WRITE #478: X=63 Y=63 DATA=000000111
+# WRITE #479: X=64 Y=63 DATA=000000111
+# WRITE #480: X=65 Y=63 DATA=000000111
+# WRITE #481: X=50 Y=64 DATA=000000111
+# WRITE #482: X=51 Y=64 DATA=000000111
+# WRITE #483: X=52 Y=64 DATA=000000111
+# WRITE #484: X=53 Y=64 DATA=000000111
+# WRITE #485: X=54 Y=64 DATA=000000111
+# WRITE #486: X=55 Y=64 DATA=000000111
+# WRITE #487: X=56 Y=64 DATA=000000111
+# WRITE #488: X=57 Y=64 DATA=000000111
+# WRITE #489: X=58 Y=64 DATA=000000111
+# WRITE #490: X=59 Y=64 DATA=000000111
+# WRITE #491: X=60 Y=64 DATA=000000111
+# WRITE #492: X=61 Y=64 DATA=000000111
+# WRITE #493: X=62 Y=64 DATA=000000111
+# WRITE #494: X=63 Y=64 DATA=000000111
+# WRITE #495: X=64 Y=64 DATA=000000111
+# WRITE #496: X=65 Y=64 DATA=000000111
+# WRITE #497: X=50 Y=65 DATA=000000111
+# WRITE #498: X=51 Y=65 DATA=000000111
+# WRITE #499: X=52 Y=65 DATA=000000111
+# WRITE #500: X=53 Y=65 DATA=000000111
+# WRITE #501: X=54 Y=65 DATA=000000111
+# WRITE #502: X=55 Y=65 DATA=000000111
+# WRITE #503: X=56 Y=65 DATA=000000111
+# WRITE #504: X=57 Y=65 DATA=000000111
+# WRITE #505: X=58 Y=65 DATA=000000111
+# WRITE #506: X=59 Y=65 DATA=000000111
+# WRITE #507: X=60 Y=65 DATA=000000111
+# WRITE #508: X=61 Y=65 DATA=000000111
+# WRITE #509: X=62 Y=65 DATA=000000111
+# WRITE #510: X=63 Y=65 DATA=000000111
+# WRITE #511: X=64 Y=65 DATA=000000111
+# WRITE #512: X=65 Y=65 DATA=000000111
+# 
+# ====================================================
+# VERIFICACAO DAS ESCRITAS
+# ====================================================
+# Escritas totais   : 512
+# Sprite 0          : 256
+# Sprite 1          : 256
+# 
+# PASSOU: total de escritas = 512.
+# PASSOU: Sprite 0 escreveu 256 pixels.
+# PASSOU: Sprite 1 escreveu 256 pixels.
+# 
+# ====================================================
+# VERIFICANDO FRAMEBUFFER FINAL
+# ====================================================
+# 
+# PASSOU: todos os pixels possuem a cor
+# do sprite de maior prioridade.
+# 
+# ====================================================
+# >>> TESTE DE PRIORIDADE: PASSOU <<<
+# ====================================================
+# ** Note: $stop    : E:/FINAL/tb_motor_sprite_prioridade.v(434)
+#    Time: 66965 ns  Iteration: 0  Instance: /tb_motor_sprite_prioridade
+# Break in Module tb_motor_sprite_prioridade at E:/FINAL/tb_motor_sprite_prioridade.v line 434
+# End time: 20:57:52 on Sep 02,2026, Elapsed time: 0:00:28
+# Errors: 0, Warnings: 0

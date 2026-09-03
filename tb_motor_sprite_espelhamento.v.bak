@@ -1,0 +1,768 @@
+```verilog
+`timescale 1ns/1ps
+
+module tb_motor_sprite_espelhamento;
+
+    // ============================================================
+    // CLOCK / RESET
+    // ============================================================
+
+    reg clk;
+    reg reset;
+
+    always #10 clk = ~clk;
+
+
+    // ============================================================
+    // CONTROLE
+    // ============================================================
+
+    reg start;
+
+    wire busy;
+    wire done;
+
+
+    // ============================================================
+    // INTERFACE DA ATTRIBUTE RAM
+    // ============================================================
+
+    wire [4:0] attr_rd_addr;
+    reg  [31:0] attr_rd_data;
+
+
+    // ============================================================
+    // INTERFACE DA PATTERN RAM
+    // ============================================================
+
+    wire [13:0] pattern_rd_addr;
+    reg  [7:0] pattern_rd_data;
+
+
+    // ============================================================
+    // INTERFACE DA PALETTE RAM
+    // ============================================================
+
+    wire [8:0] palette_rd_addr;
+    reg  [8:0] palette_rd_data;
+
+
+    // ============================================================
+    // INTERFACE DO FRAMEBUFFER
+    // ============================================================
+
+    wire        fb_we;
+    wire [8:0]  fb_wr_x;
+    wire [7:0]  fb_wr_y;
+    wire [8:0]  fb_wr_data;
+
+
+    // ============================================================
+    // MEMÓRIAS COMPORTAMENTAIS
+    // ============================================================
+
+    reg [31:0] attr_mem [0:31];
+
+    reg [7:0] pattern_mem [0:16383];
+
+    reg [8:0] palette_mem [0:511];
+
+
+    // ============================================================
+    // LEITURA DAS MEMÓRIAS
+    // ============================================================
+
+    always @(*) begin
+        attr_rd_data = attr_mem[attr_rd_addr];
+    end
+
+    always @(*) begin
+        pattern_rd_data = pattern_mem[pattern_rd_addr];
+    end
+
+    always @(*) begin
+        palette_rd_data = palette_mem[palette_rd_addr];
+    end
+
+
+    // ============================================================
+    // DUT
+    // ============================================================
+
+    motor_sprite dut (
+
+        .clk(clk),
+        .reset(reset),
+
+        .attr_rd_addr(attr_rd_addr),
+        .attr_rd_data(attr_rd_data),
+
+        .pattern_rd_addr(pattern_rd_addr),
+        .pattern_rd_data(pattern_rd_data),
+
+        .palette_rd_addr(palette_rd_addr),
+        .palette_rd_data(palette_rd_data),
+
+        .fb_we(fb_we),
+        .fb_wr_x(fb_wr_x),
+        .fb_wr_y(fb_wr_y),
+        .fb_wr_data(fb_wr_data),
+
+        .start(start),
+
+        .busy(busy),
+        .done(done)
+    );
+
+
+    // ============================================================
+    // CONTROLE DO TESTE
+    // ============================================================
+
+    integer errors;
+    integer writes;
+    integer i;
+
+    reg [8:0] expected_x;
+    reg [7:0] expected_y;
+
+    reg [8:0] current_expected_x;
+    reg [7:0] current_expected_y;
+
+
+    // ============================================================
+    // MONITOR DAS ESCRITAS
+    // ============================================================
+
+    always @(posedge clk) begin
+
+        if (fb_we) begin
+
+            writes = writes + 1;
+
+            // ----------------------------------------------------
+            // Somente pixels opacos devem gerar escrita.
+            // A cor utilizada no teste é 9'b111111111.
+            // ----------------------------------------------------
+
+            if (fb_wr_data !== 9'b111111111) begin
+
+                $display(
+                    "ERRO: cor inesperada em (%0d,%0d): %h",
+                    fb_wr_x,
+                    fb_wr_y,
+                    fb_wr_data
+                );
+
+                errors = errors + 1;
+
+            end
+
+
+            // ----------------------------------------------------
+            // Verificação das coordenadas.
+            //
+            // current_expected_x/y são definidos pelo cenário
+            // que está sendo executado.
+            // ----------------------------------------------------
+
+            if (fb_wr_x !== current_expected_x ||
+                fb_wr_y !== current_expected_y) begin
+
+                $display(
+                    "ERRO: coordenada inesperada: recebeu (%0d,%0d), esperado (%0d,%0d)",
+                    fb_wr_x,
+                    fb_wr_y,
+                    current_expected_x,
+                    current_expected_y
+                );
+
+                errors = errors + 1;
+
+            end
+
+        end
+
+    end
+
+
+    // ============================================================
+    // PROCEDIMENTO PARA LIMPAR AS MEMÓRIAS
+    // ============================================================
+
+    task clear_memories;
+
+        integer k;
+
+        begin
+
+            for (k = 0; k < 32; k = k + 1)
+                attr_mem[k] = 32'd0;
+
+            for (k = 0; k < 16384; k = k + 1)
+                pattern_mem[k] = 8'd0;
+
+            for (k = 0; k < 512; k = k + 1)
+                palette_mem[k] = 9'd0;
+
+        end
+
+    endtask
+
+
+    // ============================================================
+    // CONFIGURA PADRÃO 16x16
+    //
+    // O padrão utilizado é:
+    //
+    // X...............
+    // X...............
+    // X...............
+    // X...............
+    // X...............
+    // X...............
+    // X...............
+    // X...............
+    // ................
+    // ................
+    // ................
+    // ................
+    // ................
+    // ................
+    // ................
+    // XXXXXXXXXXXXXXXX
+    //
+    // Pixel opaco = índice 1
+    // Pixel transparente = índice 0
+    //
+    // pattern = 0
+    //
+    // Os quatro tiles são:
+    //
+    // tile 0 = região superior esquerda
+    // tile 1 = região superior direita
+    // tile 2 = região inferior esquerda
+    // tile 3 = região inferior direita
+    //
+    // tile_id = {pattern, quadrant}
+    //
+    // quadrant:
+    //
+    // 00 -> tile 0
+    // 01 -> tile 1
+    // 10 -> tile 2
+    // 11 -> tile 3
+    // ============================================================
+
+    task configure_pattern;
+
+        integer x;
+        integer y;
+        integer tile_id;
+        integer sx;
+        integer sy;
+        integer value;
+
+        begin
+
+            for (y = 0; y < 16; y = y + 1) begin
+
+                for (x = 0; x < 16; x = x + 1) begin
+
+                    // Barra vertical esquerda
+                    // OU barra horizontal inferior
+
+                    if ((x == 0) || (y == 15))
+                        value = 1;
+                    else
+                        value = 0;
+
+
+                    // Identifica o tile 8x8
+                    tile_id = 0;
+
+                    if (y >= 8)
+                        tile_id = tile_id + 2;
+
+                    if (x >= 8)
+                        tile_id = tile_id + 1;
+
+
+                    // Coordenadas dentro do tile
+                    sx = x % 8;
+                    sy = y % 8;
+
+
+                    pattern_mem[
+                        (tile_id << 6) +
+                        (sy << 3) +
+                        sx
+                    ] = value;
+
+                end
+
+            end
+
+        end
+
+    endtask
+
+
+    // ============================================================
+    // CONFIGURA SPRITE
+    //
+    // flip_h / flip_v controlam o cenário.
+    // ============================================================
+
+    task configure_sprite;
+
+        input flip_h;
+        input flip_v;
+
+        begin
+
+            attr_mem[0] = {
+                1'b1,       // enable
+                5'd0,       // priority
+                flip_v,     // flip_v
+                flip_h,     // flip_h
+                1'b0,       // palette_sel
+                6'd0,       // pattern
+                8'd50,      // pos_y
+                9'd50       // pos_x
+            };
+
+        end
+
+    endtask
+
+
+    // ============================================================
+    // EXECUTA UMA SPRITE
+    // ============================================================
+
+    task run_sprite;
+
+        begin
+
+            writes = 0;
+
+            @(posedge clk);
+
+            start <= 1'b1;
+
+            @(posedge clk);
+
+            start <= 1'b0;
+
+            wait(done == 1'b1);
+
+            @(posedge clk);
+
+        end
+
+    endtask
+
+
+    // ============================================================
+    // TESTE 1
+    //
+    // SEM ESPELHAMENTO
+    //
+    // Esperamos:
+    //
+    // barra vertical:
+    // x = 50
+    // y = 50 até 57
+    //
+    // barra horizontal:
+    // y = 65
+    // x = 50 até 65
+    // ============================================================
+
+    task test_baseline;
+
+        begin
+
+            $display("");
+            $display("====================================================");
+            $display("CENARIO 1: SPRITE ORIGINAL");
+            $display("====================================================");
+
+            clear_memories();
+
+            configure_pattern();
+
+            configure_sprite(
+                1'b0,       // flip_h
+                1'b0        // flip_v
+            );
+
+
+            current_expected_x = 9'd50;
+            current_expected_y = 8'd50;
+
+            run_sprite();
+
+
+            // ----------------------------------------------------
+            // Esperamos 8 pixels da barra vertical
+            // ----------------------------------------------------
+
+            if (writes != 24) begin
+
+                $display(
+                    "ERRO: quantidade de pixels original = %0d, esperado = 24",
+                    writes
+                );
+
+                errors = errors + 1;
+
+            end
+
+            else begin
+
+                $display(
+                    "PASSOU: sprite original gerou %0d pixels opacos",
+                    writes
+                );
+
+            end
+
+        end
+
+    endtask
+
+
+    // ============================================================
+    // TESTE 2
+    //
+    // FLIP HORIZONTAL
+    //
+    // A barra vertical esquerda deve ir para a direita.
+    //
+    // Antes:
+    // x = 50
+    //
+    // Depois:
+    // x = 65
+    //
+    // A barra horizontal inferior continua horizontal.
+    // ============================================================
+
+    task test_flip_h;
+
+        begin
+
+            $display("");
+            $display("====================================================");
+            $display("CENARIO 2: FLIP HORIZONTAL");
+            $display("====================================================");
+
+            clear_memories();
+
+            configure_pattern();
+
+            configure_sprite(
+                1'b1,       // flip_h
+                1'b0        // flip_v
+            );
+
+
+            // ----------------------------------------------------
+            // Para flip_h:
+            //
+            // slx = 15 - lx
+            //
+            // O pixel original x=0 aparece em lx=15.
+            //
+            // Portanto:
+            //
+            // dest_x = 50 + 15 = 65
+            // ----------------------------------------------------
+
+            current_expected_x = 9'd65;
+            current_expected_y = 8'd50;
+
+            run_sprite();
+
+
+            if (writes != 24) begin
+
+                $display(
+                    "ERRO: flip_h gerou %0d pixels, esperado = 24",
+                    writes
+                );
+
+                errors = errors + 1;
+
+            end
+
+            else begin
+
+                $display(
+                    "PASSOU: flip_h manteve os %0d pixels opacos",
+                    writes
+                );
+
+            end
+
+        end
+
+    endtask
+
+
+    // ============================================================
+    // TESTE 3
+    //
+    // FLIP VERTICAL
+    //
+    // A barra horizontal inferior deve ir para cima.
+    //
+    // Antes:
+    //
+    // y = 65
+    //
+    // Depois:
+    //
+    // y = 50
+    //
+    // A barra vertical esquerda passa a ocupar
+    // y = 57 até 50.
+    // ============================================================
+
+    task test_flip_v;
+
+        begin
+
+            $display("");
+            $display("====================================================");
+            $display("CENARIO 3: FLIP VERTICAL");
+            $display("====================================================");
+
+            clear_memories();
+
+            configure_pattern();
+
+            configure_sprite(
+                1'b0,       // flip_h
+                1'b1        // flip_v
+            );
+
+
+            // ----------------------------------------------------
+            // Para flip_v:
+            //
+            // sly = 15 - ly
+            //
+            // O pixel original y=15 aparece em ly=0.
+            //
+            // Portanto:
+            //
+            // dest_y = 50
+            // ----------------------------------------------------
+
+            current_expected_x = 9'd50;
+            current_expected_y = 8'd50;
+
+            run_sprite();
+
+
+            if (writes != 24) begin
+
+                $display(
+                    "ERRO: flip_v gerou %0d pixels, esperado = 24",
+                    writes
+                );
+
+                errors = errors + 1;
+
+            end
+
+            else begin
+
+                $display(
+                    "PASSOU: flip_v manteve os %0d pixels opacos",
+                    writes
+                );
+
+            end
+
+        end
+
+    endtask
+
+
+    // ============================================================
+    // TESTE 4
+    //
+    // FLIP HORIZONTAL + VERTICAL
+    //
+    // As duas transformações são aplicadas simultaneamente.
+    // ============================================================
+
+    task test_flip_hv;
+
+        begin
+
+            $display("");
+            $display("====================================================");
+            $display("CENARIO 4: FLIP HORIZONTAL + VERTICAL");
+            $display("====================================================");
+
+            clear_memories();
+
+            configure_pattern();
+
+            configure_sprite(
+                1'b1,       // flip_h
+                1'b1        // flip_v
+            );
+
+
+            // ----------------------------------------------------
+            // O pixel original (0,15):
+            //
+            // flip_h -> x = 15
+            // flip_v -> y = 0
+            //
+            // destino:
+            //
+            // (50+15, 50+0)
+            // = (65,50)
+            // ----------------------------------------------------
+
+            current_expected_x = 9'd65;
+            current_expected_y = 8'd50;
+
+            run_sprite();
+
+
+            if (writes != 24) begin
+
+                $display(
+                    "ERRO: flip_hv gerou %0d pixels, esperado = 24",
+                    writes
+                );
+
+                errors = errors + 1;
+
+            end
+
+            else begin
+
+                $display(
+                    "PASSOU: flip_hv manteve os %0d pixels opacos",
+                    writes
+                );
+
+            end
+
+        end
+
+    endtask
+
+
+    // ============================================================
+    // TESTE PRINCIPAL
+    // ============================================================
+
+    initial begin
+
+        clk   = 1'b0;
+        reset = 1'b1;
+        start = 1'b0;
+
+        errors = 0;
+        writes = 0;
+
+        current_expected_x = 9'd0;
+        current_expected_y = 8'd0;
+
+
+        // --------------------------------------------------------
+        // Reset
+        // --------------------------------------------------------
+
+        repeat (5)
+            @(posedge clk);
+
+        reset = 1'b0;
+
+        @(posedge clk);
+
+
+        // --------------------------------------------------------
+        // TESTES
+        // --------------------------------------------------------
+
+        test_baseline;
+
+        test_flip_h;
+
+        test_flip_v;
+
+        test_flip_hv;
+
+
+        // --------------------------------------------------------
+        // RESULTADO
+        // --------------------------------------------------------
+
+        $display("");
+        $display("====================================================");
+        $display("RESULTADO FINAL - ESPELHAMENTO");
+        $display("====================================================");
+
+        $display(
+            "Falhas detectadas: %0d",
+            errors
+        );
+
+        $display(
+            "===================================================="
+        );
+
+
+        if (errors == 0) begin
+
+            $display("");
+            $display(">>> TESTE DE ESPELHAMENTO: PASSOU <<<");
+            $display("");
+
+        end
+
+        else begin
+
+            $display("");
+            $display(">>> TESTE DE ESPELHAMENTO: FALHOU <<<");
+            $display("");
+
+        end
+
+
+        $stop;
+
+    end
+
+
+    // ============================================================
+    // TIMEOUT
+    // ============================================================
+
+    initial begin
+
+        #500000;
+
+        $display("");
+        $display("====================================================");
+        $display("TIMEOUT");
+        $display("O motor_sprite nao terminou a simulacao.");
+        $display("====================================================");
+
+        $stop;
+
+    end
+
+endmodule
+```

@@ -1,0 +1,103 @@
+
+State Machine - |DE1_SOC_golden_top|test_driver:test_driver_inst|state
+Name state.T_WAIT_FRAME state.T_SIGNAL_DONE state.T_WAIT_TRIANGLE state.T_DRAW_TRIANGLE state.T_WAIT_SQUARE state.T_DRAW_SQUARE state.T_CHECK_EN state.T_WAIT_POLY state.T_IDLE 
+state.T_IDLE 0 0 0 0 0 0 0 0 0 
+state.T_WAIT_POLY 0 0 0 0 0 0 0 1 1 
+state.T_CHECK_EN 0 0 0 0 0 0 1 0 1 
+state.T_DRAW_SQUARE 0 0 0 0 0 1 0 0 1 
+state.T_WAIT_SQUARE 0 0 0 0 1 0 0 0 1 
+state.T_DRAW_TRIANGLE 0 0 0 1 0 0 0 0 1 
+state.T_WAIT_TRIANGLE 0 0 1 0 0 0 0 0 1 
+state.T_SIGNAL_DONE 0 1 0 0 0 0 0 0 1 
+state.T_WAIT_FRAME 1 0 0 0 0 0 0 0 1 
+
+State Machine - |DE1_SOC_golden_top|top_video:video_system|compositor:compositor_inst|state
+Name state.S_SPR state.S_POLY state.S_BG state.S_IDLE state.S_DONE 
+state.S_IDLE 0 0 0 0 0 
+state.S_BG 0 0 1 1 0 
+state.S_POLY 0 1 0 1 0 
+state.S_SPR 1 0 0 1 0 
+state.S_DONE 0 0 0 1 1 
+
+State Machine - |DE1_SOC_golden_top|top_video:video_system|rasterizador_top:rasterizer_top_inst|rasterizador_triangulo:u_triangle|state
+Name state.S_DONE state.S_BOT_FILL state.S_BOT_ROW state.S_BOT_INIT state.S_DIV_BOT state.S_TOP_FILL state.S_TOP_ROW state.S_TOP_INIT state.S_DIV_TOP state.S_DIV_LONG state.S_SETUP state.S_PALETTE_WAIT state.S_IDLE 
+state.S_IDLE 0 0 0 0 0 0 0 0 0 0 0 0 0 
+state.S_PALETTE_WAIT 0 0 0 0 0 0 0 0 0 0 0 1 1 
+state.S_SETUP 0 0 0 0 0 0 0 0 0 0 1 0 1 
+state.S_DIV_LONG 0 0 0 0 0 0 0 0 0 1 0 0 1 
+state.S_DIV_TOP 0 0 0 0 0 0 0 0 1 0 0 0 1 
+state.S_TOP_INIT 0 0 0 0 0 0 0 1 0 0 0 0 1 
+state.S_TOP_ROW 0 0 0 0 0 0 1 0 0 0 0 0 1 
+state.S_TOP_FILL 0 0 0 0 0 1 0 0 0 0 0 0 1 
+state.S_DIV_BOT 0 0 0 0 1 0 0 0 0 0 0 0 1 
+state.S_BOT_INIT 0 0 0 1 0 0 0 0 0 0 0 0 1 
+state.S_BOT_ROW 0 0 1 0 0 0 0 0 0 0 0 0 1 
+state.S_BOT_FILL 0 1 0 0 0 0 0 0 0 0 0 0 1 
+state.S_DONE 1 0 0 0 0 0 0 0 0 0 0 0 1 
+
+State Machine - |DE1_SOC_golden_top|top_video:video_system|rasterizador_top:rasterizer_top_inst|rasterizador_quadrado:u_square|state
+Name state.S_FILL state.S_SETUP state.S_PALETTE_WAIT state.S_IDLE state.S_DONE 
+state.S_IDLE 0 0 0 0 0 
+state.S_PALETTE_WAIT 0 0 1 1 0 
+state.S_SETUP 0 1 0 1 0 
+state.S_FILL 1 0 0 1 0 
+state.S_DONE 0 0 0 1 1 
+
+State Machine - |DE1_SOC_golden_top|top_video:video_system|motor_sprite:motor_sprite_inst|state
+Name state.S_DONE state.S_NEXT_LVL state.S_NEXT_SPR state.S_NEXT_PX state.S_WRITE_PX state.S_PALETTE_RD state.S_PATTERN_RD state.S_CHECK_SPR state.S_ATTR_WAIT state.S_ATTR_RD state.S_IDLE 
+state.S_IDLE 0 0 0 0 0 0 0 0 0 0 0 
+state.S_ATTR_RD 0 0 0 0 0 0 0 0 0 1 1 
+state.S_ATTR_WAIT 0 0 0 0 0 0 0 0 1 0 1 
+state.S_CHECK_SPR 0 0 0 0 0 0 0 1 0 0 1 
+state.S_PATTERN_RD 0 0 0 0 0 0 1 0 0 0 1 
+state.S_PALETTE_RD 0 0 0 0 0 1 0 0 0 0 1 
+state.S_WRITE_PX 0 0 0 0 1 0 0 0 0 0 1 
+state.S_NEXT_PX 0 0 0 1 0 0 0 0 0 0 1 
+state.S_NEXT_SPR 0 0 1 0 0 0 0 0 0 0 1 
+state.S_NEXT_LVL 0 1 0 0 0 0 0 0 0 0 1 
+state.S_DONE 1 0 0 0 0 0 0 0 0 0 1 
+
+State Machine - |DE1_SOC_golden_top|top_video:video_system|motor_background:motor_background_inst|state
+Name state.S_PALETTE_WAIT2 state.S_PREFETCH_WAIT2 state.S_PATTERN_WAIT2 state.S_DONE state.S_WRITE state.S_PALETTE_WAIT state.S_PALETTE_SET state.S_PATTERN_WAIT state.S_PATTERN_SET state.S_PREFETCH_STORE state.S_PREFETCH_WAIT state.S_PREFETCH_SET state.S_ROW_CHECK state.S_IDLE 
+state.S_IDLE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+state.S_ROW_CHECK 0 0 0 0 0 0 0 0 0 0 0 0 1 1 
+state.S_PREFETCH_SET 0 0 0 0 0 0 0 0 0 0 0 1 0 1 
+state.S_PREFETCH_WAIT 0 0 0 0 0 0 0 0 0 0 1 0 0 1 
+state.S_PREFETCH_STORE 0 0 0 0 0 0 0 0 0 1 0 0 0 1 
+state.S_PATTERN_SET 0 0 0 0 0 0 0 0 1 0 0 0 0 1 
+state.S_PATTERN_WAIT 0 0 0 0 0 0 0 1 0 0 0 0 0 1 
+state.S_PALETTE_SET 0 0 0 0 0 0 1 0 0 0 0 0 0 1 
+state.S_PALETTE_WAIT 0 0 0 0 0 1 0 0 0 0 0 0 0 1 
+state.S_WRITE 0 0 0 0 1 0 0 0 0 0 0 0 0 1 
+state.S_DONE 0 0 0 1 0 0 0 0 0 0 0 0 0 1 
+state.S_PATTERN_WAIT2 0 0 1 0 0 0 0 0 0 0 0 0 0 1 
+state.S_PREFETCH_WAIT2 0 1 0 0 0 0 0 0 0 0 0 0 0 1 
+state.S_PALETTE_WAIT2 1 0 0 0 0 0 0 0 0 0 0 0 0 1 
+
+State Machine - |DE1_SOC_golden_top|top_video:video_system|vga_driver:vga_driver_inst|v_state_d1
+Name v_state_d1.V_BACK_STATE v_state_d1.V_PULSE_STATE v_state_d1.V_FRONT_STATE v_state_d1.V_ACTIVE_STATE 
+v_state_d1.V_ACTIVE_STATE 0 0 0 0 
+v_state_d1.V_FRONT_STATE 0 0 1 1 
+v_state_d1.V_PULSE_STATE 0 1 0 1 
+v_state_d1.V_BACK_STATE 1 0 0 1 
+
+State Machine - |DE1_SOC_golden_top|top_video:video_system|vga_driver:vga_driver_inst|h_state_d1
+Name h_state_d1.H_BACK_STATE h_state_d1.H_PULSE_STATE h_state_d1.H_FRONT_STATE h_state_d1.H_ACTIVE_STATE 
+h_state_d1.H_ACTIVE_STATE 0 0 0 0 
+h_state_d1.H_FRONT_STATE 0 0 1 1 
+h_state_d1.H_PULSE_STATE 0 1 0 1 
+h_state_d1.H_BACK_STATE 1 0 0 1 
+
+State Machine - |DE1_SOC_golden_top|top_video:video_system|vga_driver:vga_driver_inst|v_state
+Name v_state.V_BACK_STATE v_state.V_PULSE_STATE v_state.V_FRONT_STATE v_state.V_ACTIVE_STATE 
+v_state.V_ACTIVE_STATE 0 0 0 0 
+v_state.V_FRONT_STATE 0 0 1 1 
+v_state.V_PULSE_STATE 0 1 0 1 
+v_state.V_BACK_STATE 1 0 0 1 
+
+State Machine - |DE1_SOC_golden_top|top_video:video_system|vga_driver:vga_driver_inst|h_state
+Name h_state.H_BACK_STATE h_state.H_PULSE_STATE h_state.H_FRONT_STATE h_state.H_ACTIVE_STATE 
+h_state.H_ACTIVE_STATE 0 0 0 0 
+h_state.H_FRONT_STATE 0 0 1 1 
+h_state.H_PULSE_STATE 0 1 0 1 
+h_state.H_BACK_STATE 1 0 0 1 

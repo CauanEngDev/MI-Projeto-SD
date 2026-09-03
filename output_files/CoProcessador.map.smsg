@@ -1,0 +1,3 @@
+Warning (10268): Verilog HDL information at tb_motor_sprite_espelhamento.v(141): always construct contains both blocking and non-blocking assignments File: E:/FINAL/tb_motor_sprite_espelhamento.v Line: 141
+Warning (10268): Verilog HDL information at tb_compositor_sobreposicao.v(420): always construct contains both blocking and non-blocking assignments File: E:/FINAL/tb_compositor_sobreposicao.v Line: 420
+Warning (10268): Verilog HDL information at tb_motor_sprite_prioridade.v(118): always construct contains both blocking and non-blocking assignments File: E:/FINAL/tb_motor_sprite_prioridade.v Line: 118

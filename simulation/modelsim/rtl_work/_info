@@ -1,0 +1,584 @@
+m255
+K4
+z2
+!s11f vlog 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dE:/FINAL/simulation/modelsim
+vbg_tile_pattern_ram
+!s110 1788393367
+!i10b 1
+!s100 0:V1m=k]IkQEjC8MPCDe90
+Z1 !s11b Dg1SIo80bB@j0V0VzS_@n1
+I_lP`YBl?Ujanc`jJ2_?jd1
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+R0
+Z3 w1788350652
+8E:/FINAL/memory_files/bg_tile_pattern_ram.v
+FE:/FINAL/memory_files/bg_tile_pattern_ram.v
+!i122 18
+Z4 L0 40 75
+Z5 OV;L;2020.1;71
+r1
+!s85 0
+31
+!s108 1788393366.000000
+!s107 E:/FINAL/memory_files/bg_tile_pattern_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL/memory_files|E:/FINAL/memory_files/bg_tile_pattern_ram.v|
+!i113 1
+Z6 o-vlog01compat -work work
+Z7 !s92 -vlog01compat -work work +incdir+E:/FINAL/memory_files
+Z8 tCvgOpt 0
+vbg_tile_ram
+!s110 1788393312
+!i10b 1
+!s100 =X7ooIcYKWj9`R8N[9WKi2
+R1
+IF>5B8U=_L7k<Kj6IA;fh`1
+R2
+R0
+R3
+8E:/FINAL/memory_files/bg_tile_ram.v
+FE:/FINAL/memory_files/bg_tile_ram.v
+!i122 2
+R4
+R5
+r1
+!s85 0
+31
+Z9 !s108 1788393311.000000
+!s107 E:/FINAL/memory_files/bg_tile_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL/memory_files|E:/FINAL/memory_files/bg_tile_ram.v|
+!i113 1
+R6
+R7
+R8
+vcompositor
+!s110 1788393362
+!i10b 1
+!s100 `JQl]?l8iPbb?7nOUgcOj2
+R1
+IEieaX8bmOF71iTkk1@iZF2
+R2
+R0
+R3
+8E:/FINAL/compositor.v
+FE:/FINAL/compositor.v
+!i122 17
+L0 1 84
+R5
+r1
+!s85 0
+31
+!s108 1788393362.000000
+!s107 E:/FINAL/compositor.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/compositor.v|
+!i113 1
+R6
+Z10 !s92 -vlog01compat -work work +incdir+E:/FINAL
+R8
+vDE1_SOC_golden_top
+!s110 1788393319
+!i10b 1
+!s100 5LjzZn40hS^Z7VVS5Vd3R0
+R1
+I8Nh3eDG[CnifLPg]DkO`z1
+R2
+R0
+w1788390912
+8E:/FINAL/DE1_SOC_golden_top.v
+FE:/FINAL/DE1_SOC_golden_top.v
+!i122 3
+L0 54 366
+R5
+r1
+!s85 0
+31
+!s108 1788393318.000000
+!s107 E:/FINAL/DE1_SOC_golden_top.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/DE1_SOC_golden_top.v|
+!i113 1
+R6
+R10
+R8
+n@d@e1_@s@o@c_golden_top
+vdivisor_unsigned
+!s110 1788393351
+!i10b 1
+!s100 >b<hhi<cdP8`YT3=JMGH>1
+R1
+I>;82g1j:I6C?:<Mj`h`z01
+R2
+R0
+R3
+8E:/FINAL/divisor_unsigned.v
+FE:/FINAL/divisor_unsigned.v
+!i122 13
+L0 1 47
+R5
+r1
+!s85 0
+31
+!s108 1788393349.000000
+!s107 E:/FINAL/divisor_unsigned.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/divisor_unsigned.v|
+!i113 1
+R6
+R10
+R8
+vfb_addr_gen
+!s110 1788393337
+!i10b 1
+!s100 DZGDV8WlED=cg5>G3;RiC3
+R1
+I3Si0Q2SZR6<UeflU7=hV[2
+R2
+R0
+R3
+8E:/FINAL/fb_addr_gen.v
+FE:/FINAL/fb_addr_gen.v
+!i122 8
+L0 1 10
+R5
+r1
+!s85 0
+31
+!s108 1788393337.000000
+!s107 E:/FINAL/fb_addr_gen.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/fb_addr_gen.v|
+!i113 1
+R6
+R10
+R8
+vframebuffer
+!s110 1788393338
+!i10b 1
+!s100 mgOl0TeR>BlS0edWO[SNa2
+R1
+IAeXOIBd>H7NI7iT2=9gbG0
+R2
+R0
+R3
+8E:/FINAL/framebuffer.v
+FE:/FINAL/framebuffer.v
+!i122 9
+L0 1 64
+R5
+r1
+!s85 0
+31
+!s108 1788393338.000000
+!s107 E:/FINAL/framebuffer.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/framebuffer.v|
+!i113 1
+R6
+R10
+R8
+vframebuffer_ram
+!s110 1788393311
+!i10b 1
+!s100 k5UAnZkd4DHl:lBHmE8mj0
+R1
+I_aIKGQekDz_PFS[=5=IA80
+R2
+R0
+R3
+8E:/FINAL/memory_files/framebuffer_ram.v
+FE:/FINAL/memory_files/framebuffer_ram.v
+!i122 1
+R4
+R5
+r1
+!s85 0
+31
+R9
+!s107 E:/FINAL/memory_files/framebuffer_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL/memory_files|E:/FINAL/memory_files/framebuffer_ram.v|
+!i113 1
+R6
+R7
+R8
+vmotor_background
+!s110 1788393327
+!i10b 1
+!s100 MckjoVfI[nCEK1>idF?oP1
+R1
+IzQ`eKNIUY48SBe8j4<;8S1
+R2
+R0
+w1788367806
+8E:/FINAL/motor_background.v
+FE:/FINAL/motor_background.v
+!i122 6
+L0 4 239
+R5
+r1
+!s85 0
+31
+!s108 1788393325.000000
+!s107 E:/FINAL/motor_background.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/motor_background.v|
+!i113 1
+R6
+R10
+R8
+vmotor_sprite
+!s110 1788393333
+!i10b 1
+!s100 [kYM?<97ob?ki`n8n8`Nc1
+R1
+IC;SRSK<j0lRnRkPX7AeS21
+R2
+R0
+w1788368494
+8E:/FINAL/motor_sprite.v
+FE:/FINAL/motor_sprite.v
+!i122 7
+Z11 L0 1 177
+R5
+r1
+!s85 0
+31
+!s108 1788393331.000000
+!s107 E:/FINAL/motor_sprite.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/motor_sprite.v|
+!i113 1
+R6
+R10
+R8
+vpalette_ram
+!s110 1788393356
+!i10b 1
+!s100 =M5^m1W^0Zal][eSU9;gK1
+R1
+IgO[cfQ9SHA083e>baEM6j2
+R2
+R0
+R3
+8E:/FINAL/memory_files/palette_ram.v
+FE:/FINAL/memory_files/palette_ram.v
+!i122 16
+R4
+R5
+r1
+!s85 0
+31
+Z12 !s108 1788393355.000000
+!s107 E:/FINAL/memory_files/palette_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL/memory_files|E:/FINAL/memory_files/palette_ram.v|
+!i113 1
+R6
+R7
+R8
+vpll01
+!s110 1788393310
+!i10b 1
+!s100 7fjPAe>5WCg1e7hC90T=l3
+R1
+ILNH^k0A85M]WNjknMWVe_2
+R2
+R0
+R3
+8E:/FINAL/pll01_sim/pll01.vo
+FE:/FINAL/pll01_sim/pll01.vo
+!i122 0
+L0 32 264
+R5
+r1
+!s85 0
+31
+!s108 1788393307.000000
+!s107 E:/FINAL/pll01_sim/pll01.vo|
+!s90 -reportprogress|300|E:/FINAL/pll01_sim/pll01.vo|
+!i113 1
+R8
+vrasterizador_quadrado
+!s110 1788393340
+!i10b 1
+!s100 >19eXMX:eGm860=m]XW]V2
+R1
+I;=VZA=J9_1oK]>nH0eVdP0
+R2
+R0
+R3
+8E:/FINAL/rasterizador_quadrado.v
+FE:/FINAL/rasterizador_quadrado.v
+!i122 10
+L0 1 85
+R5
+r1
+!s85 0
+31
+!s108 1788393339.000000
+!s107 E:/FINAL/rasterizador_quadrado.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/rasterizador_quadrado.v|
+!i113 1
+R6
+R10
+R8
+vrasterizador_top
+!s110 1788393346
+!i10b 1
+!s100 LZJ;dX<]QOQ3j:mRB49QX3
+R1
+I>5N_L6O`d1`zSZ=2ec[7:0
+R2
+R0
+R3
+8E:/FINAL/rasterizador_top.v
+FE:/FINAL/rasterizador_top.v
+!i122 12
+L0 1 79
+R5
+r1
+!s85 0
+31
+!s108 1788393346.000000
+!s107 E:/FINAL/rasterizador_top.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/rasterizador_top.v|
+!i113 1
+R6
+R10
+R8
+vrasterizador_triangulo
+!s110 1788393342
+!i10b 1
+!s100 >Nfoo>eRXRZlP]F;K0K:H0
+R1
+IBjT^h[m<7Bm?USAVA^jFW2
+R2
+R0
+R3
+8E:/FINAL/rasterizador_triangulo.v
+FE:/FINAL/rasterizador_triangulo.v
+!i122 11
+L0 1 239
+R5
+r1
+!s85 0
+31
+!s108 1788393342.000000
+!s107 E:/FINAL/rasterizador_triangulo.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/rasterizador_triangulo.v|
+!i113 1
+R6
+R10
+R8
+vsprite_attribute_ram
+!s110 1788393354
+!i10b 1
+!s100 9;FFEEoH^eUaKMD9A__`I0
+R1
+IeKFRD;zVPg7jF53^M]<]K3
+R2
+R0
+w1788370366
+8E:/FINAL/memory_files/sprite_attribute_ram.v
+FE:/FINAL/memory_files/sprite_attribute_ram.v
+!i122 14
+R4
+R5
+r1
+!s85 0
+31
+!s108 1788393354.000000
+!s107 E:/FINAL/memory_files/sprite_attribute_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL/memory_files|E:/FINAL/memory_files/sprite_attribute_ram.v|
+!i113 1
+R6
+R7
+R8
+vsprite_mover_flip
+!s110 1788393371
+!i10b 1
+!s100 __1KJFC[6P]zb3KMz<OU=3
+R1
+IO9_GWgUnf>fh3oM773Vkg1
+R2
+R0
+R3
+8E:/FINAL/sprite_mover_flip.v
+FE:/FINAL/sprite_mover_flip.v
+!i122 20
+L0 1 55
+R5
+r1
+!s85 0
+31
+!s108 1788393370.000000
+!s107 E:/FINAL/sprite_mover_flip.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/sprite_mover_flip.v|
+!i113 1
+R6
+R10
+R8
+vsprite_pattern_ram
+!s110 1788393355
+!i10b 1
+!s100 V1TbG`9J5jcY[B8`o^_5Z1
+R1
+IXGF^mCDkNiK9KP@E;3<4N3
+R2
+R0
+w1788370356
+8E:/FINAL/memory_files/sprite_pattern_ram.v
+FE:/FINAL/memory_files/sprite_pattern_ram.v
+!i122 15
+R4
+R5
+r1
+!s85 0
+31
+R12
+!s107 E:/FINAL/memory_files/sprite_pattern_ram.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL/memory_files|E:/FINAL/memory_files/sprite_pattern_ram.v|
+!i113 1
+R6
+R7
+R8
+vsprite_spawner
+!s110 1788393372
+!i10b 1
+!s100 I>LGBQ:Gg6I3?FbgS?[7a0
+R1
+IDOMMGYV::ZN3CnR9Ke[WW1
+R2
+R0
+R3
+8E:/FINAL/sprite_spawner.v
+FE:/FINAL/sprite_spawner.v
+!i122 21
+L0 1 31
+R5
+r1
+!s85 0
+31
+!s108 1788393371.000000
+!s107 E:/FINAL/sprite_spawner.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/sprite_spawner.v|
+!i113 1
+R6
+R10
+R8
+vtb_framebuffer_troca_buffers
+!s110 1788393402
+!i10b 1
+!s100 :<H18DNf[M=:i1XY?QVWU1
+R1
+IOkde[bifWVU_2>5_ijnPi3
+R2
+R0
+w1788392462
+8E:/FINAL/tb_framebuffer_troca_buffers.v
+FE:/FINAL/tb_framebuffer_troca_buffers.v
+!i122 23
+L0 3 455
+R5
+r1
+!s85 0
+31
+!s108 1788393400.000000
+!s107 E:/FINAL/tb_framebuffer_troca_buffers.v|
+!s90 -reportprogress|300|-work|work|E:/FINAL/tb_framebuffer_troca_buffers.v|
+!i113 1
+Z13 o-work work
+R8
+vtb_motor_sprite_prioridade
+!s110 1788393394
+!i10b 1
+!s100 `jMi>lcU_e]S:4[8zkMZJ3
+R1
+I^VYjEiFNdJoYb?[>2?34H0
+R2
+R0
+w1788391998
+8E:/FINAL/tb_motor_sprite_prioridade.v
+FE:/FINAL/tb_motor_sprite_prioridade.v
+!i122 22
+L0 3 436
+R5
+r1
+!s85 0
+31
+!s108 1788393394.000000
+!s107 E:/FINAL/tb_motor_sprite_prioridade.v|
+!s90 -reportprogress|300|-work|work|E:/FINAL/tb_motor_sprite_prioridade.v|
+!i113 1
+R13
+R8
+vtest_driver
+!s110 1788393368
+!i10b 1
+!s100 cJn7>;bnAbiN>6iWiH3HY1
+R1
+Id>haPUCD92V9nP;XdkhNF0
+R2
+R0
+w1788369752
+8E:/FINAL/test_driver.v
+FE:/FINAL/test_driver.v
+!i122 19
+L0 1 86
+R5
+r1
+!s85 0
+31
+!s108 1788393367.000000
+!s107 E:/FINAL/test_driver.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/test_driver.v|
+!i113 1
+R6
+R10
+R8
+vtop_video
+!s110 1788393325
+!i10b 1
+!s100 doQCbTg@dZ^lXi>V9QX>@1
+R1
+ICD_@o[NQRB:HR^bLRKNj^1
+R2
+R0
+w1788370428
+8E:/FINAL/top_video.v
+FE:/FINAL/top_video.v
+!i122 5
+L0 1 564
+R5
+r1
+!s85 0
+31
+!s108 1788393324.000000
+!s107 E:/FINAL/top_video.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/top_video.v|
+!i113 1
+R6
+R10
+R8
+vvga_driver
+!s110 1788393324
+!i10b 1
+!s100 dk1a:CBSWmLI6X[OCG0I`2
+R1
+Im;`nOXgHfZEPRzjGbbRLA0
+R2
+R0
+w1788390910
+8E:/FINAL/vga_driver.v
+FE:/FINAL/vga_driver.v
+!i122 4
+R11
+R5
+r1
+!s85 0
+31
+!s108 1788393322.000000
+!s107 E:/FINAL/vga_driver.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+E:/FINAL|E:/FINAL/vga_driver.v|
+!i113 1
+R6
+R10
+R8

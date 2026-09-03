@@ -1,0 +1,230 @@
+module rasterizador_triangulo #(
+    parameter FX_BITS = 8
+)(
+    input  wire        clk,
+    input  wire        reset,
+
+    input  wire        start,
+    input  wire [8:0]  v0x, v1x, v2x,
+    input  wire [7:0]  v0y, v1y, v2y,
+    input  wire [8:0]  color,
+
+    output reg          fb_we,
+    output reg  [8:0]   fb_wr_x,
+    output reg  [7:0]   fb_wr_y,
+    output reg  [8:0]   fb_wr_data,
+
+    output wire         busy,
+    output reg          done
+);
+
+    localparam S_IDLE     = 4'd0,
+               S_SETUP    = 4'd1,
+               S_DIV_LONG = 4'd2,
+               S_DIV_TOP  = 4'd3,
+               S_TOP_INIT = 4'd4,
+               S_TOP_ROW  = 4'd5,
+               S_TOP_FILL = 4'd6,
+               S_DIV_BOT  = 4'd7,
+               S_BOT_INIT = 4'd8,
+               S_BOT_ROW  = 4'd9,
+               S_BOT_FILL = 4'd10,
+               S_DONE     = 4'd11;
+
+    reg [3:0] state;
+    assign busy = (state != S_IDLE);
+
+    reg [8:0] iv0x, iv1x, iv2x;
+    reg [7:0] iv0y, iv1y, iv2y;
+    reg [8:0] color_reg;
+
+    reg [8:0] sx0, sx1, sx2;
+    reg [7:0] sy0, sy1, sy2;
+
+    always @(*) begin
+        if (iv0y <= iv1y) begin
+            if (iv1y <= iv2y) begin
+                sx0=iv0x; sy0=iv0y; sx1=iv1x; sy1=iv1y; sx2=iv2x; sy2=iv2y;
+            end else if (iv0y <= iv2y) begin
+                sx0=iv0x; sy0=iv0y; sx1=iv2x; sy1=iv2y; sx2=iv1x; sy2=iv1y;
+            end else begin
+                sx0=iv2x; sy0=iv2y; sx1=iv0x; sy1=iv0y; sx2=iv1x; sy2=iv1y;
+            end
+        end else begin
+            if (iv0y <= iv2y) begin
+                sx0=iv1x; sy0=iv1y; sx1=iv0x; sy1=iv0y; sx2=iv2x; sy2=iv2y;
+            end else if (iv1y <= iv2y) begin
+                sx0=iv1x; sy0=iv1y; sx1=iv2x; sy1=iv2y; sx2=iv0x; sy2=iv0y;
+            end else begin
+                sx0=iv2x; sy0=iv2y; sx1=iv1x; sy1=iv1y; sx2=iv0x; sy2=iv0y;
+            end
+        end
+    end
+
+    wire signed [9:0] dx_long = $signed({1'b0,sx2}) - $signed({1'b0,sx0});
+    wire        [7:0] dy_long = sy2 - sy0;
+    wire signed [9:0] dx_top  = $signed({1'b0,sx1}) - $signed({1'b0,sx0});
+    wire        [7:0] dy_top  = sy1 - sy0;
+    wire signed [9:0] dx_bot  = $signed({1'b0,sx2}) - $signed({1'b0,sx1});
+    wire        [7:0] dy_bot  = sy2 - sy1;
+
+    wire [9:0] dx_long_abs10 = dx_long[9] ? (~dx_long + 10'd1) : dx_long;
+    wire [9:0] dx_top_abs10  = dx_top[9]  ? (~dx_top  + 10'd1) : dx_top;
+    wire [9:0] dx_bot_abs10  = dx_bot[9]  ? (~dx_bot  + 10'd1) : dx_bot;
+    wire [8:0] dx_long_mag   = dx_long_abs10[8:0];
+    wire [8:0] dx_top_mag    = dx_top_abs10[8:0];
+    wire [8:0] dx_bot_mag    = dx_bot_abs10[8:0];
+
+    localparam DIV_W = 24;
+    reg              div_start;
+    reg [DIV_W-1:0]  div_num, div_den;
+    wire [DIV_W-1:0] div_quot;
+    wire             div_done;
+
+    divider_unsigned #(.WIDTH(DIV_W)) u_div (
+        .clk(clk), .reset(reset), .start(div_start),
+        .numerator(div_num), .denominator(div_den),
+        .quotient(div_quot), .done(div_done)
+    );
+
+    reg signed [17:0] inv_long, inv_top, inv_bot;
+    reg               sign_long, sign_top, sign_bot;
+    reg signed [17:0] xacc_long, xacc_short;
+    reg [7:0] cur_y;
+    reg [8:0] cur_x, xL, xR;
+
+    wire [8:0] xA_int = xacc_long[16:FX_BITS];
+    wire [8:0] xB_int = xacc_short[16:FX_BITS];
+
+    always @(posedge clk) begin
+        if (reset) begin
+            state     <= S_IDLE;
+            fb_we     <= 1'b0;
+            done      <= 1'b0;
+            div_start <= 1'b0;
+        end else begin
+            fb_we     <= 1'b0;
+            done      <= 1'b0;
+            div_start <= 1'b0;
+
+            case (state)
+                S_IDLE: if (start) begin
+                    iv0x <= v0x; iv0y <= v0y;
+                    iv1x <= v1x; iv1y <= v1y;
+                    iv2x <= v2x; iv2y <= v2y;
+                    color_reg <= color;
+                    state <= S_SETUP;
+                end
+
+                S_SETUP: begin
+                    div_num   <= {{(DIV_W-17){1'b0}}, dx_long_mag, {FX_BITS{1'b0}}};
+                    div_den   <= {{(DIV_W-8){1'b0}}, dy_long};
+                    sign_long <= dx_long[9];
+                    div_start <= 1'b1;
+                    state     <= S_DIV_LONG;
+                end
+
+                S_DIV_LONG: if (div_done) begin
+                    inv_long <= div_quot[17:0];
+                    if (dy_top != 8'd0) begin
+                        div_num   <= {{(DIV_W-17){1'b0}}, dx_top_mag, {FX_BITS{1'b0}}};
+                        div_den   <= {{(DIV_W-8){1'b0}}, dy_top};
+                        sign_top  <= dx_top[9];
+                        div_start <= 1'b1;
+                        state     <= S_DIV_TOP;
+                    end else begin
+                        inv_top <= 18'sd0;
+                        state   <= S_TOP_INIT;
+                    end
+                end
+
+                S_DIV_TOP: if (div_done) begin
+                    inv_top <= div_quot[17:0];
+                    state   <= S_TOP_INIT;
+                end
+
+                S_TOP_INIT: begin
+                    xacc_long  <= {sx0, {FX_BITS{1'b0}}};
+                    xacc_short <= {sx0, {FX_BITS{1'b0}}};
+                    cur_y      <= sy0;
+                    state      <= S_TOP_ROW;
+                end
+
+                S_TOP_ROW: begin
+                    if (cur_y >= sy1) begin
+                        if (dy_bot != 8'd0) begin
+                            div_num   <= {{(DIV_W-17){1'b0}}, dx_bot_mag, {FX_BITS{1'b0}}};
+                            div_den   <= {{(DIV_W-8){1'b0}}, dy_bot};
+                            sign_bot  <= dx_bot[9];
+                            div_start <= 1'b1;
+                            state     <= S_DIV_BOT;
+                        end else begin
+                            inv_bot <= 18'sd0;
+                            state   <= S_BOT_INIT;
+                        end
+                    end else begin
+                        xL    <= (xA_int <= xB_int) ? xA_int : xB_int;
+                        xR    <= (xA_int <= xB_int) ? xB_int : xA_int;
+                        cur_x <= (xA_int <= xB_int) ? xA_int : xB_int;
+                        state <= S_TOP_FILL;
+                    end
+                end
+
+                S_TOP_FILL: begin
+                    fb_we      <= 1'b1;
+                    fb_wr_x    <= cur_x;
+                    fb_wr_y    <= cur_y;
+                    fb_wr_data <= color_reg;
+                    if (cur_x == xR) begin
+                        xacc_long  <= xacc_long  + (sign_long ? -inv_long : inv_long);
+                        xacc_short <= xacc_short + (sign_top  ? -inv_top  : inv_top);
+                        cur_y      <= cur_y + 8'd1;
+                        state      <= S_TOP_ROW;
+                    end else cur_x <= cur_x + 9'd1;
+                end
+
+                S_DIV_BOT: if (div_done) begin
+                    inv_bot <= div_quot[17:0];
+                    state   <= S_BOT_INIT;
+                end
+
+                S_BOT_INIT: begin
+                    xacc_short <= {sx1, {FX_BITS{1'b0}}};
+                    state      <= S_BOT_ROW;
+                end
+
+                S_BOT_ROW: begin
+                    if (cur_y > sy2) begin
+                        state <= S_DONE;
+                    end else begin
+                        xL    <= (xA_int <= xB_int) ? xA_int : xB_int;
+                        xR    <= (xA_int <= xB_int) ? xB_int : xA_int;
+                        cur_x <= (xA_int <= xB_int) ? xA_int : xB_int;
+                        state <= S_BOT_FILL;
+                    end
+                end
+
+                S_BOT_FILL: begin
+                    fb_we      <= 1'b1;
+                    fb_wr_x    <= cur_x;
+                    fb_wr_y    <= cur_y;
+                    fb_wr_data <= color_reg;
+                    if (cur_x == xR) begin
+                        xacc_long  <= xacc_long  + (sign_long ? -inv_long : inv_long);
+                        xacc_short <= xacc_short + (sign_bot  ? -inv_bot  : inv_bot);
+                        cur_y      <= cur_y + 8'd1;
+                        state      <= S_BOT_ROW;
+                    end else cur_x <= cur_x + 9'd1;
+                end
+
+                S_DONE: begin
+                    done  <= 1'b1;
+                    state <= S_IDLE;
+                end
+
+                default: state <= S_IDLE;
+            endcase
+        end
+    end
+
+endmodule
