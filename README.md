@@ -81,29 +81,29 @@ Um dos principais objetivos do projeto e demonstrar a transformacao de uma descr
 
 De forma simplificada, o processo pode ser representado como:
 
-PARAMETROS DA CENA
-        |
-        v
-+---------------------+
-|    MOTORES GRAFICOS |
-+---------------------+
-   |       |       |
-   v       v       v
-BACKGROUND POLIGONOS SPRITES
-   |       |       |
-   +-------+-------+
-           |
-           v
-      COMPOSICAO
-           |
-           v
-      FRAMEBUFFER
-           |
-           v
-     CONTROLADOR VGA
-           |
-           v
-        MONITOR
+    PARAMETROS DA CENA
+            |
+            v
+    +---------------------+
+    |    MOTORES GRAFICOS |
+    +---------------------+
+       |       |       |
+       v       v       v
+    BACKGROUND POLIGONOS SPRITES
+       |       |       |
+       +-------+-------+
+               |
+               v
+          COMPOSICAO
+               |
+               v
+          FRAMEBUFFER
+               |
+               v
+         CONTROLADOR VGA
+               |
+               v
+            MONITOR
 
 Cada motor grafico interpreta seus respectivos parametros e produz os elementos necessarios para a construcao do quadro.
 
@@ -119,12 +119,12 @@ Essa resolucao foi adotada como representacao interna da cena, reduzindo a quant
 
 Para a saida VGA em 640 x 480 pixels, cada pixel logico e representado por um bloco de 2 x 2 pixels fisicos:
 
-Pixel logico
-+---+---+
-|   |   |
-+---+---+
-|   |   |
-+---+---+
+    Pixel logico
+    +---+---+
+    |   |   |
+    +---+---+
+    |   |   |
+    +---+---+
 
      2 x 2
 
@@ -329,156 +329,474 @@ por banco.
 
 
 
-# 3. Fundamentação TEORICA
+# 3. FUNDAMENTACAO TEORICA
 
-## 3.1 Representação Gráfica Indexada
+A fundamentacao teorica deste projeto apresenta os principais conceitos de computacao grafica utilizados na construcao do sistema de video implementado em FPGA.
 
-Em vez de armazenar diretamente a intensidade de vermelho, verde e azul de cada recurso grafico, o sistema trabalha principalmente com indices de cor.
+A arquitetura combina diferentes tecnicas de representacao, armazenamento e processamento de imagens, permitindo que elementos graficos sejam gerados diretamente em hardware e posteriormente combinados em um quadro destinado a exibicao em um monitor VGA.
 
-Um pixel armazenado nos padroes de tiles ou sprites possui 8 bits e representa uma posicao da paleta.
+Os principais conceitos abordados sao a representacao grafica indexada, o uso de tiles para construcao do background, scroll e wraparound, sprites, espelhamento, rasterizacao de primitivas geometricas, double buffering e a geracao da saida VGA.
 
-A paleta converte o indice em uma palavra de cor de 9 bits utilizada pelo sistema de video.
+A utilizacao desses conceitos permite organizar o processamento grafico em modulos especializados, reduzindo a dependencia do processador para a geracao individual dos pixels e explorando caracteristicas proprias da implementacao em FPGA, como processamento dedicado, paralelismo e acesso estruturado a memorias.
 
-Essa abordagem reduz a quantidade de memoria necessaria para armazenar imagens e permite alterar varias cores de um recurso modificando somente a paleta.
+
+## 3.1 Representacao Grafica Indexada
+
+A representacao grafica indexada e uma tecnica na qual os pixels de uma imagem nao armazenam diretamente todos os componentes de sua cor. Em vez disso, cada pixel armazena um indice que referencia uma entrada de uma paleta de cores.
+
+No projeto, os padroes utilizados por tiles e sprites sao armazenados utilizando indices de 8 bits. Dessa forma, cada pixel do padrao representa uma posicao dentro da paleta, e nao diretamente os valores de vermelho, verde e azul.
+
+O processo pode ser representado de forma simplificada por:
+
+    INDICE DO PIXEL
+           |
+           v
+    +----------------+
+    |     PALETA     |
+    +----------------+
+           |
+           v
+      COR RGB DE 9 BITS
+
+A cor utilizada pelo sistema possui 9 bits, organizados no formato:
+
+RRR GGG BBB
+
+Sao utilizados 3 bits para cada componente de cor, permitindo representar oito niveis de intensidade para vermelho, verde e azul. Dessa combinacao resultam ate 512 possibilidades de cor.
+
+A principal vantagem dessa abordagem esta na separacao entre o padrao grafico e a sua representacao de cor. Em vez de armazenar uma palavra completa de cor para cada pixel, a memoria de padroes armazena apenas o indice correspondente.
+
+Isso reduz a quantidade de memoria necessaria para armazenar os recursos graficos e tambem permite que diferentes elementos compartilhem os mesmos padroes.
+
+Outra vantagem e a possibilidade de modificar a aparencia de um recurso por meio da alteracao da paleta, sem que seja necessario modificar todos os pixels armazenados na memoria de padroes.
+
+No contexto deste projeto, essa organizacao e utilizada tanto pelo motor de background quanto pelo motor de sprites, estabelecendo uma interface comum entre os padroes graficos armazenados e as cores efetivamente utilizadas na imagem final.
 
 
 ## 3.2 Background Baseado em Tiles
 
-Um sistema de tiles divide a tela em pequenos blocos reutilizaveis.
+O background baseado em tiles e uma tecnica de construcao de imagens na qual um cenario e formado pela repeticao e combinacao de pequenos blocos graficos.
 
-Neste projeto, cada tile possui:
+Em vez de armazenar cada pixel de um cenario completo de forma independente, o sistema armazena um conjunto de padroes de tiles e utiliza uma estrutura de referencias, denominada tilemap, para determinar qual padrao deve aparecer em cada posicao.
+
+No projeto, cada tile possui dimensao:
 
 8 x 8 pixels
 
-Como a tela logica possui:
+Considerando a resolucao logica utilizada pelo sistema:
 
 320 x 240 pixels
 
-temos:
+a tela pode ser dividida em:
 
 320 / 8 = 40 tiles na horizontal
 
 240 / 8 = 30 tiles na vertical
 
-Portanto, o tilemap possui:
+Portanto, uma tela logica completa e composta por:
 
-40 x 30 = 1200 entradas
+40 x 30 = 1200 posicoes de tiles.
 
-Cada entrada do tilemap contem o indice de um padrao armazenado na memoria de padroes.
+O tilemap armazena uma referencia para o padrao grafico que deve ser utilizado em cada uma dessas posicoes. Os padroes dos tiles, por sua vez, ficam armazenados em uma memoria especifica.
 
-Para determinar o pixel do background, o sistema utiliza a posicao atual do pixel, aplica os valores de scroll, identifica o tile correspondente e acessa o pixel correto dentro do padrao selecionado.
+A determinacao de um pixel do background pode ser entendida como uma decomposicao da coordenada da tela.
+
+Primeiramente, a coordenada do pixel e combinada com os valores de scroll. A coordenada resultante identifica a posicao correspondente no cenario.
+
+Em seguida, essa coordenada e dividida conceitualmente em duas partes:
+
+- Coordenada do tile: identifica qual entrada do tilemap deve ser acessada;
+- Coordenada local: identifica qual pixel deve ser lido dentro do tile.
+
+Como cada tile possui 8 x 8 pixels, existem 64 posicoes possiveis dentro de cada padrao.
+
+O processo pode ser representado por:
+
+    COORDENADA DO PIXEL
+            |
+            v
+    +-------------------+
+    |  SCROLL / OFFSET  |
+    +-------------------+
+            |
+            v
+    COORDENADA DO CENARIO
+            |
+            +----------------+
+            |                |
+            v                v
+       TILEMAP          COORDENADA
+                        LOCAL DO TILE
+            |                |
+            v                v
+       PADRAO DO TILE ---> PIXEL
+                             |
+                             v
+                            COR
+
+A principal vantagem dessa tecnica e a reutilizacao dos padroes. Um mesmo tile pode aparecer diversas vezes no cenario sem que seja necessario armazenar varias copias de seus pixels.
+
+Essa organizacao reduz o consumo de memoria e permite representar cenarios maiores e mais variados a partir de uma quantidade relativamente pequena de padroes graficos.
 
 
 ## 3.3 Scroll e Wraparound
 
-O scroll altera a origem da imagem exibida sem alterar fisicamente todo o conteudo do tilemap.
+O scroll e uma tecnica utilizada para produzir o deslocamento visual de um cenario. Em uma arquitetura baseada em tiles, esse deslocamento pode ser realizado alterando as coordenadas utilizadas para consultar o cenario, sem que seja necessario mover fisicamente os dados armazenados no tilemap.
 
-Sao mantidos deslocamentos horizontal e vertical.
+No projeto, sao utilizados deslocamentos nos eixos horizontal e vertical, permitindo modificar a regiao do cenario que esta sendo apresentada na tela.
 
-Esses deslocamentos sao utilizados nas coordenadas logicas antes do calculo do tile correspondente.
+De forma conceitual:
 
-Quando a coordenada ultrapassa o limite da area grafica, a logica realiza o retorno para o inicio, criando o efeito de wraparound.
+    COORDENADA DA TELA
+            +
+    OFFSET DE SCROLL
+            |
+            v
+    COORDENADA DO CENARIO
+            |
+            v
+    CONSULTA AO TILEMAP
 
-Isso permite que o cenario se desloque continuamente.
+Assim, quando o valor de scroll e alterado, uma mesma posicao da tela pode passar a representar outra regiao do cenario.
+
+Essa estrategia evita a necessidade de deslocar fisicamente os dados armazenados na memoria. O tilemap e os padroes graficos permanecem em suas respectivas memorias, enquanto a coordenada utilizada durante a consulta e modificada de acordo com o deslocamento desejado.
+
+O wraparound complementa esse mecanismo ao permitir que o deslocamento seja tratado de forma ciclica. Quando uma coordenada utilizada para acessar o cenario ultrapassa os limites definidos, ela pode retornar ao inicio da regiao correspondente.
+
+Esse comportamento pode ser representado de forma simplificada por:
+
+    +-----------------------------+
+    |          CENARIO            |
+    |                             |
+    |  INICIO ------------ FIM    |
+    |    ^                 |      |
+    |    |_________________|      |
+    |         WRAPAROUND          |
+    +-----------------------------+
+
+Dessa maneira, o final do cenario pode ser conectado ao seu inicio, permitindo que o deslocamento continue sem a necessidade de interromper o movimento ou reconstruir o tilemap.
+
+A combinacao entre scroll e wraparound permite produzir movimento continuo do background, mantendo os dados graficos armazenados de forma organizada e evitando operacoes desnecessarias de movimentacao da imagem.
 
 
 ## 3.4 Sprites
 
-Sprites sao objetos graficos independentes do background.
+Sprites sao elementos graficos independentes do background, utilizados para representar objetos que possuem posicao e atributos proprios dentro da cena.
 
-Cada sprite possui uma palavra de atributos com 32 bits.
+Enquanto o background e organizado a partir de uma estrutura de tiles, os sprites sao armazenados e processados individualmente pelo motor de sprites. Cada sprite possui uma entrada de atributos armazenada em uma memoria dedicada.
 
-Na implementacao analisada, a codificacao utilizada e:
+No projeto, cada entrada da memoria de atributos possui:
 
-Bit 31       - Enable
-Bits 30:26   - Prioridade
-Bit 25       - Flip vertical
-Bit 24       - Flip horizontal
-Bit 23       - Selecao de paleta
-Bits 22:17   - Indice do padrao
-Bits 16:9    - Coordenada Y
-Bits 8:0     - Coordenada X
+32 bits
 
-Os sprites possuem dimensao de:
+A memoria de atributos utiliza um endereco de 5 bits, permitindo armazenar:
 
-16 x 16 pixels
+2^5 = 32 entradas de sprites.
 
-Internamente, cada sprite e formado por quatro regioes de 8 x 8 pixels.
+A interface utilizada pelo sistema pode ser representada por:
 
-O motor de sprites percorre os niveis de prioridade e os 32 slots de atributos.
+    +--------------------------+
+    | MEMORIA DE ATRIBUTOS     |
+    |                          |
+    | 32 entradas              |
+    | 32 bits por entrada     |
+    +--------------------------+
+                |
+                v
+         ATRIBUTOS DO SPRITE
+                |
+                v
+          MOTOR DE SPRITES
 
-Para cada sprite habilitado, verifica se o pixel correspondente deve ser escrito no framebuffer.
+A palavra de atributos de 32 bits e utilizada para armazenar as informacoes necessarias para configurar cada sprite. Essas informacoes sao produzidas pelos modulos de controle de sprites e posteriormente armazenadas na memoria de atributos.
 
-O indice de cor 0 e tratado como transparente. Portanto, pixels com esse indice nao sobrescrevem a imagem previamente desenhada.
+O sistema possui, por exemplo, modulos responsaveis pelo controle de movimento e espelhamento de um sprite e pela criacao de novos sprites. Esses modulos geram os dados de atributos que sao escritos na memoria dedicada. :contentReference[oaicite:0]{index=0}
+
+Durante a renderizacao, o motor de sprites realiza a leitura dessas entradas por meio do endereco do atributo e utiliza os dados obtidos juntamente com a memoria de padroes e a paleta de cores para determinar os pixels que devem ser escritos no framebuffer. A interface do motor recebe a palavra de atributos de 32 bits, o padrao grafico e os dados da paleta. :contentReference[oaicite:1]{index=1} :contentReference[oaicite:2]{index=2}
+
+Os padroes graficos dos sprites sao armazenados separadamente da memoria de atributos. Cada dado lido da memoria de padroes possui 8 bits, correspondendo ao indice de cor utilizado pelo pixel do padrao.
+
+Essa separacao entre atributos, padroes graficos e paleta permite organizar o processamento dos sprites em diferentes memorias e modulos especializados:
+
+    ATRIBUTOS
+        |
+        v
+    +--------------------+
+    | MEMORIA DE         |
+    | ATRIBUTOS          |
+    +--------------------+
+        |
+        v
+    MOTOR DE SPRITES
+        |
+        +--------------------+
+        |                    |
+        v                    v
+    PADRAO GRAFICO        PALETA
+        |                    |
+        +---------+----------+
+                  |
+                  v
+             PIXEL RGB
+                  |
+                  v
+             FRAMEBUFFER
+
+Dessa forma, o sprite pode ser entendido como a combinacao entre seus atributos de configuracao, seu padrao grafico e as cores definidas pela paleta. O motor de sprites utiliza essas informacoes para determinar como o objeto deve ser representado na imagem final.
 
 
 ## 3.5 Espelhamento
 
-O flip horizontal e vertical e realizado modificando a coordenada local utilizada para acessar o padrao.
+O espelhamento e uma tecnica utilizada para alterar a orientacao de um recurso grafico sem a necessidade de armazenar uma segunda versao do mesmo padrao.
 
-Para uma coordenada local x de um sprite 16 x 16:
+No projeto sao utilizados dois tipos de espelhamento:
 
-x_flip = 15 - x
+- Flip horizontal;
+- Flip vertical.
 
-De forma equivalente:
+O principio consiste em alterar a ordem das coordenadas locais utilizadas para acessar os pixels do padrao grafico.
 
-y_flip = 15 - y
+Para um sprite de 16 x 16 pixels, no espelhamento horizontal a coordenada horizontal e acessada em ordem inversa. De forma conceitual:
 
-Com isso, o mesmo padrao grafico pode ser exibido em diferentes orientacoes sem armazenar novas versoes da imagem em memoria.
+COORDENADA ORIGINAL:
+
+    0, 1, 2, 3, ..., 13, 14, 15
+
+COORDENADA ESPELHADA:
+
+    15, 14, 13, ..., 2, 1, 0
+
+De maneira equivalente, o espelhamento vertical inverte a ordem das coordenadas no eixo vertical.
+
+O processo pode ser representado por:
+
+               SPRITE
+                  |
+          +-------+-------+
+          |               |
+          v               v
+     FLIP HORIZONTAL   FLIP VERTICAL
+          |               |
+          v               v
+     INVERTE X         INVERTE Y
+          |               |
+          +-------+-------+
+                  |
+                  v
+          PADRAO GRAFICO
+                  |
+                  v
+                PIXEL
+
+Assim, o mesmo padrao armazenado na memoria pode ser apresentado em diferentes orientacoes.
+
+Essa tecnica e importante principalmente pela reutilizacao dos recursos graficos. Em vez de armazenar diferentes imagens para cada orientacao de um objeto, o sistema pode utilizar o mesmo padrao e modificar a forma como seus pixels sao acessados.
+
+No projeto, o controle dessas orientacoes esta associado ao processamento dos atributos dos sprites, permitindo que um mesmo recurso grafico possa ser apresentado com diferentes orientacoes durante a renderizacao.
+
+Dessa forma, o espelhamento contribui para a economia de memoria e aumenta a reutilizacao dos padroes graficos armazenados.
 
 
-## 3.6 Rasterização
+## 3.6 Rasterizacao
 
-Rasterizacao e o processo de transformar uma descricao geometrica em pixels.
+Rasterizacao e o processo de transformar uma descricao geometrica em uma representacao discreta formada por pixels.
 
-O projeto implementa dois tipos de primitivas:
+Uma primitiva geometrica pode ser descrita por coordenadas, vertices e relacoes entre pontos. Entretanto, a imagem armazenada no framebuffer e composta por uma quantidade finita de pixels.
 
-- Retangulos preenchidos.
+A rasterizacao realiza justamente essa conversao entre a representacao geometrica e a representacao discreta da imagem.
+
+No projeto sao implementadas duas primitivas geometricas:
+
+- Retangulos preenchidos;
 - Triangulos preenchidos.
 
-O rasterizador de retangulos normaliza as coordenadas recebidas, determinando os valores minimo e maximo em cada eixo e percorrendo toda a regiao correspondente.
+Para os retangulos, o rasterizador utiliza as coordenadas fornecidas para determinar a regiao ocupada pela primitiva. A partir dos limites horizontais e verticais, os pixels pertencentes a essa regiao sao percorridos e enviados para o framebuffer.
 
-O rasterizador de triangulos ordena os vertices pela coordenada Y e calcula incrementalmente os limites esquerdo e direito de cada linha do triangulo.
+O processo pode ser representado por:
+    
+    COORDENADAS DA PRIMITIVA
+              |
+              v
+    +----------------------+
+    | DETERMINACAO DOS     |
+    | LIMITES DA REGIAO    |
+    +----------------------+
+              |
+              v
+    +----------------------+
+    | PERCURSO DOS PIXELS  |
+    +----------------------+
+              |
+              v
+          FRAMEBUFFER
 
-A implementacao utiliza aritmetica inteira/fixa e um divisor sequencial dedicado.
+No caso dos triangulos, a rasterizacao utiliza os tres vertices fornecidos para determinar a regiao ocupada pela primitiva.
+
+O preenchimento pode ser realizado linha por linha, determinando para cada coordenada vertical o intervalo horizontal correspondente ao interior do triangulo.
+
+De forma simplificada:
+
+         /\
+        /  \
+       /    \
+      /------\
+     /        \
+    /----------\
+
+Cada linha possui um intervalo de pixels que pertence ao interior da primitiva. Esses pixels sao posteriormente utilizados para construir a imagem no framebuffer.
+
+A implementacao em hardware utiliza operacoes aritmeticas adequadas a logica digital, incluindo representacoes inteiras e de ponto fixo. Essa abordagem permite realizar os calculos necessarios sem depender de operacoes de ponto flutuante.
+
+Algumas operacoes aritmeticas utilizadas durante o processo podem ser realizadas por circuitos dedicados e distribuidas em diferentes ciclos de clock. Essa estrategia permite controlar o processamento por meio de maquinas de estados e adequar a rasterizacao ao funcionamento sequencial da FPGA.
+
+De forma geral, o processo de rasterizacao pode ser resumido por:
+
+    DESCRICAO GEOMETRICA
+              |
+              v
+    +----------------------+
+    | RASTERIZADOR         |
+    |                      |
+    | Retangulos           |
+    | Triangulos           |
+    +----------------------+
+              |
+              v
+        PIXELS GERADOS
+              |
+              v
+          COMPOSITOR
+              |
+              v
+          FRAMEBUFFER
+
+A rasterizacao constitui, portanto, uma das principais etapas responsaveis por transformar informacoes geometricas em pixels que posteriormente participarao da composicao da imagem final.
 
 
 ## 3.7 Double Buffering
 
-Se o mesmo framebuffer estiver sendo lido pelo VGA e modificado simultaneamente pelos motores graficos, partes de dois estados diferentes da cena podem ser exibidas na mesma atualizacao.
+O double buffering e uma tecnica utilizada para separar o buffer que esta sendo exibido daquele que esta sendo utilizado para construir o proximo quadro.
 
-Para evitar esse problema sao utilizados dois buffers.
+Quando um unico framebuffer e utilizado simultaneamente para leitura pelo controlador VGA e escrita pelos motores graficos, o conteudo da imagem pode ser modificado enquanto ainda esta sendo transmitido para o monitor.
 
-Buffer A -> exibido
-Buffer B -> escrito
+Isso pode fazer com que diferentes partes da tela correspondam a estados diferentes da cena, produzindo artefatos visuais.
 
-Apos a construcao do novo quadro:
+Para evitar esse problema, o sistema utiliza dois buffers:
 
-Buffer B -> exibido
-Buffer A -> escrito
+    +------------------+
+    |    BUFFER A      |
+    |                  |
+    |    EXIBICAO      |
+    +------------------+
 
-A troca ocorre no periodo de VBlank.
+    +------------------+
+    |    BUFFER B      |
+    |                  |
+    |   RENDERIZACAO   |
+    +------------------+
+
+Enquanto o controlador VGA realiza a leitura do Buffer A, os motores graficos podem construir o proximo quadro no Buffer B.
+
+Quando o novo quadro esta pronto, os papeis dos buffers sao invertidos:
+
+    BUFFER A -> RENDERIZACAO
+    BUFFER B -> EXIBICAO
+
+A troca dos buffers e sincronizada com o sinal de video e ocorre durante o periodo de vertical blanking, conhecido como VBlank.
+
+O VBlank corresponde ao intervalo entre o final de um quadro e o inicio da apresentacao do proximo quadro. Realizar a troca nesse momento evita, ou reduz significativamente, a possibilidade de alterar o buffer utilizado para exibicao no meio da varredura da imagem.
+
+Dessa forma, o double buffering cria uma separacao entre a etapa de renderizacao e a etapa de exibicao.
+
+O mecanismo pode ser resumido como:
+
+     RENDERIZACAO
+         |
+         v
+    BUFFER DE ESCRITA
+         |
+         | quadro pronto
+         v
+       VBLANK
+         |
+         v
+    TROCA DOS BUFFERS
+         |
+         v
+    BUFFER DE EXIBICAO
+         |
+         v
+        VGA
 
 
 ## 3.8 VGA
 
-O clock principal da placa e:
+VGA (Video Graphics Array) e uma interface tradicional de video utilizada para transmitir uma imagem para um monitor por meio de sinais de sincronizacao e dados de cor.
+
+No projeto, o controlador VGA representa a etapa final do processamento grafico. Ele realiza a leitura dos dados armazenados no framebuffer e gera os sinais necessarios para a apresentacao da imagem.
+
+O clock principal utilizado pela plataforma e:
 
 50 MHz
 
-Um PLL gera o clock aproximado de:
+A partir desse sinal, um PLL gera um clock de aproximadamente:
 
 25 MHz
 
-utilizado pelo controlador VGA.
+utilizado pelo controlador VGA para realizar a varredura da imagem.
 
-A saida fisica opera em:
+A saida fisica utilizada pelo projeto possui resolucao:
 
 640 x 480 pixels
 
-As coordenadas fisicas sao convertidas para coordenadas logicas utilizando uma divisao por dois.
+Entretanto, a representacao interna da imagem utiliza uma resolucao logica de:
 
-Dessa forma, cada pixel logico e visualizado como quatro pixels fisicos.
+320 x 240 pixels
+
+Para compatibilizar essas duas resolucoes, cada pixel logico e representado por uma area de 2 x 2 pixels fisicos.
+
+A relacao pode ser representada por:
+
+    PIXEL LOGICO
+    
+    +-----+-----+
+    |     |     |
+    |  P  |  P  |
+    +-----+-----+
+    |     |     |
+    |  P  |  P  |
+    +-----+-----+
+
+Cada pixel logico, portanto, corresponde a quatro pixels fisicos na saida VGA.
+
+Considerando uma coordenada logica (x, y), a regiao correspondente na tela fisica possui aproximadamente o dobro das dimensoes:
+
+(x, y) -> (2x, 2y)
+
+Essa estrategia permite que os motores graficos trabalhem com uma quantidade menor de pixels, reduzindo a quantidade de memoria necessaria para o framebuffer e simplificando o processamento interno.
+
+O controlador VGA realiza a varredura sequencial da imagem fisica e utiliza as coordenadas produzidas pelo contador de video para determinar qual regiao do framebuffer deve ser apresentada.
+
+Assim, a etapa final do fluxo grafico pode ser resumida como:
+
+    FRAMEBUFFER
+         |
+         v
+    COORDENADA FISICA VGA
+         |
+         v
+    MAPEAMENTO 640 x 480
+         |
+         v
+    MAPEAMENTO 320 x 240
+         |
+         v
+    DADOS DE COR
+         |
+         v
+    MONITOR VGA
+
+A saida VGA estabelece, portanto, a interface entre a imagem produzida pelos motores graficos e o dispositivo fisico de exibicao.
 
 
 
