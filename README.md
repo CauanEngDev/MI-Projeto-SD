@@ -299,236 +299,109 @@ Dessa forma, cada pixel logico e visualizado como quatro pixels fisicos.
 
 
 
-# 4. Arquitetura DO SISTEMA
+# 4. Arquitetura do Sistema
 
-A arquitetura implementada possui os seguintes blocos principais:
+A arquitetura do sistema gráfico foi organizada de forma modular, separando as etapas de armazenamento de dados, geração dos elementos gráficos, composição das camadas e apresentação do resultado por meio da interface VGA. O módulo `top_video.v` atua como elemento central de integração do subsistema de vídeo, conectando as memórias utilizadas pelos motores de renderização, o rasterizador, o compositor, o framebuffer e o controlador VGA. A comunicação com o restante do sistema ocorre por meio de interfaces destinadas à escrita de dados de background, padrões de sprites, atributos de sprites, paleta de cores, parâmetros de scroll e comandos de rasterização. Dessa forma, o `top_video` concentra a infraestrutura necessária para que os diferentes elementos gráficos possam ser processados e armazenados antes de serem apresentados no monitor.
 
-DE1_SOC_golden_top
-        |
-        v
-Controle da demonstracao
-        |
-        v
-top_video
-        |
-        +----------------------+
-        |                      |
-        v                      v
-Motor de Background       Rasterizador
-        |                 de Poligonos
-        |                      |
-        +----------+-----------+
-                   |
-                   v
-             Motor de Sprites
-                   |
-                   v
-               Compositor
-                   |
-                   v
-          Double Framebuffer
-                   |
-                   v
-              VGA Driver
-                   |
-                   v
-             Saida VGA
+Internamente, o sistema trabalha com uma resolução lógica de 320×240 pixels, enquanto a saída VGA utiliza resolução de 640×480 pixels. Essa diferença é tratada pelo controlador VGA, que fornece as coordenadas do pixel físico e permite que o framebuffer seja acessado utilizando as coordenadas lógicas obtidas por meio dos deslocamentos de um bit das coordenadas VGA. Assim, `fb_rd_x` é obtido a partir de `next_x[9:1]` e `fb_rd_y` a partir de `next_y[9:1]`, fazendo com que cada pixel lógico corresponda a uma região de 2×2 pixels na saída VGA.
 
+A geração do clock utilizado pelo subsistema VGA também está integrada ao `top_video`. O clock principal de 50 MHz é fornecido ao PLL `pll01`, que gera o clock de pixel de 25 MHz utilizado pelo controlador VGA. O sinal `pll_locked` é utilizado para garantir que o controlador VGA somente opere normalmente após o PLL estar estabilizado.
+
+A organização da arquitetura pode ser representada pelo seguinte fluxo:
+
+```text
+                    frame_start
+                         |
+                         v
+                  +---------------+
+                  |   COMPOSITOR  |
+                  +---------------+
+                         |
+          +--------------+--------------+
+          |              |              |
+          v              v              v
+    Background       Polígonos       Sprites
+          |              |              |
+          +--------------+--------------+
+                         |
+                         v
+                  Framebuffer RAM
+                    Double Buffer
+                         |
+                         v
+                    VGA Driver
+                         |
+                         v
+                     Saída VGA
+```
+
+O processo de composição é controlado pelo módulo `compositor.v`, que determina a ordem de execução dos três motores gráficos. Ao receber `frame_start`, o compositor inicia inicialmente o motor de background. Após a conclusão dessa etapa, inicia o processamento da camada de polígonos e, posteriormente, o motor de sprites. Dessa maneira, os elementos são incorporados ao framebuffer de forma sequencial, estabelecendo uma ordem de sobreposição determinística. No `top_video`, essa sequência é explicitamente conectada aos sinais `bg_start`, `poly_start` e `spr_start`, enquanto os sinais de conclusão dos respectivos motores são utilizados pelo compositor para determinar as transições entre as etapas.
+
+A arquitetura utiliza ainda recursos de memória compartilhados entre os diferentes motores. A palette RAM possui uma única interface física de leitura conectada ao compositor. Cada motor fornece seu próprio endereço de leitura, e o compositor seleciona o endereço correspondente ao motor que está em execução. Como os motores são ativados sequencialmente, não há necessidade de realizar arbitração complexa entre requisições simultâneas. O mesmo princípio é aplicado à porta de escrita do framebuffer, permitindo que background, polígonos e sprites utilizem uma única interface física de escrita.
+
+Essa organização reduz a quantidade de interfaces físicas necessárias e mantém a responsabilidade de gerenciamento dos recursos compartilhados concentrada em um único módulo. O compositor, portanto, exerce duas funções complementares: controlar a sequência de composição e realizar a seleção das requisições de memória provenientes dos motores ativos.
 
 ## 4.1 Fluxo de Composição
 
-O modulo compositor.v organiza a construcao do quadro de forma sequencial:
+A construção de cada frame ocorre em etapas sequenciais controladas por uma máquina de estados finitos implementada no `compositor.v`. O módulo possui os estados `S_IDLE`, `S_BG`, `S_POLY`, `S_SPR` e `S_DONE`, correspondentes, respectivamente, à espera de uma solicitação de composição, processamento do background, processamento dos polígonos, processamento dos sprites e finalização do frame. O sinal `busy` permanece ativo enquanto o compositor não está no estado `S_IDLE`, permitindo que o restante do sistema identifique quando uma composição está em andamento.
 
+Quando `start` é acionado no estado `S_IDLE`, o compositor gera um pulso em `bg_start` e passa para o estado `S_BG`. O motor de background passa então a gerar as escritas correspondentes ao plano de fundo. A conclusão dessa etapa é indicada por `bg_done`. Quando esse sinal é detectado, o compositor gera `poly_start` e passa para `S_POLY`, iniciando o processamento da camada de polígonos.
+
+A etapa de polígonos possui uma característica específica: sua conclusão é indicada pelo sinal `poly_layer_done`, e não simplesmente pelo sinal geral `rast_done`. Isso permite que o controle da composição utilize uma indicação específica de término da camada de polígonos. Após essa indicação, o compositor gera `spr_start` e passa para o estado `S_SPR`, permitindo que os sprites sejam desenhados sobre o conteúdo previamente produzido pelas etapas anteriores. O processamento de sprites termina quando `spr_done` é acionado. Em seguida, o compositor entra em `S_DONE`, produzindo `done` e retornando posteriormente ao estado de espera.
+
+A ordem de composição estabelecida é, portanto:
+
+```text
 Background
-    |
-    v
-Poligonos
-    |
-    v
+     ↓
+Polígonos
+     ↓
 Sprites
+```
 
-Portanto, a solucao atual nao realiza uma comparacao simultanea de tres camadas para cada pixel.
+Essa ordem possui uma consequência importante sobre a construção da imagem. Como cada etapa escreve sobre o framebuffer utilizado para a renderização, os elementos processados posteriormente podem substituir pixels previamente escritos. O background constitui a base da imagem, os polígonos são adicionados posteriormente e os sprites são processados por último. No caso dos sprites, pixels transparentes não geram escritas no framebuffer, permitindo preservar o conteúdo produzido pelas camadas anteriores.
 
-Cada etapa escreve sobre o framebuffer apos a anterior.
+O compositor também garante que as requisições de memória sejam associadas à etapa correta da composição. Para a palette RAM, o endereço de leitura é selecionado de acordo com o motor que está ocupado. Para o framebuffer, os sinais `fb_we`, `fb_wr_x`, `fb_wr_y` e `fb_wr_data` são selecionados da mesma maneira. Como a sequência de composição impede que os motores sejam executados simultaneamente dentro do fluxo normal, essa estrutura funciona como uma arbitração simples baseada no estado atual da composição.
 
-Como pixels transparentes de sprites nao sao escritos, o conteudo ja existente permanece visivel nessas posicoes.
+O resultado dessa estratégia é uma arquitetura em que os motores de renderização não precisam disputar diretamente os recursos compartilhados. Cada motor possui suas próprias interfaces lógicas para palette e framebuffer, enquanto o compositor converte essas interfaces em uma única interface física para cada recurso. Essa separação simplifica a implementação e torna explícita a ordem de composição.
 
-Essa organizacao simplifica a arbitragem de memoria e estabelece a ordem de camadas utilizada pela demonstracao.
+Depois que o compositor termina, o frame ainda não é imediatamente apresentado pelo VGA. O `top_video` mantém uma separação entre o término da renderização e o momento de troca dos buffers. O sinal `compositor_done` é utilizado para indicar que o frame foi completamente produzido, enquanto o sinal `vblank_event`, derivado do `vblank_tick` gerado pelo controlador VGA, indica um período seguro para modificar o banco que está sendo exibido.
 
+Essa separação permite que a renderização seja concluída antes do período de atualização da imagem. Quando o compositor termina, o `top_video` registra essa condição por meio de `frame_render_done`. Quando posteriormente ocorre um evento de VBlank com `frame_render_done` ativo, os bancos de leitura e escrita são trocados. O banco que estava sendo utilizado para renderização passa a ser exibido, enquanto o banco anteriormente exibido passa a receber o próximo frame. Depois da troca, `frame_done` é acionado para indicar que um novo frame foi efetivamente apresentado.
+
+Esse mecanismo caracteriza a utilização de **double buffering**. Inicialmente, `rd_buf_sel` é configurado para o banco 0 e `wr_buf_sel` para o banco 1. Assim, o VGA pode continuar lendo um frame enquanto o outro banco é atualizado pelos motores de renderização. A troca somente ocorre durante o VBlank, reduzindo o risco de que o VGA leia simultaneamente uma imagem que ainda esteja sendo modificada.
 
 ## 4.2 Principais Módulos
 
+O módulo `DE1_SOC_golden_top.v` constitui o nível superior da aplicação na placa DE1-SoC, realizando a conexão entre os recursos externos da placa e o subsistema de vídeo. A partir desse nível são fornecidos sinais de clock, reset e controles utilizados pela demonstração, além das interfaces necessárias para comandar os elementos gráficos. O `top_video.v` é instanciado nesse nível e concentra a implementação específica do sistema gráfico.
 
-DE1_SOC_golden_top.v
+O `top_video.v` é responsável pela integração dos principais componentes da arquitetura. Além das interfaces de saída VGA, ele possui entradas para escrita nas memórias de background, sprites e palette, parâmetros de scroll e comandos destinados ao rasterizador. Também recebe `frame_start` para iniciar uma nova composição e fornece sinais relacionados ao estado do rasterizador e à fase de processamento dos polígonos.
 
-E o top-level da placa DE1-SoC.
+O `motor_background.v` é responsável pela geração da camada de fundo. Ele utiliza a memória de tilemap, a memória de padrões dos tiles e a palette para determinar a cor de cada pixel do background. O `top_video` conecta o motor às memórias `bg_tile_ram` e `bg_tile_pattern_ram`, além de disponibilizar os sinais de controle de scroll horizontal e vertical.
 
-Responsavel por:
+A organização do background é baseada na separação entre os dados que identificam os tiles e os dados que representam seus padrões gráficos. A `bg_tile_ram` armazena os identificadores dos tiles utilizados pelo mapa, enquanto a `bg_tile_pattern_ram` fornece os dados dos pixels associados aos padrões. O motor utiliza essas informações para produzir os pixels da camada de fundo e enviá-los para o framebuffer.
 
-- Conexao com CLOCK_50.
-- Botoes KEY.
-- Chaves SW.
-- Interface VGA.
-- Controles de demonstracao.
-- Controle do movimento e flip de sprites.
-- Criacao de sprites.
-- Geracao de comandos de teste para poligonos.
-- Instanciacao de top_video.
+O sistema de background também possui mecanismos de controle de scroll. O `top_video` fornece ao motor sinais para escrita explícita dos parâmetros de scroll e sinais associados ao modo de scroll automático, incluindo eixo, direção e passo.
 
+O subsistema de sprites é dividido entre armazenamento dos atributos, armazenamento dos padrões e processamento propriamente dito. A `sprite_attribute_ram` armazena os atributos dos sprites, enquanto a `sprite_pattern_ram` armazena seus padrões gráficos. O `motor_sprite.v` utiliza essas informações para produzir os pixels dos sprites, realizando as consultas necessárias à palette e gerando as escritas no framebuffer.
 
-top_video.v
+Essa divisão permite separar os dados estáticos ou configuráveis dos sprites do mecanismo responsável pela renderização. Os atributos podem ser fornecidos externamente ao subsistema por meio das interfaces de escrita presentes no `top_video`, enquanto o motor realiza as leituras durante a composição.
 
-Integra o subsistema grafico.
+O `rasterizador_top.v` funciona como interface superior do rasterizador. O `top_video` fornece ao módulo os comandos para iniciar a rasterização de quadrados ou triângulos, as coordenadas dos vértices, o índice de cor e a seleção da palette. O rasterizador fornece, por sua vez, sinais de `busy`, `done` e `invalid_cmd`, além das interfaces de leitura da palette e escrita no framebuffer.
 
-Possui interfaces para:
+O rasterizador é responsável pela geração dos pixels dos elementos geométricos. Para retângulos preenchidos, o processamento consiste em determinar os limites das coordenadas e gerar os pixels pertencentes à área definida. Para triângulos preenchidos, o algoritmo utiliza a abordagem de varredura por linhas, determinando os limites horizontais de cada linha do triângulo e produzindo os pixels correspondentes. A interface superior permite que ambos os tipos de primitivas compartilhem a infraestrutura de palette e framebuffer utilizada pelos demais motores.
 
-- Escrita no tilemap.
-- Escrita em padroes de background.
-- Atributos de sprites.
-- Padroes de sprites.
-- Paleta.
-- Scroll.
-- Comandos de rasterizacao.
-- Framebuffer.
-- Controlador VGA.
+A `palette_ram` constitui a memória compartilhada responsável por armazenar as cores utilizadas durante a composição. O `top_video` fornece a interface de escrita para atualização da palette e conecta sua porta de leitura ao compositor. Durante a execução de um motor, seu endereço de palette é encaminhado pelo compositor para a memória, e o dado retornado é disponibilizado ao motor correspondente.
 
-Essas interfaces tambem formam uma base para uma futura integracao com um processador por registradores ou MMIO.
+O `framebuffer.v` constitui o estágio de armazenamento dos pixels produzidos durante a composição. O módulo recebe uma única interface de escrita proveniente do compositor, juntamente com o banco selecionado por `wr_buf_sel`, e possui uma interface de leitura associada ao domínio de clock do VGA. Dessa maneira, o framebuffer atua como uma fronteira entre a etapa de renderização e a etapa de apresentação.
 
+A seleção dos bancos é controlada diretamente pelo `top_video`. O sinal `rd_buf_sel` identifica o banco atualmente utilizado pelo VGA, enquanto `wr_buf_sel` identifica o banco que recebe as escritas durante a renderização. Após a conclusão de um frame e a ocorrência do VBlank, esses sinais são trocados, fazendo com que o frame recém-renderizado passe a ser apresentado.
 
-motor_background.v
+O `vga_driver.v` é responsável pela geração dos sinais de temporização da interface VGA e pelo fornecimento das coordenadas do pixel que está sendo apresentado. O módulo recebe `fb_color_out` como entrada de cor e gera os sinais `hsync`, `vsync`, `red`, `green`, `blue`, `sync`, `clk` e `blank`. Também produz o sinal `vblank_tick`, utilizado pelo `top_video` para sincronizar a troca dos bancos do framebuffer com o período de apagamento vertical.
 
-Responsavel pela geracao do background a partir do tilemap e dos padroes de tiles.
+Por fim, o `fb_addr_gen.v` é responsável pela transformação das coordenadas bidimensionais do framebuffer em um endereço linear de memória. Considerando a resolução lógica de 320×240 pixels, o endereço é obtido pela relação `address = y × 320 + x`. Essa transformação permite que os pixels sejam armazenados de forma sequencial na memória, mantendo uma representação linear da imagem bidimensional.
 
-Implementa:
-
-- Tiles de 8 x 8.
-- Tilemap 40 x 30.
-- Scroll horizontal.
-- Scroll vertical.
-- Wraparound.
-- Acesso a paleta.
-- Escrita da camada de background no framebuffer.
-- Cache de linha para auxiliar o processamento.
-
-
-motor_sprite.v
-
-Renderiza os sprites armazenados na memoria de atributos.
-
-Implementa:
-
-- Ate 32 sprites.
-- Enable.
-- Posicao X/Y.
-- Prioridade.
-- Selecao de padrao.
-- Selecao de paleta.
-- Flip horizontal.
-- Flip vertical.
-- Transparencia do indice 0.
-
-
-subsistema_sprite.v
-
-Integra as memorias e sinais relacionados ao subsistema de sprites.
-
-
-sprite_mover_flip.v
-
-Modulo de demonstracao utilizado para alterar atributos de um sprite atraves dos controles fisicos da placa.
-
-Permite:
-
-- Movimentacao.
-- Flip horizontal.
-- Flip vertical.
-
-
-sprite_spawner.v
-
-Cria novos sprites em posicoes definidas pelas chaves da placa enquanto existirem slots disponiveis na memoria de atributos.
-
-
-rasterizador_top.v
-
-Interface superior dos rasterizadores.
-
-Responsavel por:
-
-- Validar as coordenadas recebidas.
-- Iniciar o rasterizador correspondente.
-- Informar busy.
-- Informar done.
-- Sinalizar comandos invalidos.
-
-As coordenadas validas sao:
-
-0 <= X < 320
-0 <= Y < 240
-
-
-rasterizador_quadrado.v
-
-Rasteriza retangulos preenchidos.
-
-O modulo aceita vertices em diferentes ordens e determina internamente os valores minimos e maximos das coordenadas antes de gerar os pixels.
-
-
-rasterizador_triangulo.v
-
-Rasteriza triangulos preenchidos.
-
-A implementacao:
-
-# 1. Ordena os vertices por Y.
-# 2. Calcula as inclinacoes das arestas.
-# 3. Percorre cada linha do triangulo.
-# 4. Determina os limites esquerdo e direito.
-# 5. Gera os pixels entre os limites.
-
-
-divisor_unsigned.v
-
-Divisor inteiro sem sinal implementado de forma sequencial.
-
-E utilizado pelo rasterizador de triangulos para obtencao das inclinacoes necessarias ao preenchimento.
-
-
-framebuffer.v
-
-Gerencia os dois bancos de framebuffer.
-
-Responsavel por:
-
-- Selecao do buffer de leitura.
-- Selecao do buffer de escrita.
-- Sincronizacao entre dominio do sistema e dominio de video.
-- Troca de buffers.
-
-
-fb_addr_gen.v
-
-Converte coordenadas x e y em endereco linear do framebuffer.
-
-A relacao utilizada e equivalente a:
-
-endereco = y x 320 + x
-
-ou seja:
-
-endereco = y * 320 + x
-
-
-vga_driver.v
-
-Gera os sinais de temporizacao VGA e fornece as coordenadas do pixel atualmente exibido.
-
-
-tile_memory.v
-
-Modulo relacionado ao armazenamento e acesso de tiles utilizado pelo sistema grafico.
-
-
+A arquitetura resultante separa claramente as responsabilidades entre **geração dos elementos gráficos, armazenamento, composição e apresentação**. Os motores produzem os pixels de suas respectivas camadas, o compositor controla a ordem de execução e arbitra os recursos compartilhados, o framebuffer mantém os frames em buffers separados e o controlador VGA realiza a apresentação do conteúdo armazenado. Essa organização permite que novos motores ou primitivas gráficas sejam incorporados posteriormente sem modificar diretamente a lógica responsável pela saída VGA, mantendo a estrutura modular do subsistema gráfico.
 
 # 5. Especificação DE HARDWARE E SOFTWARE
 
