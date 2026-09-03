@@ -951,71 +951,131 @@ Por fim, o `fb_addr_gen.v` é responsável pela transformação das coordenadas 
 
 A arquitetura resultante separa claramente as responsabilidades entre **geração dos elementos gráficos, armazenamento, composição e apresentação**. Os motores produzem os pixels de suas respectivas camadas, o compositor controla a ordem de execução e arbitra os recursos compartilhados, o framebuffer mantém os frames em buffers separados e o controlador VGA realiza a apresentação do conteúdo armazenado. Essa organização permite que novos motores ou primitivas gráficas sejam incorporados posteriormente sem modificar diretamente a lógica responsável pela saída VGA, mantendo a estrutura modular do subsistema gráfico.
 
-# 5. Especificação DE HARDWARE E SOFTWARE
+# 5. ESPECIFICACAO DE HARDWARE E SOFTWARE
+
+Esta secao apresenta os principais recursos de hardware, software e arquivos de inicializacao utilizados no desenvolvimento e na execucao do sistema grafico implementado em FPGA.
 
 ## 5.1 Hardware
 
-Plataforma:
-Terasic DE1-SoC
+A plataforma utilizada no projeto e a Terasic DE1-SoC, equipada com um dispositivo Intel/Altera Cyclone V SoC. A FPGA concentra a implementacao dos modulos responsaveis pelo processamento grafico, controle e armazenamento dos dados utilizados durante a geracao da imagem.
 
-FPGA:
-Intel/Altera Cyclone V SoC
+As principais especificacoes de hardware utilizadas sao:
 
-Dispositivo utilizado na sintese:
-5CSEMA5F31C6
+- Plataforma: Terasic DE1-SoC
+- FPGA: Intel/Altera Cyclone V SoC
+- Dispositivo utilizado na sintese: `5CSEMA5F31C6`
+- Clock principal: 50 MHz
+- Clock VGA: aproximadamente 25 MHz
+- Saida de video: VGA
+- Resolucao fisica: 640 x 480 pixels
+- Resolucao logica: 320 x 240 pixels
+- Controles de demonstracao: `KEY`, `SW` e sinais da placa
 
-Clock principal:
-50 MHz
+A imagem e processada internamente na resolucao logica de 320 x 240 pixels. Para a exibicao em VGA, essa imagem e apresentada na resolucao fisica de 640 x 480 pixels, com cada pixel logico correspondendo a um bloco de 2 x 2 pixels fisicos.
 
-Clock VGA:
-aproximadamente 25 MHz
+De forma simplificada, o fluxo de processamento implementado em hardware pode ser representado por:
 
-Saida de video:
-VGA
-
-Resolucao fisica:
-640 x 480
-
-Resolucao logica:
-320 x 240
-
-Controles de demonstracao:
-KEY, SW e sinais da placa
-
+```text
+PARAMETROS DA CENA
+        |
+        v
++---------------------+
+| MOTORES GRAFICOS    |
+|                     |
+| Background          |
+| Poligonos           |
+| Sprites             |
++----------+----------+
+           |
+           v
++---------------------+
+| COMPOSITOR          |
++----------+----------+
+           |
+           v
++---------------------+
+| FRAMEBUFFER         |
++----------+----------+
+           |
+           v
++---------------------+
+| DOUBLE BUFFERING    |
++----------+----------+
+           |
+           v
++---------------------+
+| CONTROLADOR VGA     |
++----------+----------+
+           |
+           v
+        MONITOR
+```
 
 ## 5.2 Software
 
-Os relatorios presentes no projeto indicam utilizacao de:
+O desenvolvimento do projeto utiliza ferramentas destinadas a compilacao, sintese e simulacao dos circuitos implementados em HDL.
 
-Intel Quartus Prime Lite Edition 20.1.1
+Os relatorios presentes no projeto indicam a utilizacao do:
 
-O repositorio tambem contem arquivos e scripts de simulacao para o fluxo ModelSim/Questa utilizado durante o desenvolvimento.
+- Intel Quartus Prime Lite Edition 20.1.1
 
-Alguns arquivos .qip de memoria apresentam metadados de IP gerados em versoes diferentes do Quartus.
+O repositorio tambem contem arquivos e scripts relacionados ao fluxo de simulacao ModelSim/Questa, utilizados durante o desenvolvimento do sistema.
 
-Dessa forma, ao reconstruir o projeto em outra instalacao, pode ser necessario regenerar ou atualizar determinados IPs.
+Tambem estao presentes arquivos `.qip` relacionados a componentes e memorias gerados como IPs. Alguns desses arquivos apresentam metadados associados a diferentes versoes do Quartus. Dessa forma, ao reconstruir o projeto em outra instalacao ou versao da ferramenta, determinados IPs podem exigir regeneracao ou atualizacao.
 
+## 5.3 Arquivos de Inicializacao
 
-## 5.3 Arquivos de Inicialização
+O projeto utiliza arquivos no formato `.mif` (Memory Initialization File) para inicializar as memorias que armazenam dados utilizados pelos recursos graficos.
 
-O diretorio de memorias contem arquivos .mif utilizados para inicializar os recursos graficos.
+Entre os principais arquivos de inicializacao presentes no projeto estao:
 
-Entre eles estao:
+- `bg_tile_pattern_praia.mif`
+- `bg_tile_ram.mif`
+- `palette_default.mif`
+- `sprite_attribute_ram.mif`
+- `sprite_pattern_ram_pikachu_charmander.mif`
 
-bg_tile_pattern_praia.mif
-bg_tile_ram.mif
-palette_default.mif
-sprite_attribute_ram.mif
-sprite_pattern_ram_pikachu_charmander.mif
+Esses arquivos estao associados aos diferentes recursos utilizados pelo sistema:
 
-Esses arquivos definem recursos como:
+- `bg_tile_pattern_praia.mif`: padroes graficos dos tiles utilizados pelo background.
+- `bg_tile_ram.mif`: dados referentes a organizacao do mapa de tiles.
+- `palette_default.mif`: dados iniciais utilizados pela paleta de cores.
+- `sprite_attribute_ram.mif`: atributos iniciais dos sprites.
+- `sprite_pattern_ram_pikachu_charmander.mif`: padroes graficos utilizados pelos sprites.
 
-- Cenario do background.
-- Mapa de tiles.
-- Paleta inicial.
-- Atributos iniciais dos sprites.
-- Padroes graficos dos sprites.
+A organizacao das memorias acompanha a propria arquitetura grafica do projeto. O motor de background acessa as memorias de tile, padrao grafico e paleta para gerar os pixels do cenario, enquanto o motor de sprites utiliza as memorias de atributos e padroes dos sprites. Esses elementos sao posteriormente encaminhados ao compositor e ao framebuffer.
 
+Assim, os arquivos de inicializacao constituem os dados graficos utilizados pelas memorias do sistema, enquanto os modulos HDL implementam a logica responsavel pelo processamento desses dados e pela construcao da imagem.
+
+De forma simplificada:
+
+```text
++-----------------------------+
+|       ARQUIVOS .MIF         |
+|                             |
+| Background | Paleta | Sprite|
++-------------+---------------+
+              |
+              v
++-----------------------------+
+|          MEMORIAS           |
+|                             |
+| Tilemap | Patterns | Atrib. |
++-------------+---------------+
+              |
+              v
++-----------------------------+
+|       MOTORES GRAFICOS      |
++-------------+---------------+
+              |
+              v
++-----------------------------+
+|          COMPOSITOR         |
++-------------+---------------+
+              |
+              v
+          FRAMEBUFFER
+```
 
 
 # 6. Processo DE DESENVOLVIMENTO
