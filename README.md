@@ -1148,312 +1148,307 @@ Esse arquivo pode ser utilizado para programacao temporaria da FPGA pelo Quartus
 
 
 
-# 8. Testes DE FUNCIONAMENTO
+# 8. Testes e Erros
 
-O projeto inclui testbenches especificos para os principais subsistemas.
+Os testes do coprocessador foram realizados inicialmente por meio de testbenches desenvolvidos em Verilog, utilizando o ModelSim para simulação dos módulos individualmente. Os testes utilizaram memórias comportamentais como modelos das RAMs presentes no projeto, permitindo verificar os sinais de leitura, escrita no framebuffer, seleção de paletas e funcionamento dos motores de renderização.
 
-Arquivos identificados:
+A estratégia adotada foi validar inicialmente os módulos de forma isolada e, posteriormente, verificar o comportamento conjunto das diferentes camadas de renderização. Dessa forma, foi possível identificar erros de funcionamento antes da integração completa com o sistema de vídeo.
 
-tb_motor_background.v
-tb_motor_sprite.v
-tb_motor_sprite_espelhamento.v
-tb_motor_sprite_prioridade.v
-tb_motor_sprite_transparencia.v
-tb_compositor_sobreposicao.v
-tb_framebuffer_troca_buffers.v
-tb_rasterizer_square.v
-tb_rasterizer_triangle.v
+## 8.1 Testes do Rasterizador de Quadrados
 
+O rasterizador de quadrados foi testado considerando diferentes posições e dimensões dos retângulos, além de diferentes configurações de paleta.
 
-## 8.1 Background
+O primeiro teste utilizou um quadrado pequeno entre as coordenadas `(10,10)` e `(15,15)`, verificando se todos os pixels da região eram preenchidos com a cor esperada. Também foi realizada uma verificação dos pixels imediatamente externos à região, garantindo que não houvesse escrita fora dos limites especificados.
 
-O teste do motor de background verifica o processo de geracao da camada com base no tilemap e nos padroes de tiles.
+Em seguida, foi testada a utilização dos vértices em ordem invertida. Nesse caso, as coordenadas foram fornecidas como `(50,40)` e `(45,35)`, verificando se o módulo realizava corretamente a normalização dos limites do quadrado.
 
+Também foi considerado o caso extremo em que os dois vértices são iguais, formando um quadrado de apenas um pixel. Por fim, foi realizado um teste com uma região maior, próxima ao canto superior esquerdo da tela, e outro utilizando o mesmo índice de cor em uma segunda paleta.
 
-## 8.2 Transparência de Sprites
+Os testes verificaram tanto a quantidade de pixels escritos quanto a posição e a cor dos pixels armazenados no framebuffer de teste.
 
-O testbench:
+## 8.2 Testes do Motor de Background
 
-tb_motor_sprite_transparencia.v
+O motor de background foi testado utilizando modelos comportamentais das memórias de tiles, padrões e paleta. O teste também avaliou o mecanismo de scroll automático.
 
-verifica a regra:
+Foi configurado um scroll horizontal, com deslocamento de um pixel por frame. Foram executados cinco frames consecutivos e, ao final de cada processamento, foram observados os valores de `scroll_x` e `frame_scroll_x`.
 
-indice de cor 0 -> nao escrever no framebuffer
+O objetivo foi verificar se o deslocamento era atualizado corretamente entre os frames e se o valor utilizado durante a renderização permanecia consistente com o frame em processamento.
 
-Isso garante que regioes transparentes do sprite preservem o conteudo anteriormente desenhado.
+Além do controle de scroll, as escritas realizadas pelo motor no framebuffer foram monitoradas durante a simulação para confirmar que o background estava efetivamente produzindo pixels.
 
+## 8.3 Teste de Transparência das Sprites
 
-## 8.3 Prioridade de Sprites
+O teste de transparência verificou o comportamento do motor de sprites quando o índice de cor armazenado no pattern representa um pixel transparente.
 
-O teste:
+Foi configurada uma sprite de 16×16 pixels na posição `(50,50)`, com todos os pixels do pattern configurados com índice de cor `0`. O resultado esperado era que nenhum desses pixels produzisse uma escrita no framebuffer.
 
-tb_motor_sprite_prioridade.v
+Durante a simulação, todas as escritas do sinal `fb_we` foram contabilizadas. Caso alguma escrita fosse detectada, o testbench registrava um erro, pois pixels transparentes não devem alterar o conteúdo existente no framebuffer.
 
-utiliza sprites sobrepostos com prioridades diferentes.
+O teste foi utilizado para validar que a transparência ocorre antes da escrita do pixel, evitando que regiões transparentes da sprite sobrescrevam as camadas inferiores.
 
-Um dos cenarios utiliza:
+## 8.4 Teste de Espelhamento
 
-Sprite 0 -> prioridade 0
-Sprite 1 -> prioridade 1
+O comportamento de espelhamento foi testado considerando as quatro possíveis configurações dos bits de flip da sprite:
 
-A expectativa e que o sprite de maior prioridade permaneça visivel na regiao de sobreposicao.
+* Sem espelhamento;
+* Espelhamento horizontal (`flip_h`);
+* Espelhamento vertical (`flip_v`);
+* Espelhamento horizontal e vertical simultaneamente (`flip_h + flip_v`).
 
+Para tornar o efeito do espelhamento verificável, foi utilizado um padrão assimétrico de 16×16 pixels. Dessa forma, uma simples mudança na posição dos pixels permite identificar se a transformação foi realizada corretamente.
 
-## 8.4 Espelhamento
+No teste combinado de `flip_h + flip_v`, por exemplo, a barra vertical originalmente posicionada à esquerda deveria aparecer à direita, enquanto a barra horizontal originalmente posicionada na parte inferior deveria aparecer na parte superior. O testbench verifica também a quantidade de pixels escritos e as posições esperadas no framebuffer.
 
-O testbench:
+Ao final da execução, o testbench contabiliza as falhas encontradas e informa se o teste completo de espelhamento foi aprovado.
 
-tb_motor_sprite_espelhamento.v
+## 8.5 Teste de Sobreposição
 
-exercita quatro situacoes:
+O teste de sobreposição foi utilizado para verificar o comportamento do pipeline quando diferentes elementos de renderização ocupam a mesma região da tela.
 
-- Sem flip.
-- Flip horizontal.
-- Flip vertical.
-- Flip horizontal + vertical.
+Nesse cenário, background, polígono e sprite são configurados de forma que suas áreas de escrita coincidam. Cada camada utiliza uma cor diferente, permitindo observar qual camada permanece no framebuffer após a composição.
 
+O testbench verifica individualmente a quantidade de pixels escritos por cada componente. Em um dos cenários utilizados, background, polígono e sprite realizam 256 escritas cada, totalizando 768 escritas. Ao final, os pixels da região de sobreposição são verificados e devem apresentar a cor correspondente à última camada renderizada.
 
-## 8.5 Sobreposição entre Camadas
+Esse teste também permite verificar, de forma indireta, a sequência de composição utilizada pelo sistema, garantindo que as camadas sejam processadas na ordem estabelecida pela arquitetura.
 
-O arquivo:
+## 8.6 Teste de Prioridade das Sprites
 
-tb_compositor_sobreposicao.v
+O sistema possui um mecanismo de prioridade para determinar qual sprite deve permanecer visível quando duas ou mais sprites ocupam a mesma região.
 
-verifica a composicao das camadas.
+Para validar esse mecanismo, foram configuradas duas sprites de 16×16 pixels na posição `(50,50)`. A primeira sprite possui prioridade `0` e utiliza a cor vermelha, enquanto a segunda possui prioridade `1` e utiliza a cor azul.
 
-O cenario utiliza:
+Como ambas ocupam os mesmos 256 pixels, o resultado esperado é que cada sprite produza 256 escritas, totalizando 512 escritas. Após a composição, entretanto, todos os pixels da região devem apresentar a cor da sprite de maior prioridade.
 
-Background -> verde
-Poligono -> vermelho
-Sprite -> azul
+O testbench verifica tanto os contadores individuais quanto o conteúdo final do framebuffer. A aprovação ocorre somente quando são detectadas 512 escritas, sendo 256 provenientes de cada sprite, e todos os pixels da região `(50,50)` até `(65,65)` apresentam a cor azul.
 
-na regiao de sobreposicao.
+## 8.7 Teste de Troca de Buffers
 
-Como o sprite e processado por ultimo, o resultado esperado nessa area e o pixel do sprite quando ele nao for transparente.
+A troca de buffers foi testada utilizando dois framebuffers independentes, denominados `BUFFER 0` e `BUFFER 1`. Cada buffer foi associado a uma cor diferente para facilitar a identificação durante a simulação.
 
+Inicialmente, foi escrita a cor vermelha na posição `(100,100)` do `BUFFER 0` e a cor azul na mesma posição do `BUFFER 1`. Em seguida, o teste selecionou o `BUFFER 0` para leitura e verificou a presença da cor vermelha. Posteriormente, a seleção foi alterada para o `BUFFER 1`, que deveria apresentar a cor azul.
 
-## 8.6 Double Buffering
+Por fim, o teste retornou ao `BUFFER 0` e verificou novamente seu conteúdo. Também foi verificado que os dois buffers mantiveram seus conteúdos independentes após as trocas.
 
-O teste:
+Esse teste valida o princípio utilizado pelo sistema de double buffering: enquanto um buffer pode ser utilizado para exibição, o outro pode receber os dados referentes ao próximo frame, permitindo realizar a troca posteriormente sem destruir o conteúdo do frame atualmente exibido.
 
-tb_framebuffer_troca_buffers.v
+## 8.8 Testes de Integração
 
-escreve conteudos diferentes nos dois bancos e verifica a alternancia do buffer de leitura.
+Após a validação individual dos motores, foram realizados testes de integração para verificar a comunicação entre os componentes responsáveis pela composição da imagem.
 
-Um dos cenarios utiliza o pixel:
+O compositor é responsável por controlar a sequência de processamento entre background, polígonos e sprites, enquanto realiza a arbitragem dos recursos compartilhados. Na arquitetura integrada, os três motores possuem suas próprias interfaces de escrita e o compositor seleciona qual delas será conectada à porta física de escrita do framebuffer. Da mesma forma, as solicitações de leitura da paleta são arbitradas pelo compositor.
 
-(100, 100)
+A sequência utilizada durante a composição é:
 
-com valores distintos em cada framebuffer.
+```text
+START
+  |
+  v
+BACKGROUND
+  |
+  v
+POLÍGONOS
+  |
+  v
+SPRITES
+  |
+  v
+DONE
+```
 
+Dessa maneira, os testes de integração verificam não somente a geração dos pixels, mas também o correto sequenciamento dos motores e a composição das diferentes camadas no framebuffer.
 
-## 8.7 Retângulos
+## 8.9 Erros, Limitações e Decisões de Projeto
 
-O arquivo:
+Durante o desenvolvimento dos testbenches foram identificados problemas relacionados principalmente à sincronização das memórias e ao controle da sequência de renderização.
 
-tb_rasterizer_square.v
+Como as memórias utilizadas no hardware possuem comportamento síncrono, seus dados não ficam disponíveis imediatamente após a aplicação do endereço. Por esse motivo, os testbenches dos motores de background e do framebuffer utilizam modelos de memória com latência de leitura, permitindo reproduzir mais fielmente o comportamento esperado no hardware.
 
-testa situacoes como:
+Outro ponto importante foi a necessidade de considerar a latência durante a leitura da paleta. O testbench do rasterizador de quadrados utiliza uma memória de paleta com saída registrada e uma latência de um ciclo, reproduzindo o comportamento esperado pelo módulo.
 
-- Coordenadas normais.
-- Vertices invertidos.
-- Retangulo de um pixel.
-- Areas maiores.
-- Diferentes indices de paleta.
+Também foram necessários testes específicos para verificar condições que poderiam provocar escrita incorreta no framebuffer, como pixels transparentes, coordenadas invertidas, sobreposição de elementos e seleção incorreta dos bancos de memória.
 
+### 8.9.1 Módulos auxiliares para demonstração
 
-## 8.8 Triângulos
+Como a unidade de controle do coprocessador foi definida como parte do desenvolvimento da **Fase 2**, foi necessário utilizar uma solução temporária para permitir a demonstração das funcionalidades implementadas nesta etapa.
 
-O arquivo:
+Para isso, foram desenvolvidos módulos auxiliares responsáveis por gerar comandos de teste e modificar os atributos das sprites. Entre eles estão o `test_driver` e o `sprite_mover_flip`.
 
-tb_rasterizer_triangle.v
+O módulo `test_driver` atua como um controlador simplificado da demonstração. Ele gera o início de cada frame e, durante a fase de polígonos, pode comandar a execução de um quadrado e de um triângulo com parâmetros previamente definidos. Também permite habilitar ou desabilitar a renderização dos polígonos por meio de uma entrada externa.
 
-exercita triangulos com diferentes formatos e inclinacoes, permitindo verificar a logica de ordenacao dos vertices e de preenchimento por linhas.
+Já o módulo `sprite_mover_flip` foi desenvolvido para permitir a movimentação de uma sprite e o acionamento dos comandos de espelhamento horizontal e vertical. O módulo mantém a posição da sprite e os estados dos bits `flip_h` e `flip_v`, atualizando a memória de atributos da sprite quando ocorre uma movimentação ou alteração de espelhamento.
 
+Esses módulos não substituem a unidade de controle definitiva do coprocessador. Eles foram utilizados especificamente como uma solução auxiliar para conectar e demonstrar, em hardware, os módulos de renderização desenvolvidos na fase atual.
 
-## 8.9 Comandos Inválidos
+### 8.9.2 Problema identificado na demonstração
 
-O rasterizador_top.v possui logica para rejeitar coordenadas fora da faixa valida:
+A execução da demonstração em hardware foi importante para complementar os testes realizados no ModelSim. Durante essa etapa foi identificado um problema no funcionamento do **espelhamento horizontal das sprites**.
 
-0 <= X < 320
-0 <= Y < 240
+Embora os testbenches utilizados durante a validação dos módulos tenham sido capazes de verificar as diferentes configurações de `flip_h` e `flip_v`, a execução integrada na FPGA revelou que o espelhamento horizontal não apresentava o comportamento esperado na demonstração.
 
-e gera sinalizacao:
+Esse resultado evidenciou uma diferença entre a validação individual realizada em simulação e o comportamento observado no sistema integrado em hardware. O problema foi identificado especificamente durante a utilização do módulo auxiliar `sprite_mover_flip`, que permitia acionar o espelhamento por meio de pulsos externos.
 
-invalid_cmd
+A identificação desse erro também demonstrou a importância da etapa de demonstração em hardware como complemento aos testes de simulação. Enquanto os testbenches permitem verificar o comportamento lógico de módulos específicos em condições controladas, a execução na FPGA possibilita observar a interação entre os módulos e as condições reais de operação do sistema.
 
-Na versao analisada do repositorio, nao foi identificado um testbench separado dedicado exclusivamente a invalid_cmd, embora a validacao esteja presente no RTL.
+O problema do espelhamento horizontal permanece, portanto, como uma pendência identificada nesta fase e deverá ser investigado e corrigido durante a continuidade do desenvolvimento.
 
+### 8.9.3 Comandos Inválidos
 
+Apesar de o rasterizador possuir o sinal `invalid_cmd`, não foi desenvolvido um testbench específico para validação de comandos inválidos nesta fase do projeto.
 
-# 9. Análise DO RESULTADO
+Essa funcionalidade está relacionada ao tratamento dos comandos recebidos pelo coprocessador e depende de uma unidade de controle responsável pela interpretação e gerenciamento desses comandos. Foi tomada a decisão de direcionar o desenvolvimento dessa unidade de controle para a **Fase 2 do projeto**.
 
-## 9.1 Resultado Funcional
+Dessa forma, os testes realizados nesta etapa foram concentrados na validação dos módulos de renderização e de sua integração, incluindo rasterização, background, sprites, composição, transparência, espelhamento, prioridade e troca de buffers.
 
-A arquitetura produz uma cadeia grafica composta por:
+A ausência desse teste nesta fase representa, portanto, uma limitação de escopo do desenvolvimento atual, e não uma indicação de que o comportamento de comandos inválidos tenha sido validado.
 
-Tile background
-      |
-      v
-Rasterizacao de poligonos
-      |
-      v
-Sprites
-      |
-      v
-Double framebuffer
-      |
-      v
-VGA
 
-O sistema demonstra conceitos centrais de uma unidade grafica dedicada:
 
-- Separacao entre armazenamento de recursos e framebuffer.
-- Composicao de multiplas categorias de objetos.
-- Processamento independente do scanout VGA.
-- Uso de memoria indexada.
-- Prioridade e transparencia.
-- Rasterizacao de primitivas em hardware.
-- Sincronizacao entre producao e exibicao de frames.
+# 9. Análise do Resultado
 
+Os resultados obtidos durante o desenvolvimento indicam que a maior parte dos requisitos funcionais e arquiteturais estabelecidos para o coprocessador gráfico foi atendida. A validação foi realizada em duas etapas principais: inicialmente por meio de simulações no ModelSim, utilizando testbenches específicos para os módulos, e posteriormente por meio da demonstração do sistema implementado na FPGA DE1-SoC.
 
-## 9.2 Utilização de Recursos
+A combinação dessas duas etapas permitiu verificar tanto o comportamento lógico dos módulos individualmente quanto a integração entre os diferentes componentes responsáveis pela geração e composição da imagem.
 
-Os relatorios de sintese presentes no projeto indicam aproximadamente:
+## 9.1 Resultados de Simulação
 
-ALMs:
-709
+Os testes realizados no ModelSim demonstraram o funcionamento dos principais módulos de renderização.
 
-Registradores:
-996
+O rasterizador foi validado para a geração de retângulos preenchidos, incluindo diferentes posições, dimensões, coordenadas invertidas, o caso de um único pixel e diferentes índices de cor e paletas. Os testes também verificaram a quantidade de pixels escritos e a ausência de escritas fora da região especificada.
 
-Pinos:
-241 / 457
+O motor de background apresentou o comportamento esperado para a geração da camada baseada em tiles e para o deslocamento horizontal. O mecanismo de scroll foi testado durante múltiplos frames, verificando a atualização progressiva da posição de deslocamento e a geração de escritas no framebuffer.
 
-Bits de memoria:
-1.659.776 / 4.065.280
+Para as sprites, foram realizados testes de transparência, espelhamento, prioridade e posicionamento. A transparência foi verificada utilizando pixels com índice transparente, garantindo que esses pixels não provocassem alterações no framebuffer. O espelhamento horizontal e vertical também foi testado utilizando padrões assimétricos, permitindo identificar alterações nas posições dos pixels após as transformações.
 
-Blocos de RAM:
-208 / 397
+Os testes de integração verificaram a composição das diferentes camadas. Background, polígonos e sprites foram posicionados sobre uma mesma região, permitindo verificar a sequência de composição e o resultado final armazenado no framebuffer.
 
-DSPs:
-0
+Também foi validada a troca entre os dois buffers de vídeo. Os testes demonstraram que os conteúdos dos buffers permanecem independentes e que a seleção do buffer altera corretamente a imagem utilizada para leitura.
 
-PLLs:
-1 / 6
+De maneira geral, os resultados de simulação indicaram comportamento consistente dos módulos implementados e permitiram validar as principais funcionalidades de renderização antes da execução em hardware.
 
-A maior parcela do custo da implementacao esta associada as memorias utilizadas pelos framebuffers, padroes graficos, tilemap, atributos e paletas.
+## 9.2 Resultados da Demonstração em Hardware
 
-O uso de 0 DSPs tambem mostra que as operacoes de rasterizacao foram implementadas sem depender dos blocos DSP dedicados da FPGA.
+Após a validação por simulação, o projeto foi implementado na FPGA DE1-SoC para realização da demonstração.
 
+A demonstração permitiu verificar o funcionamento integrado do pipeline de vídeo, incluindo a geração do background, a renderização de polígonos, a utilização de sprites, a composição das camadas e a saída através da interface VGA.
 
-## 9.3 Temporização
+A utilização de uma resolução lógica de `320 × 240` com duplicação dos pixels permitiu gerar a saída em `640 × 480`, mantendo uma arquitetura de renderização mais simples e compatível com os recursos utilizados no projeto.
 
-Os relatorios analisados indicam folga positiva para os principais clocks do projeto.
+A demonstração também foi importante para identificar um problema que não havia sido evidenciado durante os testes individuais de simulação. Ao utilizar os controles desenvolvidos especificamente para a apresentação, foi observado que o **espelhamento horizontal das sprites não apresentava o comportamento esperado**.
 
-Para o dominio de 50 MHz foi observada frequencia maxima reportada proxima de:
+Esse resultado demonstra a importância da validação em hardware como complemento aos testbenches. A simulação permite verificar condições específicas de maneira controlada, enquanto a execução na FPGA permite observar o comportamento do sistema integrado em condições mais próximas da utilização real.
 
-84,6 MHz
+Apesar desse problema específico, as demais funcionalidades demonstradas apresentaram o comportamento esperado, indicando que a arquitetura desenvolvida é funcional em hardware.
 
-com setup slack aproximado de:
+## 9.3 Atendimento aos Requisitos
 
-8,179 ns
+A análise dos resultados mostra que a maior parte dos requisitos estabelecidos para o projeto foi atendida.
 
-Para o dominio de video de 25 MHz foi observada frequencia maxima proxima de:
+### Entrada e saída
 
-92,64 MHz
+A saída de vídeo foi implementada utilizando a interface VGA da DE1-SoC, com resolução física de `640 × 480` pixels. A renderização utiliza uma resolução lógica de `320 × 240` pixels, com duplicação dos pixels na saída.
 
-e setup slack de aproximadamente:
+Os controles físicos da placa foram utilizados apenas como mecanismo auxiliar para a demonstração das funcionalidades implementadas, não sendo tratados como substitutos da futura interface MMIO.
 
-13,278 ns
+### Núcleo do coprocessador
 
-Esses valores indicam que, para a compilacao registrada nos relatorios, os clocks utilizados pelo sistema se encontram dentro das margens de temporizacao obtidas pela sintese.
+O núcleo gráfico foi desenvolvido em Verilog e organizado de forma modular, separando os módulos de memória, motores gráficos, compositor, framebuffer e saída VGA.
 
+Também foram utilizadas estratégias de inicialização e reset nos módulos necessários para estabelecer estados iniciais conhecidos durante a execução.
 
-## 9.4 Pontos Fortes da Arquitetura
+A arquitetura modular permitiu desenvolver e testar os diferentes componentes individualmente antes da integração.
 
-A implementacao apresenta como principais pontos positivos:
+### Motor de background
 
-- Divisao clara em modulos.
-- Resolucao logica reduzida para economizar memoria.
-- Reutilizacao de padroes por tiles.
-- Sprites independentes do background.
-- Atributos compactados em 32 bits.
-- Suporte a flip sem duplicacao de padroes.
-- Paleta indexada.
-- Double buffering.
-- Rasterizacao de primitivas em hardware.
-- Testbenches especificos para funcionalidades criticas.
-- Separacao entre dominio grafico e dominio de exibicao.
+O motor de background implementa uma camada baseada em tilemap de `40 × 30` entradas, utilizando tiles de `8 × 8` pixels. Os padrões e informações de tiles são armazenados em memórias internas e o mecanismo de scroll foi validado por simulação.
 
+O motor também realiza a geração dos pixels da camada e sua escrita no framebuffer durante o processo de composição.
 
-## 9.5 Limitações Atuais
+### Motor de sprites
 
-A versao presente no repositorio ainda nao representa o sistema final completo descrito pelo problema.
+O sistema possui memória de atributos para múltiplas sprites e suporta sprites de `16 × 16` pixels, além de atributos como posição, padrão gráfico, habilitação, prioridade, seleção de paleta e espelhamento horizontal e vertical.
 
-As principais limitacoes sao:
+Os testes de transparência e prioridade apresentaram os resultados esperados. Entretanto, foi identificado um problema especificamente no **espelhamento horizontal**, observado durante a demonstração em hardware.
 
+Portanto, esse requisito foi considerado **parcialmente atendido**, permanecendo o comportamento do `flip_h` como uma funcionalidade a ser corrigida.
 
-# 1. AUSENCIA DO DRIVER LINUX/ARM
+### Rasterizador de polígonos
 
-Nao foi identificado no projeto um driver Linux em ARM Assembly responsavel por controlar o coprocessador por MMIO.
+O rasterizador implementa a geração de primitivas preenchidas utilizando aritmética inteira. Os testes realizados validaram a geração de quadrados e a integração com a camada de polígonos.
 
-A interface de top_video.v ja separa diversas operacoes de escrita, o que facilita uma integracao futura, mas essa ligacao ainda nao faz parte do material analisado.
+O projeto também possui suporte à rasterização de triângulos, utilizado durante a composição e demonstração do sistema.
 
+### Compositor, paleta e saída VGA
 
-# 2. AUSENCIA DA APLICACAO EM C
+O compositor realiza o sequenciamento das camadas de background, polígonos e sprites e controla o acesso aos recursos compartilhados, como framebuffer e paleta.
 
-Nao foi identificado um jogo ou aplicacao em C controlando o hardware grafico.
+A composição segue uma ordem definida, permitindo que as camadas superiores sobrescrevam as inferiores quando não há transparência. Os testes de sobreposição e prioridade confirmaram o comportamento esperado dessa organização.
 
-A demonstracao atual utiliza principalmente controles locais da FPGA.
+A paleta permite associar índices de cor às cores RGB utilizadas na saída, enquanto o framebuffer armazena os pixels resultantes da composição.
 
+## 9.4 Recursos, Timing e Desempenho
 
-# 3. COMPOSICAO SEQUENCIAL
+A síntese do projeto foi realizada no Quartus para avaliar a utilização dos recursos disponíveis na FPGA e verificar a viabilidade da implementação da arquitetura proposta.
 
-O compositor atual processa:
+Em relação aos recursos de memória, o projeto utiliza **1.659.776 bits** dos **4.065.280 bits** disponíveis na FPGA, correspondendo a aproximadamente **40,9% da capacidade total de memória**. Essa utilização está relacionada principalmente às memórias utilizadas pelo framebuffer, padrões gráficos, atributos das sprites, tiles do background e paleta.
 
-Background -> Poligonos -> Sprites
+Quanto aos elementos sequenciais, foram utilizados **996 registradores**. Já a implementação da lógica combinacional e sequencial ocupa **709 ALMs (Adaptive Logic Modules)**.
 
-em fases distintas.
+Os principais resultados de utilização podem ser resumidos da seguinte forma:
 
-Portanto, nao existe nesta implementacao um compositor por pixel que receba simultaneamente todas as camadas e escolha dinamicamente o vencedor a partir de uma comparacao geral de prioridades.
+| Recurso       |     Utilização | Total disponível | Utilização percentual |
+| ------------- | -------------: | ---------------: | --------------------: |
+| Memória       | 1.659.776 bits |   4.065.280 bits |               ≈ 40,9% |
+| Registradores |            996 |                — |                     — |
+| ALMs          |            709 |                — |                     — |
 
+Os resultados indicam que o projeto utiliza uma parcela significativa, porém ainda disponível, dos recursos de memória da FPGA. Isso é particularmente relevante para a arquitetura gráfica, uma vez que o framebuffer e as demais memórias de recursos gráficos representam uma parcela importante do armazenamento utilizado.
 
-# 4. TRANSPARENCIA DE POLIGONOS
+A utilização de **709 ALMs** e **996 registradores** também demonstra que a implementação dos motores gráficos, compositor, controle das memórias e lógica de vídeo foi realizada com uma ocupação relativamente moderada dos recursos lógicos, deixando margem para futuras extensões da arquitetura.
 
-A transparencia do indice de cor zero esta explicitamente implementada no motor de sprites.
+Em relação ao desempenho, a implementação deve ser analisada em conjunto com os resultados do relatório de timing gerado pelo Quartus. A frequência máxima de operação e os valores de slack permitem determinar se os caminhos críticos do circuito atendem às restrições temporais estabelecidas para o sistema.
 
-Na versao analisada do rasterizador de poligonos, nao foi identificada uma regra equivalente que impeca a escrita do poligono quando seu indice de cor for zero.
+Outro fator que influencia o desempenho é o processamento sequencial das camadas. O compositor executa as etapas de background, polígonos e sprites de forma ordenada, garantindo uma composição determinística, mas reduzindo o paralelismo entre os motores. Assim, o tempo necessário para produzir um frame depende da quantidade de ciclos consumidos por cada etapa de renderização.
 
-Assim, nao se deve considerar a transparencia de poligonos como uma funcionalidade concluida apenas com base no RTL atual.
+Dessa forma, a análise dos recursos demonstra que a implementação atual ainda possui espaço para expansão, enquanto a análise de timing permite identificar se a frequência de operação utilizada é adequada e quais caminhos podem exigir otimização em versões futuras.
 
 
-# 5. ARQUIVOS PRINCIPAIS DO PROJETO QUARTUS
+## 9.5 Gargalos e Limitações
 
-A ausencia dos arquivos .qpf/.qsf no ZIP analisado dificulta a reproducao integral da compilacao a partir de um clone limpo.
+Um dos principais pontos de atenção da arquitetura é o acesso aos recursos compartilhados durante a composição. O framebuffer e a paleta são utilizados por diferentes motores, sendo necessário que o compositor controle o acesso a esses recursos.
 
-Uma melhoria importante para o repositorio e incluir os arquivos de projeto e as atribuicoes de pinos necessarias para reconstruir a compilacao.
+A composição sequencial das camadas simplifica a arbitragem e torna o comportamento determinístico, porém limita o grau de paralelismo entre os motores. Background, polígonos e sprites não são processados simultaneamente; cada etapa precisa concluir antes que a próxima seja iniciada.
 
+Outro ponto de atenção é o processamento das sprites. Como múltiplas sprites podem ocupar regiões sobrepostas, o mecanismo de prioridade e transparência precisa ser executado de maneira consistente para determinar o pixel final.
 
-## 9.6 Melhorias Futuras
+Também foi identificada a limitação relacionada ao espelhamento horizontal das sprites, descoberta durante a demonstração em hardware.
 
-Como continuidade do projeto, podem ser desenvolvidos:
+Por fim, a unidade de controle definitiva e a futura interface de comandos/MMIO não fazem parte do escopo concluído nesta fase, tendo seu desenvolvimento direcionado para a Fase 2.
 
-- Barramento de registradores/MMIO.
-- Integracao FPGA-HPS da DE1-SoC.
-- Driver Linux em ARM Assembly.
-- Biblioteca de comandos graficos.
-- Aplicacao ou jogo em C.
-- FIFO de comandos graficos.
-- Prioridade mais geral entre diferentes tipos de camada.
-- Clipping mais completo.
-- Transparencia configuravel para poligonos.
-- Multiplos backgrounds.
-- Animacao de sprites.
-- Suporte a mais primitivas.
-- Documentacao automatica dos registradores.
-- Scripts completos de regressao de testes.
+## 9.6 Melhorias Possíveis
 
+Entre as principais melhorias previstas para a continuidade do projeto estão:
+
+* corrigir o funcionamento do espelhamento horizontal das sprites;
+* implementar a unidade de controle definitiva do coprocessador;
+* desenvolver a interface MMIO para comunicação com o processador;
+* desenvolver e executar testes específicos para comandos inválidos após a implementação da unidade de controle;
+* aumentar o grau de paralelismo entre os motores de renderização, caso os recursos da FPGA permitam;
+* otimizar os caminhos críticos identificados na análise de timing;
+* avaliar formas de reduzir o número de ciclos necessários para a composição dos pixels;
+* ampliar a quantidade e a complexidade das primitivas gráficas suportadas;
+* realizar testes adicionais diretamente no hardware para complementar a validação realizada no ModelSim.
+
+## 9.7 Funcionalidades Não Atendidas
+
+Embora a maior parte dos requisitos tenha sido atendida, algumas funcionalidades não foram completamente concluídas nesta fase.
+
+A principal funcionalidade parcialmente atendida é o **espelhamento horizontal das sprites (`flip_h`)**, que apresentou comportamento incorreto durante a demonstração em hardware e deverá ser corrigido.
+
+Além disso, o **tratamento de comandos inválidos** não foi validado por testbench, pois a unidade de controle responsável pela interpretação desses comandos foi deliberadamente deixada para a Fase 2 do desenvolvimento.
+
+Da mesma forma, a interface de controle definitiva baseada em comandos e MMIO ainda não representa o estágio final do coprocessador, sendo os controles físicos utilizados nesta fase exclusivamente para viabilizar a demonstração das funcionalidades implementadas.
+
+Assim, considerando o escopo definido para esta etapa, o projeto apresenta um grau elevado de atendimento aos requisitos funcionais de renderização, com as principais pendências concentradas no controle do coprocessador e na correção do espelhamento horizontal das sprites.
 
 
 # 10. Controles DA DEMONSTRACAO NA FPGA
