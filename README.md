@@ -50,7 +50,7 @@
 * [7. Instalação e Configuração](#7-instalação-e-configuração)
 
 * [8. Testes e Erros](#8-testes-e-erros)
-
+  * [8.0.1 Simulação](#801-simulacao)
   * [8.1 Testes do Rasterizador de Quadrados](#81-testes-do-rasterizador-de-quadrados)
   * [8.2 Testes do Motor de Background](#82-testes-do-motor-de-background)
   * [8.3 Teste de Transparência das Sprites](#83-teste-de-transparência-das-sprites)
@@ -1418,6 +1418,26 @@ Esse arquivo pode ser utilizado para programacao temporaria da FPGA pelo Quartus
 Os testes do coprocessador foram realizados inicialmente por meio de testbenches desenvolvidos em Verilog, utilizando o ModelSim para simulação dos módulos individualmente. Os testes utilizaram memórias comportamentais como modelos das RAMs presentes no projeto, permitindo verificar os sinais de leitura, escrita no framebuffer, seleção de paletas e funcionamento dos motores de renderização.
 
 A estratégia adotada foi validar inicialmente os módulos de forma isolada e, posteriormente, verificar o comportamento conjunto das diferentes camadas de renderização. Dessa forma, foi possível identificar erros de funcionamento antes da integração completa com o sistema de vídeo.
+
+## 8.0.1 Simulação
+
+Para executar os *testbenches* do projeto, é necessário primeiro **compilar o projeto** no Quartus. Em seguida, deve-se configurar a ferramenta de simulação em **Assignments → Settings**, selecionando o **ModelSim-Altera** como ferramenta de simulação.
+
+Após essa configuração, o processo de execução de um *testbench* é:
+
+1. Acesse **Tools → Run Simulation Tool → Compile**.
+2. Selecione o arquivo do *testbench* que deseja testar.
+3. Clique em **Compile** e, após a compilação, em **Done**.
+4. Na página do ModelSim, localize a região **Library** e abra a biblioteca **work**.
+5. Localize o *testbench* desejado e dê **duplo clique** sobre ele para iniciar a simulação.
+6. Na janela da simulação, clique com o botão direito e selecione **Add → Wave** para adicionar os sinais à visualização de ondas.
+7. No terminal do ModelSim, execute:
+
+```text
+run -all
+```
+
+Esse comando executa a simulação até que o *testbench* seja finalizado, permitindo analisar os sinais e verificar o comportamento do módulo testado. Todos os arquivos que correspondem a um *testbench* se iniciam com as letar *tb*.
 
 ## 8.1 Testes do Rasterizador de Quadrados
 
