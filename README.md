@@ -5,18 +5,19 @@
 * [1. Visão Geral do Projeto](#1-visão-geral-do-projeto)
 
   * [1.1 Conceito Geral](#11-conceito-geral)
-  * [1.2 Da Descricao da Cena ao Pixel](#12-da-descricao-da-cena-ao-pixel)
-  * [1.3 Resolucao e Representacao da Imagem](#13-resolucao-e-representacao-da-imagem)
-  * [1.4 Arquitetura Grafica em Hardware](#14-arquitetura-grafica-em-hardware)
-  * [1.5 Composicao e Memoria de Video](#15-composicao-e-memoria-de-video)
+  * [1.2 Da Descrição da Cena ao Pixel](#12-da-descrição-da-cena-ao-pixel)
+  * [1.3 Resolução e Representação da Imagem](#13-resolução-e-representação-da-imagem)
+  * [1.4 Arquitetura Gráfica em Hardware](#14-arquitetura-gráfica-em-hardware)
+  * [1.5 Composição e Memória de Vídeo](#15-composição-e-memória-de-vídeo)
   * [1.6 Double Buffering](#16-double-buffering)
-  * [1.7 Organizacao Modular](#17-organizacao-modular)
+  * [1.7 Organização Modular](#17-organização-modular)
   * [1.8 Estrutura Principal do Projeto](#18-estrutura-principal-do-projeto)
 
 * [2. Levantamento de Requisitos](#2-levantamento-de-requisitos)
 
   * [2.1 Requisitos Funcionais](#21-requisitos-funcionais)
-  * [2.2 Requisitos de Memória](#22-requisitos-de-memória)
+  * [2.2 Requisitos Não Funcionais](#22-requisitos-nao-funcionais)
+  * [2.3 Requisitos de Memória](#23-requisitos-de-memória)
 
 * [3. Fundamentação Teórica](#3-fundamentação-teórica)
 
@@ -43,14 +44,32 @@
     * [4.3.6 `framebuffer_ram` — 2 bancos de 76800 × 9 bits](#436-framebuffer_ram--2-bancos-de-76800--9-bits)
   * [4.4 Organização do Armazenamento](#44-organização-do-armazenamento)
 
-* [5. Especificação de Hardware e Software](#5-especificação-de-hardware-e-software)
+* [5. Especificação de Hardware e Software](#5-especificacao-de-hardware-e-software)
+
+  * [5.1 Hardware](#51-hardware)
+  * [5.2 Software](#52-software)
+  * [5.3 Arquivos de Inicialização](#53-arquivos-de-inicialização)
 
 * [6. Processo de Desenvolvimento](#6-processo-de-desenvolvimento)
 
+  * [6.1 Sistema VGA](#61-sistema-vga)
+  * [6.2 Framebuffer](#62-framebuffer)
+  * [6.3 Background](#63-background)
+  * [6.4 Sprites](#64-sprites)
+  * [6.5 Rasterização de Polígonos](#65-rasterização-de-polígonos)
+  * [6.6 Compositor](#66-compositor)
+  * [6.7 Integração na DE1-SoC](#67-integração-na-de1-soc)
+
 * [7. Instalação e Configuração](#7-instalação-e-configuração)
 
+  * [7.1 Pré-requisitos](#71-pré-requisitos)
+  * [7.2 Estrutura Geral do Projeto](#72-estrutura-geral-do-projeto)
+  * [7.3 Observação Importante sobre o Projeto Quartus](#73-observação-importante-sobre-o-projeto-quartus)
+  * [7.4 Configuração Básica](#74-configuração-básica)
+  * [7.5 Programação](#75-programação)
+
 * [8. Testes e Erros](#8-testes-e-erros)
-    * [8.0.1 Simulação](#801-simulacao)
+  * [8.0.1 Simulação](#801-simulacao)
   * [8.1 Testes do Rasterizador de Quadrados](#81-testes-do-rasterizador-de-quadrados)
   * [8.2 Testes do Motor de Background](#82-testes-do-motor-de-background)
   * [8.3 Teste de Transparência das Sprites](#83-teste-de-transparência-das-sprites)
@@ -77,9 +96,9 @@
 
 * [10. Controles da Demonstração na FPGA](#10-controles-da-demonstração-na-fpga)
 
-* [11. Equipe do Desenvolvimento](#12-equipe-do-desenvolvimento)
+* [11. Equipe do Desenvolvimento](#11-equipe-do-desenvolvimento)
 
-* [12. Referências](#13-referências)
+* [12. Referências](#12-referências)
 
 Projeto desenvolvido para o Problema #1 - 2026.2 / Sistema Digital, com o objetivo de implementar, em FPGA, um nucleo de coprocessamento grafico inspirado na arquitetura de consoles de 16 bits. A solucao implementa geracao de background por tiles, sprites com atributos e prioridade, rasterizacao de poligonos, framebuffer com double buffering e saida VGA.
 
