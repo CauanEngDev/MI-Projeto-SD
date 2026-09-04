@@ -2,8 +2,6 @@
 
 ## Sumário
 
-## Sumário
-
 * [1. Visão Geral do Projeto](#1-visão-geral-do-projeto)
 
   * [1.1 Conceito Geral](#11-conceito-geral)
