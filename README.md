@@ -50,7 +50,7 @@
 * [7. Instalação e Configuração](#7-instalação-e-configuração)
 
 * [8. Testes e Erros](#8-testes-e-erros)
-  * [8.0.1 Simulação](#801-simulacao)
+    * [8.0.1 Simulação](#801-simulacao)
   * [8.1 Testes do Rasterizador de Quadrados](#81-testes-do-rasterizador-de-quadrados)
   * [8.2 Testes do Motor de Background](#82-testes-do-motor-de-background)
   * [8.3 Teste de Transparência das Sprites](#83-teste-de-transparência-das-sprites)
@@ -1419,7 +1419,7 @@ Os testes do coprocessador foram realizados inicialmente por meio de testbenches
 
 A estratégia adotada foi validar inicialmente os módulos de forma isolada e, posteriormente, verificar o comportamento conjunto das diferentes camadas de renderização. Dessa forma, foi possível identificar erros de funcionamento antes da integração completa com o sistema de vídeo.
 
-## 8.0.1 Simulação
+### 8.0.1 Simulação
 
 Para executar os *testbenches* do projeto, é necessário primeiro **compilar o projeto** no Quartus. Em seguida, deve-se configurar a ferramenta de simulação em **Assignments → Settings**, selecionando o **ModelSim-Altera** como ferramenta de simulação.
 
