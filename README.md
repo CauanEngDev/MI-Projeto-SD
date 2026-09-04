@@ -290,84 +290,111 @@ As proximas secoes apresentam cada uma dessas partes em maior profundidade, deta
 
 
 
-# 2. Levantamento de Requisitos
+## 2. Levantamento de Requisitos
 
-A partir do enunciado do Problema #1, foram identificados os seguintes requisitos principais.
+A partir da análise do enunciado do Problema #1 e das especificações para a plataforma Intel/Altera **DE1-SoC**, os requisitos do sistema foram estruturados entre **Requisitos Funcionais (RF)**, **Requisitos Não Funcionais (RNF)** e um **Mapeamento Detalhado da Organização de Memória**.
 
+---
 
 ## 2.1 Requisitos Funcionais
 
-- Resolucao grafica logica de 320 x 240 pixels: IMPLEMENTADO
-- Saida VGA em 640 x 480 pixels: IMPLEMENTADO
-- Ampliacao de cada pixel logico para 2 x 2 pixels fisicos: IMPLEMENTADO
-- Background formado por tiles de 8 x 8 pixels: IMPLEMENTADO
-- Tilemap de 40 x 30 posicoes: IMPLEMENTADO
-- Scroll horizontal: IMPLEMENTADO
-- Scroll vertical: IMPLEMENTADO
-- Wraparound do background: IMPLEMENTADO
-- Memoria de padroes de tiles: IMPLEMENTADO
-- Pelo menos 32 sprites: IMPLEMENTADO
-- Sprites de 16 x 16 pixels: IMPLEMENTADO
-- Posicao X/Y dos sprites: IMPLEMENTADO
-- Enable de sprite: IMPLEMENTADO
-- Prioridade de sprites: IMPLEMENTADO
-- Flip horizontal: IMPLEMENTADO
-- Flip vertical: IMPLEMENTADO
-- Selecao de paleta: IMPLEMENTADO
-- Transparencia por indice de cor 0 em sprites: IMPLEMENTADO
-- Rasterizacao de retangulos preenchidos: IMPLEMENTADO
-- Rasterizacao de triangulos preenchidos: IMPLEMENTADO
-- Aritmetica inteira para rasterizacao: IMPLEMENTADO
-- Paleta de cores indexada: IMPLEMENTADO
-- Double buffering: IMPLEMENTADO
-- Troca de framebuffer durante VBlank: IMPLEMENTADO
-- Testes individuais dos principais modulos: IMPLEMENTADO
-- Testes de integracao: IMPLEMENTADO
-- Driver Linux em ARM Assembly: NAO IMPLEMENTADO NESTA ETAPA
-- Aplicacao/jogo em C controlando o coprocessador: NAO IMPLEMENTADO NESTA ETAPA
+| ID | Requisito | Detalhamento Técnico | Status |
+| :--- | :--- | :--- | :--- |
+| **RF01** | **Resolução Lógica** | Processamento interno da cena em $320 \times 240$ pixels. | **IMPLEMENTADO** |
+| **RF02** | **Saída de Vídeo VGA** | Sinalização física padrão VGA $640 \times 480 @ 60\text{Hz}$ ($25.175\text{ MHz}$ pixel clock). | **IMPLEMENTADO** |
+| **RF03** | **Pixel Scaling ($2 \times 2$)** | Duplicação do tamanho do pixel lógico no motor VGA (mapeamento $1\text{ pixel lógico} \to 4\text{ pixels físicos}$). | **IMPLEMENTADO** |
+| **RF04** | **Tilemap de Background** | Grade de $40 \times 30$ tiles cobrindo a resolução de $320 \times 240$ | **IMPLEMENTADO** |
+| **RF05** | **Tiles de $8 \times 8$ Pixels** | Dimensão fixa dos blocos gráficos da camada de background. | **IMPLEMENTADO** |
+| **RF06** | **Scrolling Horizontal e Vertical** | Deslocamento contínuo em X e Y com lógica de *wraparound* (repetição das bordas da matriz). | **IMPLEMENTADO** |
+| **RF07** | **Banco de Padrões de Background** | Suporte de memória interna para armazenar até 256 tiles gráficos únicos ($8 \times 8$). | **IMPLEMENTADO** |
+| **RF08** | **Engine de Sprites** | Unidade dedicada para renderização de no mínimo 32 sprites independentes. | **IMPLEMENTADO** |
+| **RF09** | **Dimensão dos Sprites ($16 \times 16$)** | Sprites compostos por arranjos de $2 \times 2$ tiles de $8 \times 8$ pixels. | **IMPLEMENTADO** |
+| **RF10** | **Atributos de Sprites** | Posição X ($9\text{ bits}$), Y ($8\text{ bits}$), Enable ($1\text{ bit}$), Flip H/V ($2\text{ bits}$), Prioridade e Seleção de Paleta. | **IMPLEMENTADO** |
+| **RF11** | **Transparência por Cor Nula** | Índice de cor `0x00` tratado como transparente na sobreposição de camadas (Sprites e Polígonos). | **IMPLEMENTADO** |
+| **RF12** | **Rasterização de Retângulos** | Unidade aritmética para preenchimento de retângulos parametrizados por $(X_0, Y_0, \text{Largura}, \text{Altura}, \text{Cor})$. | **IMPLEMENTADO** |
+| **RF13** | **Rasterização de Triângulos** | Algoritmo de renderização baseado em lógica inteira (varredura por *scanline*). | **IMPLEMENTADO** |
+| **RF14** | **Paleta de Cores Programável** | Look-Up Table (LUT) de 256 entradas convertendo índices de 8 bits em saídas RGB (3 bits por canal / $9\text{ bits}$ total). | **IMPLEMENTADO** |
+| **RF15** | **Double Buffering** | Implementação de dois bancos de memória (*Front* e *Back Buffer*) para renderização sem *screen tearing*. | **IMPLEMENTADO** |
+| **RF16** | **Troca de Buffer em VBlank** | *Swap* dos ponteiros de exibição travado estritamente durante o intervalo de sincronismo vertical (VBlank). | **IMPLEMENTADO** |
+| **RF17** | **Testes de Módulos e Integração** | Testbenches unitários para os motores gráficos/rasterizadores e testbench top-level cobrindo cenários de borda. | **IMPLEMENTADO** |
+| **RF18** | **Driver Linux (Assembly ARM)** | Driver por acesso de memória mapeada (MMIO). | **NÃO IMPLEMENTADO** *(Etapa posterior)* |
+| **RF19** | **Aplicação/Jogo Final em C** | Lógica de jogo integrando os controles e acelerômetro. | **NÃO IMPLEMENTADO** *(Etapa posterior)* |
 
+---
 
-## 2.2 Requisitos de Memória
+## 2.2 Requisitos Não Funcionais
 
-A arquitetura possui memorias dedicadas para os principais recursos graficos.
+1. **Plataforma e Hardware Alvo:**
+  - FPGA Altera/Intel **Cyclone V SE (5CSEMA5F31C6)** contida na placa **DE1-SoC**.
+2. **Frequências de Clock e Domínios de Sincronismo:**
+  - **System Clock ($50\text{ MHz}$):** Utilizado pelo núcleo de processamento do co-processador, rasterizador de polígonos e interface de comandos.
+  - **VGA Pixel Clock ($25.175\text{ MHz}$):** Gerado via **PLL (Phase-Locked Loop)** interno da FPGA para sincronização rigorosa do gerador de sinais VGA ($640 \times 480 @ 60\text{Hz}$).
+3. **Linguagem de Descrição de Hardware:**
+  - Todo o coprocessador sintetizável é codificado estritamente em **Verilog HDL (IEEE 1364-2001)**.
+4. **Interface de Controle (Protocolo de Comandos):**
+  - Receptor de instruções com palavras de **32 bits**, estruturado para permitir integração direta a um barramento de periféricos no modelo MMIO.
+5. **Estabilidade Visual e Ausência de Glitches:**
+  - O sinal VGA opera sem perda de sincronismo (*glitch* no *H-Sync*/*V-Sync*) durante operações de escrita simultânea do rasterizador nas memórias internas.
+6. **Otimização de Recursos Internos (M10K Blocks):**
+  - Utilização otimizada dos blocos de RAM embutida (Block RAM / M10K) da Cyclone V para garantir que o *Double Buffering* e os bancos de padrões caibam dentro dos limites físicos do chip.
 
-Tilemap do background:
-1200 x 8 bits
+---
 
-Padroes do background:
-16384 x 8 bits
+## 2.3 Requisitos de Memória e Organização Interna
 
-Atributos de sprites:
-32 x 32 bits
+A arquitetura utiliza memórias estáticas organizadas internamente na FPGA para atender às exigências do pipeline gráfico em tempo real a $60\text{ fps}$.
 
-Padroes de sprites:
-16384 x 8 bits
+### Detalhamento dos Blocos de Memória
 
-Paleta:
-512 x 9 bits
+* **Tilemap do Background:**
+  * **Dimensões:** Grade de $40 \times 30$ posições ($1.200$ palavras).
+  * **Largura da Palavra:** $8\text{ bits}$ (endereça até 256 padrões de tiles gráficos).
+  * **Capacidade Total:** $1.200\text{ Bytes} \approx 1,17\text{ KiB}$.
 
-Framebuffer:
-76800 x 9 bits por banco
+* **Memória de Padrões do Background (Pattern RAM):**
+  * **Capacidade:** 256 tiles únicos de $8 \times 8$ pixels ($16.384$ pixels armazenados).
+  * **Profundidade de Cor:** $8\text{ bits/pixel}$ (índice da paleta).
+  * **Capacidade Total:** $16.384\text{ Bytes} = 16\text{ KiB}$.
 
-O tilemap possui exatamente:
+* **Tabela de Atributos de Sprites (OAM - Object Attribute Memory):**
+  * **Quantidade de Sprites:** 32 objetos.
+  * **Tamanho por Registro:** $32\text{ bits}$.
+  * **Capacidade Total:** $32 \times 32\text{ bits} = 128\text{ Bytes}$.
+  * **Mapeamento de Bitfields ($32\text{ bits}$):**
+    * `[8:0]` — Posição X ($9\text{ bits}$, intervalo $0$ a $319$).
+    * `[16:9]` — Posição Y ($8\text{ bits}$, intervalo $0$ a $239$).
+    * `[24:17]` — Índice do Padrão/Tile Inicial ($8\text{ bits}$, intervalo $0$ a $255$).
+    * `[25]` — Bit de Habilitação (*Sprite Enable*).
+    * `[26]` — Flip Horizontal (*H-Flip*).
+    * `[27]` — Flip Vertical (*V-Flip*).
+    * `[29:28]` — Seleção de Prioridade de Camada ($2\text{ bits}$).
+    * `[31:30]` — Seleção de Sub-paleta / Reservado.
 
-40 x 30 = 1200 posicoes
+* **Memória de Padrões de Sprites (Sprite Pattern RAM):**
+  * **Capacidade:** Suporte a 64 sprites únicos de $16 \times 16$ pixels ($16.384$ pixels armazenados).
+  * **Profundidade de Cor:** $8\text{ bits/pixel}$.
+  * **Capacidade Total:** $16.384\text{ Bytes} = 16\text{ KiB}$.
 
-Essas posicoes correspondem a uma tela logica de 320 x 240 pixels dividida em tiles de 8 x 8 pixels.
+* **Paleta de Cores (Color LUT):**
+  * **Entradas:** 256 posições de cor.
+  * **Largura do Pixel:** $9\text{ bits}$ ($3\text{ bits Red}$, $3\text{ bits Green}$, $3\text{ bits Blue}$) adaptados ao DAC da placa DE1-SoC.
+  * **Capacidade Total:** $256 \times 9\text{ bits} = 2.304\text{ bits} = 288\text{ Bytes}$.
 
-A memoria de padroes do background possui:
+* **Framebuffer Integrado (Double Buffering):**
+  * **Resolução Lógica:** $320 \times 240\text{ pixels}$ ($76.800\text{ pixels/frame}$).
+  * **Tamanho do Pixel no Banco:** $8\text{ bits}$ (Índice de Cor) $+ 1\text{ bit}$ (Controle/Prioridade) = $9\text{ bits}$.
+  * **Capacidade por Banco:** $76.800 \times 9\text{ bits} = 691.200\text{ bits} \approx 84,37\text{ KiB}$ por banco.
+  * **Capacidade Total ($2 \times\text{Bancos - Front/Back}$):** $153.600\text{ palavras} = 1.382.400\text{ bits} \approx 168,75\text{ KiB}$.
 
-16384 posicoes
+---
 
-Isso permite armazenar:
+### Consumo Teórico Estimado de RAM Interna
 
-256 padroes x 8 x 8 pixels = 16384 pixels
+$$\text{Total RAM} = \text{Tilemap} + \text{Patterns (BG + Sprite)} + \text{OAM} + \text{Paleta} + \text{Framebuffer (2x)}$$
 
-O framebuffer possui:
+$$\text{Total RAM} \approx 1,17\text{ KiB} + 32\text{ KiB} + 0,125\text{ KiB} + 0,28\text{ KiB} + 168,75\text{ KiB} \approx \mathbf{202,32\text{ KiB}}$$
 
-320 x 240 = 76800 pixels
-
-por banco.
+> **Nota:** A FPGA Cyclone V (5CSEMA5F31C6) possui aproximadamente **$4.450\text{ KiB}$** de memória M10K disponível. A arquitetura projetada consome menos de **$5\%$** do total de memória RAM interna, permitindo alocação eficiente de recursos e sintetizabilidade sem gargalos de hardware.
 
 
 
@@ -1258,160 +1285,126 @@ De forma simplificada:
 
 # 6. Processo de Desenvolvimento
 
-## 6.1 Sistema VGA
+O processo de projeto e implementação do co-processador gráfico seguiu uma abordagem ascendente (*bottom-up*), iniciando nos módulos de menor nível (sinalização física de vídeo) até a composição final do pipeline gráfico e integração no *top-level* da FPGA DE1-SoC.
 
-Inicialmente foi estabelecida a geracao dos sinais VGA e a conversao da resolucao fisica de 640 x 480 para a resolucao logica de 320 x 240.
+---
 
-Tambem foi criado o gerador de enderecos do framebuffer.
+## 6.1 Sistema VGA e Escalonamento Espacial
 
+A primeira etapa do desenvolvimento concentrou-se no estabelecimento da sinalização física e no gerenciamento das frequências de *clock*:
 
-## 6.2 Framebuffer
+* **Geração do Pixel Clock ($25.175\text{ MHz}$):** Utilização da PLL nativa da Cyclone V para derivar a frequência de amostragem do sinal VGA a partir do clock principal da placa ($50\text{ MHz}$).
+* **Sincronismo Vertical e Horizontal ($640 \times 480 @ 60\text{Hz}$):** Implementação dos contadores de tempo para geração dos pulsos de sincronismo horizontal (`H-Sync`) e vertical (`V-Sync`), respeitando as janelas de *Front Porch*, *Back Porch* e área visível.
+* **Mapeamento e Pixel Scaling ($2 \times 2$):** Implementação do gerador de coordenadas onde cada pixel lógico ($320 \times 240$) é expandido para $2 \times 2$ pixels físicos no sinal VGA final por meio de divisão inteira (deslocamento de bit) dos contadores de varredura.
+* **Gerador de Endereço de Leitura:** Módulo responsável por converter as coordenadas lógicas correntes $(X_{log}, Y_{log})$ no endereço linear correspondente da memória de vídeo:
+  $$\text{Endereço} = Y_{log} \times 320 + X_{log}$$
 
-Em seguida foi implementado o armazenamento da imagem.
+---
 
-O sistema foi ampliado para dois bancos de memoria, possibilitando double buffering.
+## 6.2 Framebuffer e Sincronismo de Exibição
 
-A troca dos bancos foi sincronizada com o VBlank.
+Com a sinalização de vídeo validada, o armazenamento estático das imagens foi integrado para dar suporte à renderização contínua:
 
+* **Arquitetura de Memória M10K:** Alocação de dois bancos idênticos de memória RAM interna (*Front Buffer* e *Back Buffer*), permitindo que a escrita de novos quadros pelo rasterizador ocorra de forma independente da leitura contínua feita pelo controlador VGA.
+* **Mecanismo de Double Buffering:** Separação do acesso à memória em dois ponteiros distintos (Ponteiro de Exibição e Ponteiro de Desenho), eliminando o efeito de *screen tearing* (rasgo de tela).
+* **Sincronização em VBlank:** A alternância entre os bancos (*Buffer Swap*) foi travada para ocorrer exclusivamente no intervalo de supressão vertical (`VBlank`). Quando um comando de troca é recebido, a troca do ponteiro aguarda o início do ciclo de sincronismo vertical seguinte antes de se tornar efetiva.
 
-## 6.3 Background
+---
 
-O subsistema de background foi construido a partir de:
+## 6.3 Engine de Background (Tilemap e Scrolling)
 
-- Tilemap.
-- Memoria de padroes.
-- Paleta.
-- Calculo da posicao do tile.
-- Calculo da posicao local do pixel.
-- Scroll.
-- Wraparound.
+A construção da camada de plano de fundo seguiu a arquitetura tradicional de consoles de 16 bits:
 
-Arquivos .mif foram utilizados para criar uma cena grafica de demonstracao.
+* **Mapeamento de Coordenadas:** Divisão da tela em uma grade de $40 \times 30$ posições de tiles ($8 \times 8$ pixels). Para cada pixel lógico, o sistema calcula a posição do tile no mapa e o deslocamento local dentro da matriz $8 \times 8$:
+  $$\text{Tile}_{X} = X \gg 3, \quad \text{Tile}_{Y} = Y \gg 3$$
+  $$\text{Pixel Local}_{X} = X \ \& \ 7, \quad \text{Pixel Local}_{Y} = Y \ \& \ 7$$
+* **Lógica de Scroll e Wraparound:** Aplicação de *offsets* de registradores $(Scroll_X, Scroll_Y)$ somados às coordenadas de varredura antes do cálculo de endereço, permitindo movimentação contínua da cena com aritmética modular para garantir a repetição das bordas (*wraparound*).
+* **Pipeline de Leitura:** Integração da leitura em dois estágios: busca do índice do tile no **Tilemap** seguida do acesso à **Pattern RAM** para obter o índice de cor final de 8 bits.
+* **Inicialização por Arquivos `.mif`:** Utilização de arquivos *Memory Initialization File* para pré-carregar cenários gráficos de teste nas memórias internas durante a síntese na FPGA.
 
+---
 
-## 6.4 Sprites
+## 6.4 Engine de Sprites e Matriz de Atributos (OAM)
 
-Foi criada uma memoria de atributos para 32 sprites.
+Desenvolvimento do subsistema de objetos móveis e gerenciamento dinâmico de sobreposição:
 
-Posteriormente foram implementados:
+* **Memória OAM (Object Attribute Memory):** Registro interno estruturado para armazenar as propriedades de até 32 sprites em palavras de 32 bits.
+* **Estágios do Pipeline de Sprites:**
+  1. **Busca de Atributos (*Attribute Fetch*):** Avaliação dinâmica dos 32 registradores para verificar a intersecção do sprite com a varredura atual.
+  2. **Seleção de Quadrante:** Resolução da imagem de $16 \times 16$ pixels a partir de 4 sub-tiles de $8 \times 8$ da memória de padrões.
+  3. **Transformações Métricas:** Aplicação de lógica de inversão dos índices de varredura interna para suporte a espelhamento horizontal (*H-Flip*) e vertical (*V-Flip*).
+* **Arbitragem e Transparência:** Tratamento do índice de cor `0x00` como nulo/transparente e avaliação das regras de prioridade entre sprites que ocupam o mesmo pixel na tela.
+* **Módulos de Demonstração em Hardware:** Criação de geradores autonômicos de teste para movimentação em tempo real de objetos sem dependência de comandos externos.
 
-- Busca de atributos.
-- Leitura do padrao.
-- Selecao de quadrante.
-- Prioridade.
-- Transparencia.
-- Flip horizontal.
-- Flip vertical.
-- Selecao de paleta.
+---
 
-Tambem foram criados modulos especificos para demonstracao de movimentacao e criacao de sprites em hardware.
+## 6.5 Rasterizador de Polígonos
 
+Desenvolvimento da unidade lógica e aritmética (ALU) voltada para o preenchimento de primitivas geométricas diretamente no *Back Buffer*:
 
-## 6.5 Rasterização de Polígonos
+* **Rasterizador de Retângulos:** Módulo de varredura por loops encadeados utilizando os parâmetros de origem $(X_0, Y_0)$, largura, altura e cor.
+* **Rasterizador de Triângulos:** Unidade baseada na técnica de varredura por *scanlines*, utilizando interpolação linear dos vértices fornecidos.
+* **Divisor Inteiro e Aritmética:** Implementação de divisor interno em hardware para o cálculo de inclinação das arestas sem utilização de operações em ponto flutuante.
+* **Máquina de Estados e Proteção de Fronteira (*Clipping*):** Unidade de controle superior encarregada de coordenar a execução das primitivas e aplicar verificações de segurança que abortam a renderização de primitivas com coordenadas fora dos limites lógicos de $320 \times 240$.
 
-A unidade de rasterizacao foi dividida em:
+---
 
-- Rasterizador de retangulos.
-- Rasterizador de triangulos.
-- Divisor inteiro.
-- Modulo de controle superior.
+## 6.6 Compositor de Vídeo e Paleta de Cores
 
-Foram incluidas verificacoes de validade para impedir que comandos com coordenadas fora da tela iniciem a rasterizacao.
+Integração final dos motores gráficos em uma única cadeia de saída antes da conversão para o DAC da placa:
 
+* **Mux de Camadas e Prioridade:** O compositor combina pixel a pixel a saída dos subsistemas respeitando a hierarquia rígida definida para o projeto:
+  $$\mathbf{Background} \longrightarrow \mathbf{Polígonos} \longrightarrow \mathbf{Sprites}$$
+* **Tratamento de Transparências:** Se a camada de maior prioridade produzir o índice de cor `0x00`, o compositor repassa o pixel válido da camada imediatamente inferior.
+* **Mapeamento de Paleta (Color LUT):** Os índices de 8 bits resultantes da composição são passados pela Lookup Table de $256 \times 9\text{ bits}$, mapeando a informação para os canais físicos Red ($3\text{ bits}$), Green ($3\text{ bits}$) e Blue ($3\text{ bits}$).
 
-## 6.6 Compositor
+---
 
-Apos a validacao individual das camadas, elas foram integradas no compositor.
+## 6.7 Integração no Top-Level e Validação Física
 
-A sequencia de renderizacao utilizada e:
+Finalização da descrição em Verilog e teste direto na plataforma de prototipagem:
 
-Background -> Poligonos -> Sprites
+* **Interconexão de Módulos:** Conexão de todas as unidades internas ao módulo *top-level* do projeto no Quartus Prime.
+* **Interface Hardware de Validação:** Mapeamento temporário de sinais de controle nas chaves (*SW*), botões (*KEY*) e LEDs da placa **DE1-SoC**, permitindo a alternância de *buffers*, scroll manual de background, disparo de comandos do rasterizador e controle de visibilidade de sprites diretamente no monitor VGA durante a apresentação do protótipo.
 
 
-## 6.7 Integração na DE1-SoC
 
-Por fim, os subsistemas foram conectados ao top-level da placa.
+# 7. Instalação e Configuração
 
-Para demonstracao, botoes e chaves permitem alterar alguns recursos graficos sem a necessidade do driver Linux.
+Esta seção descreve as ferramentas, os pré-requisitos e o procedimento passo a passo para compilação, simulação e programação do co-processador gráfico na placa **DE1-SoC**.
 
+---
 
+## 7.1 Pré-requisitos de Software e Hardware
 
-# 7. Instalação E CONFIGURACAO
+Para reproduzir a síntese e os testes do sistema, são necessárias as seguintes ferramentas e componentes:
 
-## 7.1 Pré-requisitos
+* **Software de Desenvolvimento:**
+  * **Intel Quartus Prime (Lite ou Standard Edition)** — Versão 18.1 ou superior, contendo o pacote de suporte para a família **Cyclone V**.
+  * **ModelSim / Questa Intel FPGA Edition** — Utilizado para execução dos testbenches unitários e de integração.
+* **Hardware Requerido:**
+  * **Placa de Desenvolvimento:** Terasic DE1-SoC.
+  * **Dispositivo FPGA Altera/Intel:** `5CSEMA5F31C6`.
+  * **Exibição:** Monitor CRT ou LCD com suporte à resolução VGA padrão ($640 \times 480 @ 60\text{Hz}$) e cabo VGA de 15 pinos.
+  * **Interface de Gravação:** Cabo USB Type-A/Mini-B (conexão On-Board USB-Blaster II).
 
-Recomenda-se utilizar:
+---
 
-- Intel Quartus Prime com suporte ao Cyclone V.
-- ModelSim Intel FPGA Edition ou Questa para simulacao.
-- Placa Terasic DE1-SoC.
-- Monitor compativel com VGA.
-- Cabo USB-Blaster.
+## 7.2 Estrutura do Repositório
 
-A sintese armazenada no repositorio foi realizada para:
+O repositório do projeto está organizado conforme a estrutura abaixo:
 
-5CSEMA5F31C6
+```text
+.
+├── memory_files/       # Arquivos de inicialização de memória (.mif)
+├── output_files/       # Arquivos de síntese, relatórios e binários (.sof)
+├── tb/                 # Testbenches para simulação (ModelSim / Questa)
+├── DE1_SOC_golden_top.v # Módulo Top-Level integrado com os pinos da placa
+├── *.v                 # Arquivos fonte em Verilog HDL (Módulos RTL e IPs)
+└── README.md           # Documentação técnica do projeto
+```
 
-
-## 7.2 Estrutura Geral do Projeto
-
-Os principais arquivos RTL estao na raiz do projeto.
-
-Os recursos de memoria estao organizados em:
-
-memory_files/
-
-Os resultados de compilacao estao organizados em:
-
-output_files/
-
-
-## 7.3 Observação Importante sobre o Projeto Quartus
-
-O material analisado contem:
-
-- Arquivos RTL.
-- IPs.
-- Arquivos .qip.
-- Arquivos .mif.
-- Relatorios de compilacao.
-- Arquivo .sof.
-
-Entretanto, na versao analisada do ZIP nao foi identificado o conjunto principal de arquivos .qpf/.qsf necessario para simplesmente abrir o projeto Quartus completo com todas as configuracoes e atribuicoes de pinos.
-
-Assim, caso esses arquivos nao estejam disponiveis em outra versao do repositorio, podera ser necessario criar um novo projeto Quartus e adicionar os arquivos manualmente.
-
-
-## 7.4 Configuração Básica
-
-Criar um projeto para o dispositivo:
-
-5CSEMA5F31C6
-
-Definir como top-level:
-
-DE1_SOC_golden_top
-
-Adicionar os arquivos .v utilizados pelo projeto e os arquivos .qip das memorias/IPs.
-
-Tambem devem ser restauradas as atribuicoes de pinos da DE1-SoC para:
-
-- Clock.
-- VGA.
-- Switches.
-- Push-buttons.
-- LEDs e demais sinais utilizados.
-
-
-## 7.5 Programação
-
-O repositorio contem:
-
-output_files/CoProcessador.sof
-
-Esse arquivo pode ser utilizado para programacao temporaria da FPGA pelo Quartus Programmer, desde que corresponda a versao desejada do projeto e ao hardware utilizado.
-
-
+---
 
 # 8. Testes e Erros
 
@@ -1777,33 +1770,32 @@ Esses controles servem apenas como interface de demonstracao da etapa FPGA e nao
 
 # 11. Equipe DO DESENVOLVIMENTO
 
-Preencher com os integrantes oficiais do grupo:
+### Integrantes oficiais do grupo:
 
-Nome do integrante 1
-Nome do integrante 2
-Nome do integrante 3
-...
+- Cauan Dos Reis Almeida
+- Diego Dos Santos Barros Santana
+- Heitor Abdalla Mascarenhas
 
-Instituicao:
-Universidade Estadual de Feira de Santana - UEFS
 
-Disciplina:
-Sistema Digital
+### Instituicao:
+- Universidade Estadual de Feira de Santana - UEFS
 
-Periodo:
-2026.2
+### Disciplina:
+- Sistema Digital
+
+### Periodo:
+- 2026.2
 
 
 
 # 12. Referências
 
-- TERASIC. DE1-SoC Development and Education Board - documentacao e recursos oficiais.
-- INTEL. Cyclone V Device Documentation.
-- INTEL. Cyclone V SoC Hard Processor System Technical Reference Manual.
-- INTEL. Quartus Prime Documentation.
-- INTEL. ModelSim / Questa FPGA Simulation Documentation.
-- Documentacao do projeto Problema #1 - 2026.2 / Sistema Digital.
-- Arquivos RTL, testbenches, relatorios de sintese e arquivos de inicializacao presentes neste repositorio.
+- **INTEL CORPORATION.** *Cyclone V Device Overview*. Santa Clara: Intel Corporation. Disponível em: <https://www.intel.com/content/www/us/en/products/details/fpga/cyclone/v.html>.
+- **INTEL CORPORATION.** *Cyclone V Hard Processor System Technical Reference Manual*. Santa Clara: Intel Corporation.
+- **INTEL CORPORATION.** *Quartus Prime Standard Edition User Guide*. Santa Clara: Intel Corporation.
+- **TERASIC TECHNOLOGIES.** *DE1-SoC Development and Education Board User Manual*. Hsinchu: Terasic Inc. Disponível em: <https://www.terasic.com.tw/cgi-bin/page/archive.pl?Language=English&No=836>.
+- **UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA (UEFS).** *Problema #1 - Desenho do Núcleo de um Co-processador Gráfico em FPGA*. Disciplina de MI - Sistemas Digitais (2026.2), Departamento de Tecnologia, Feira de Santana, 2026.
+- **SIEMENS EDA.** *Questa / ModelSim FPGA Edition Simulation User Guide*. Siemens Industry Software Inc.
 
 
 
