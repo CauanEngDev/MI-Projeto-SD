@@ -1,0 +1,28 @@
+# --- Artefatos de compilação do Quartus (regenerados a cada build) ---
+db/
+incremental_db/
+output_files/
+greybox_tmp/
+verilog_libs/
+.qsys_edit/
+CoProcessador_nativelink_simulation.rpt
+
+# --- Artefatos de simulação (ModelSim/Questa) ---
+simulation/
+transcript
+modelsim.ini
+*.vcd
+*.wlf
+
+# --- Backups do editor de Verilog do Quartus ---
+*.v.bak
+*.bak
+files_bak/
+
+# --- Diversos ---
+c5_pin_model_dump.txt
+cr_ie_info.json
+filelist.txt
+
+# --- IDE ---
+.idea/

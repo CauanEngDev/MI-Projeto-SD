@@ -39,7 +39,7 @@
 
 set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CSEMA5F31C6
-set_global_assignment -name TOP_LEVEL_ENTITY DE1_SOC_golden_top
+set_global_assignment -name TOP_LEVEL_ENTITY rtl/DE1_SOC_golden_top
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 13
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "THU JUL 11 11:26:45 2013"
 set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
@@ -664,42 +664,38 @@ set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (Verilog)"
 set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda_simulation
 set_global_assignment -name QIP_FILE memory_files/framebuffer_ram.qip
 set_global_assignment -name QIP_FILE memory_files/bg_tile_ram.qip
-set_global_assignment -name VERILOG_FILE LSU.v
-set_global_assignment -name VERILOG_FILE DE1_SOC_golden_top.v
-set_global_assignment -name VERILOG_FILE vga_driver.v
-set_global_assignment -name VERILOG_FILE top_video.v
-set_global_assignment -name QIP_FILE pll01.qip
-set_global_assignment -name SIP_FILE pll01.sip
-set_global_assignment -name VERILOG_FILE motor_background.v
-set_global_assignment -name VERILOG_FILE motor_sprite.v
-set_global_assignment -name VERILOG_FILE tb_rasterizer.v
-set_global_assignment -name VERILOG_FILE fb_addr_gen.v
-set_global_assignment -name VERILOG_FILE framebuffer.v
-set_global_assignment -name VERILOG_FILE rasterizador_quadrado.v
-set_global_assignment -name VERILOG_FILE rasterizador_triangulo.v
-set_global_assignment -name VERILOG_FILE rasterizador_top.v
-set_global_assignment -name VERILOG_FILE divisor_unsigned.v
-set_global_assignment -name VERILOG_FILE tb_rasterizer_square.v
-set_global_assignment -name VERILOG_FILE tb_rasterizer_triangle.v
+set_global_assignment -name VERILOG_FILE rtl/DE1_SOC_golden_top.v
+set_global_assignment -name VERILOG_FILE rtl/drivers/vga_driver.v
+set_global_assignment -name VERILOG_FILE rtl/top_video.v
+set_global_assignment -name QIP_FILE ip/pll01.qip
+set_global_assignment -name SIP_FILE ip/pll01.sip
+set_global_assignment -name VERILOG_FILE rtl/motores_independentes/motor_background.v
+set_global_assignment -name VERILOG_FILE rtl/motores_independentes/motor_sprite.v
+set_global_assignment -name VERILOG_FILE rtl/utils/fb_addr_gen.v
+set_global_assignment -name VERILOG_FILE rtl/utils/framebuffer.v
+set_global_assignment -name VERILOG_FILE rtl/rasterizers/rasterizador_quadrado.v
+set_global_assignment -name VERILOG_FILE rtl/rasterizers/rasterizador_triangulo.v
+set_global_assignment -name VERILOG_FILE rtl/rasterizers/rasterizador_top.v
+set_global_assignment -name VERILOG_FILE rtl/utils/divisor_unsigned.v
+set_global_assignment -name VERILOG_FILE tb/tb_rasterizer_square.v
+set_global_assignment -name VERILOG_FILE tb/tb_rasterizer_triangle.v
 set_global_assignment -name QIP_FILE memory_files/sprite_attribute_ram.qip
 set_global_assignment -name QIP_FILE memory_files/sprite_pattern_ram.qip
-set_global_assignment -name VERILOG_FILE subsistema_sprite.v
+set_global_assignment -name VERILOG_FILE rtl/utils/subsistema_sprite.v
 set_global_assignment -name QIP_FILE memory_files/palette_ram.qip
-set_global_assignment -name VERILOG_FILE tb_ram_latency.v
-set_global_assignment -name VERILOG_FILE compositor.v
+set_global_assignment -name VERILOG_FILE rtl/motores_independentes/compositor.v
 set_global_assignment -name QIP_FILE memory_files/bg_tile_pattern_ram.qip
-set_global_assignment -name VERILOG_FILE test_driver.v
+set_global_assignment -name VERILOG_FILE rtl/drivers/test_driver.v
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name VERILOG_FILE tb_motor_sprite.v
-set_global_assignment -name VERILOG_FILE tb_motor_background.v
-set_global_assignment -name VERILOG_FILE sprite_mover_flip.v
-set_global_assignment -name VERILOG_FILE sprite_spawner.v
-set_global_assignment -name VERILOG_FILE tb_top_video_integracao.v
-set_global_assignment -name VERILOG_FILE tb_motor_sprite_transparencia.v
-set_global_assignment -name VERILOG_FILE tb_motor_sprite_espelhamento.v
-set_global_assignment -name VERILOG_FILE tb_compositor_sobreposicao.v
-set_global_assignment -name VERILOG_FILE tb_motor_sprite_prioridade.v
-set_global_assignment -name VERILOG_FILE tb_framebuffer_troca_buffers.v
+set_global_assignment -name VERILOG_FILE tb/tb_motor_sprite.v
+set_global_assignment -name VERILOG_FILE tb/tb_motor_background.v
+set_global_assignment -name VERILOG_FILE rtl/utils/sprite_mover_flip.v
+set_global_assignment -name VERILOG_FILE rtl/utils/sprite_spawner.v
+set_global_assignment -name VERILOG_FILE tb/tb_motor_sprite_transparencia.v
+set_global_assignment -name VERILOG_FILE tb/tb_motor_sprite_espelhamento.v
+set_global_assignment -name VERILOG_FILE tb/tb_compositor_sobreposicao.v
+set_global_assignment -name VERILOG_FILE tb/tb_motor_sprite_prioridade.v
+set_global_assignment -name VERILOG_FILE tb/tb_framebuffer_troca_buffers.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
