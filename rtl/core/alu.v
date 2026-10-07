@@ -1,5 +1,7 @@
+`include "rtl/include/isa.vh"
+
 module alu (
-    input        [2:0]  op,
+    input        [4:0]  op,
     output reg   [31:0] rd,
     input        [31:0] rn,
     input        [31:0] b,
@@ -12,14 +14,6 @@ module alu (
     output wire         busy,
     output wire         done
 );
-
-    // Opcodes da ALU
-    localparam ADD  = 3'b000;
-    localparam SUB  = 3'b001;
-    localparam AND  = 3'b010;
-    localparam LSL  = 3'b011;
-    localparam LSR  = 3'b100;
-    localparam PASS = 3'b101;
 
     always @(*) begin
         rd = 32'b0; // Define valor padrão para quando valid não é acionado
