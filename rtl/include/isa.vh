@@ -19,4 +19,4 @@ localparam DRB  = 5'b10001; // DRAW_BACKGROUND
 localparam DRS  = 5'b10010; // DRAW_SPRITES 
 localparam SWB  = 5'b10011; // SWAP_BUFFERS
 localparam WVB  = 5'b10100; // WAIT_VBLANK
-localparam HALT = 5'b10101;
+localparam HALT = 5'b10101; // Último Opcode Válido
