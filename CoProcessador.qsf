@@ -39,7 +39,7 @@
 
 set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CSEMA5F31C6
-set_global_assignment -name TOP_LEVEL_ENTITY DE1_SOC_golden_top
+set_global_assignment -name TOP_LEVEL_ENTITY coprocessador_top
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 13
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "THU JUL 11 11:26:45 2013"
 set_global_assignment -name LAST_QUARTUS_VERSION "25.1std.0 Lite Edition"
@@ -334,6 +334,8 @@ set_global_assignment -name VERILOG_FILE rtl/core/Adder.v
 set_global_assignment -name QIP_FILE memory_files/instruction_memory.qip
 set_global_assignment -name VERILOG_FILE rtl/core/banco_registradores.v
 set_global_assignment -name VERILOG_FILE rtl/core/unidade_de_busca_de_instrucoes.v
+set_global_assignment -name VERILOG_FILE rtl/core/unidade_de_controle.v
+set_global_assignment -name VERILOG_FILE rtl/core/coprocessador_top.v
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
@@ -705,4 +707,5 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_R[6]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_R[7]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_SYNC_N
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_VS
+set_global_assignment -name VERILOG_FILE tb/tb_unidade_de_busca_de_instrucoes.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
