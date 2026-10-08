@@ -1,7 +1,7 @@
 `include "rtl/include/isa.vh"
 
 module alu (
-    input        [:0]  op,
+    input        [4:0]  op,
     output reg   [31:0] rd,
     input        [31:0] rn,
     input        [31:0] b,
