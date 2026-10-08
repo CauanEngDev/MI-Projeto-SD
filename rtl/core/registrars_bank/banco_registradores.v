@@ -63,23 +63,32 @@ module banco_registradores (
     wire [5:0] campo_ra = is_alu ? instrucao[20:15] : instrucao[26:21];
     wire [5:0] campo_rb = is_alu ? instrucao[5:0]   : instrucao[20:15];
 
-    function [31:0] ler;
-        input [5:0] addr;
-        begin
-            case (addr)
-                6'd31:   ler = 32'b0;
-                6'd32:   ler = reg_ctrl;
-                6'd33:   ler = status_in;
-                6'd34:   ler = reg_scroll;
-                6'd35:   ler = reg_raster;
-                6'd36:   ler = {30'b0, reg_n, reg_z};
-                default: ler = (addr < 6'd31) ? registradores[addr[4:0]] : 32'b0;
-            endcase
-        end
-    endfunction
+    // Leitura: vetor com todo o espaco de enderecos (0-63). Cada posicao e
+    // ligada por assign a um registrador fixo, de modo que a saida acompanha
+    // qualquer mudanca de valor (inclusive em simulacao).
+    //   0-30 gerais | 31 XZR | 32 CTRL | 33 STATUS | 34 SCROLL |
+    //   35 RASTER_CTRL | 36 FLAGS | 37-63 sem uso (leem 0)
+    wire [31:0] rf [0:63];
 
-    assign read_data_a = ler(campo_ra);
-    assign read_data_b = ler(campo_rb);
+    genvar g;
+    generate
+        for (g = 0; g < 31; g = g + 1) begin : G_RF_GERAL
+            assign rf[g] = registradores[g];
+        end
+        for (g = 37; g < 64; g = g + 1) begin : G_RF_SEM_USO
+            assign rf[g] = 32'b0;
+        end
+    endgenerate
+
+    assign rf[31] = 32'b0;
+    assign rf[32] = reg_ctrl;
+    assign rf[33] = status_in;
+    assign rf[34] = reg_scroll;
+    assign rf[35] = reg_raster;
+    assign rf[36] = {30'b0, reg_n, reg_z};
+
+    assign read_data_a = rf[campo_ra];
+    assign read_data_b = rf[campo_rb];
 
     assign args = {registradores[7], registradores[6], registradores[5], registradores[4],
                    registradores[3], registradores[2], registradores[1], registradores[0]};

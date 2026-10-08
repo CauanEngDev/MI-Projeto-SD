@@ -28,9 +28,13 @@ module top_video (
     // ============================================================
     // CPU: Sprites
     // ============================================================
-    input wire        spr_attr_wr_en,
-    input wire [4:0]  spr_attr_wr_addr,
-    input wire [31:0] spr_attr_wr_data,
+    input wire        spos_we,
+	input wire [4:0]  spos_wr_addr,
+	input wire [16:0] spos_wr_data,
+
+	input wire        sattr_we,
+	input wire [4:0]  sattr_wr_addr,
+	input wire [14:0] sattr_wr_data,
 
     input wire        spr_pattern_wr_en,
     input wire [13:0] spr_pattern_wr_addr,
@@ -320,18 +324,18 @@ module top_video (
     // ============================================================
 
     wire [4:0]  spr_attr_rd_addr;
-    wire [31:0] spr_attr_rd_data;
+		wire [31:0] spr_attr_rd_data;
 
-    sprite_attribute_ram sprite_attribute_ram_inst (
-        .clock     (clock),
+		sprite_attribute_ram sprite_attribute_ram_inst (
+			 .clock     (clock),
 
-        .data      (spr_attr_wr_data),
-        .wraddress (spr_attr_wr_addr),
-        .wren      (spr_attr_wr_en),
+			 .data      (spr_attr_wr_data),
+			 .wraddress (spr_attr_wr_addr),
+			 .wren      (spr_attr_wr_en),
 
-        .rdaddress (spr_attr_rd_addr),
-        .q         (spr_attr_rd_data)
-    );
+			 .rdaddress (spr_attr_rd_addr),
+			 .q         (spr_attr_rd_data)
+		);
 
     // ============================================================
     // SPRITE PATTERN RAM
@@ -369,28 +373,39 @@ module top_video (
 	 
 	 
 
-    motor_sprite motor_sprite_inst (
-        .clk   (clock),
-        .reset (reset),
+   motor_sprite motor_sprite_inst (
+    .clk   (clock),
+    .reset (reset),
 
-        .attr_rd_addr (spr_attr_rd_addr),
-        .attr_rd_data (spr_attr_rd_data),
+    // Escrita da posição
+    .spos_we      (spos_we),
+    .spos_wr_addr (spos_wr_addr),
+    .spos_wr_data (spos_wr_data),
 
-        .pattern_rd_addr (spr_pattern_rd_addr),
-        .pattern_rd_data (spr_pattern_rd_data),
+    // Escrita dos atributos
+    .sattr_we      (sattr_we),
+    .sattr_wr_addr (sattr_wr_addr),
+    .sattr_wr_data (sattr_wr_data),
 
-        .palette_rd_addr (spr_palette_rd_addr),
-        .palette_rd_data (spr_palette_rd_data),
+    // Pattern RAM
+    .pattern_rd_addr (spr_pattern_rd_addr),
+    .pattern_rd_data (spr_pattern_rd_data),
 
-        .fb_we      (spr_fb_we),
-        .fb_wr_x    (spr_fb_wr_x),
-        .fb_wr_y    (spr_fb_wr_y),
-        .fb_wr_data (spr_fb_wr_data),
+    // Palette RAM
+    .palette_rd_addr (spr_palette_rd_addr),
+    .palette_rd_data (spr_palette_rd_data),
 
-        .start (spr_start),
-        .busy  (spr_busy),
-        .done  (spr_done)
-    );
+    // Framebuffer
+    .fb_we      (spr_fb_we),
+    .fb_wr_x    (spr_fb_wr_x),
+    .fb_wr_y    (spr_fb_wr_y),
+    .fb_wr_data (spr_fb_wr_data),
+
+    // Controle
+    .start (spr_start),
+    .busy  (spr_busy),
+    .done  (spr_done)
+);
 
     // ============================================================
     // RASTERIZADOR
