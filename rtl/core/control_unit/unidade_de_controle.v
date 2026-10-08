@@ -26,6 +26,11 @@
 // (leitura da paleta e escrita no framebuffer) conforme o motor ativo.
 // ============================================================================
 
+// ------------------------------------------------------------------------
+// Opcodes que a unidade de controle precisa reconhecer.
+// ------------------------------------------------------------------------
+`include "rtl/include/isa.vh"
+
 module unidade_de_controle (
     // ---- Da unidade de busca ----
     input  wire [31:0]  instruction,       // instrucao corrente
@@ -125,18 +130,18 @@ module unidade_de_controle (
     // ------------------------------------------------------------------------
     // Decodificacao do opcode (um sinal por instrucao)
     // ------------------------------------------------------------------------
-    wire is_alu           = (opcode >= 5'b00001) && (opcode <= 5'b00110);
-    wire is_set_palette   = (opcode == 5'b00111);
-    wire is_draw_rect     = (opcode == 5'b01000);
-    wire is_draw_tri      = (opcode == 5'b01001);
-    wire is_set_spr_pos   = (opcode == 5'b01010);
-    wire is_set_spr_attr  = (opcode == 5'b01011);
-    wire is_set_tilemap   = (opcode == 5'b01100);
-    wire is_scroll_bg     = (opcode == 5'b01101);
-    wire is_wr_spr_data   = (opcode == 5'b01110);
-    wire is_wr_tile_data  = (opcode == 5'b01111);
-    wire is_draw_bg       = (opcode == 5'b10000);
-    wire is_draw_sprites  = (opcode == 5'b10001);
+    wire is_alu           = (opcode >= ADD) && (opcode <= PASS);
+    wire is_set_palette   = (opcode == SEP);
+    wire is_draw_rect     = (opcode == DRR);
+    wire is_draw_tri      = (opcode == DRT);
+    wire is_set_spr_pos   = (opcode == SESP);
+    wire is_set_spr_attr  = (opcode == SESA);
+    wire is_set_tilemap   = (opcode == SETM);
+    wire is_scroll_bg     = (opcode == SCB);
+    wire is_wr_spr_data   = (opcode == WRSD);
+    wire is_wr_tile_data  = (opcode == WRTD);
+    wire is_draw_bg       = (opcode == DRB);
+    wire is_draw_sprites  = (opcode == DRS);
     // NOP (00000), WAIT_VBLANK (10010) e HALT (10011) nao geram sinais aqui:
     // sao tratados pela unidade de busca.
 

@@ -7,6 +7,8 @@
 //   36    FLAGS        {30'b0, N, Z}
 // Leituras combinacionais (2 portas), escrita sincrona, sem forwarding.
 
+`include "rtl/include/isa.vh"
+
 module banco_registradores (
     input  wire         clk,
     input  wire         reset,
@@ -57,7 +59,7 @@ module banco_registradores (
     //   Formato A (ULA): Rd=[25:21], Rn=[20:15], Rm=[5:0]
     //   Formato G:       Ra=[26:21], Rb=[20:15]
     wire [4:0] opcode = instrucao[31:27];
-    wire       is_alu = (opcode >= 5'b00001) && (opcode <= 5'b00110);
+    wire       is_alu = (opcode >= ADD) && (opcode <= PASS);
 
     wire [4:0] campo_rd = instrucao[25:21];
     wire [5:0] campo_ra = is_alu ? instrucao[20:15] : instrucao[26:21];
