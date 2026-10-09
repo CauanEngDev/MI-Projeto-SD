@@ -1,0 +1,33 @@
+-- Gerado por montador.py a partir de 'demo_animacao.asm'
+WIDTH=32;
+DEPTH=16384;
+
+ADDRESS_RADIX=UNS;
+DATA_RADIX=HEX;
+
+CONTENT BEGIN
+    0    : 0C208001;   -- ADD  R1, R1, #1
+    1    : 34800001;   -- PASS R4, #1
+    2    : 2CA08003;   -- LSR  R5, R1, #3
+    3    : 1CA28007;   -- AND  R5, R5, #7
+    4    : 24A28006;   -- LSL  R5, R5, #6
+    5    : 0CA2801B;   -- ADD  R5, R5, #27
+    6    : 38828000;   -- SET_PALETTE R4, R5
+    7    : 34800002;   -- PASS R4, #2
+    8    : 34A001F8;   -- PASS R5, #504
+    9    : 38828000;   -- SET_PALETTE R4, R5
+    10   : 34800003;   -- PASS R4, #3
+    11   : 34A0000C;   -- PASS R5, #12
+    12   : 38828000;   -- SET_PALETTE R4, R5
+    13   : 68210000;   -- SCROLL_BG R1, R2
+    14   : 80000000;   -- DRAW_BG
+    15   : 1C6080FF;   -- AND  R3, R1, #255
+    16   : 30A04003;   -- PASS V0X, R3
+    17   : 0CE1C028;   -- ADD  V1X, R3, #40
+    18   : 34C04064;   -- PASS V0Y, #100
+    19   : 3500408C;   -- PASS V1Y, #140
+    20   : 35604002;   -- PASS COLOR, #2
+    21   : 40000000;   -- DRAW_RECT
+    22   : 98000000;   -- HALT
+    [23..16383] : 00000000;
+END;

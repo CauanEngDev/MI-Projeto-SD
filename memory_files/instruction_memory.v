@@ -87,7 +87,7 @@ module instruction_memory (
 	defparam
 		altsyncram_component.clock_enable_input_a = "BYPASS",
 		altsyncram_component.clock_enable_output_a = "BYPASS",
-		altsyncram_component.init_file = "./memory_files/initialization_files/background_bandeira_brasil.mif",
+		altsyncram_component.init_file = "./memory_files/initialization_files/demo_animacao.mif",
 		altsyncram_component.intended_device_family = "Cyclone V",
 		altsyncram_component.lpm_hint = "ENABLE_RUNTIME_MOD=NO",
 		altsyncram_component.lpm_type = "altsyncram",

@@ -34,7 +34,8 @@ module rasterizador_triangulo #(
                S_BOT_INIT     = 4'd9,
                S_BOT_ROW      = 4'd10,
                S_BOT_FILL     = 4'd11,
-               S_DONE         = 4'd12;
+               S_DONE         = 4'd12,
+               S_PALETTE_WAIT2 = 4'd13;
 
     reg [3:0] state;
     assign busy = (state != S_IDLE);
@@ -121,7 +122,9 @@ module rasterizador_triangulo #(
                     state <= S_PALETTE_WAIT;
                 end
 
-                S_PALETTE_WAIT: state <= S_SETUP;
+                S_PALETTE_WAIT: state <= S_PALETTE_WAIT2; // palette_ram: registrador de endereco + de saida = 2 ciclos
+
+                S_PALETTE_WAIT2: state <= S_SETUP;
 
                 S_SETUP: begin
                     color_reg <= palette_rd_data; // já válido aqui

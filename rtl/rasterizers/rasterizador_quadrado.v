@@ -24,7 +24,8 @@ module rasterizador_quadrado (
                S_PALETTE_WAIT = 3'd1,
                S_SETUP        = 3'd2,
                S_FILL         = 3'd3,
-               S_DONE         = 3'd4;
+               S_DONE         = 3'd4,
+               S_PALETTE_WAIT2 = 3'd5;
 
     reg [2:0] state;
     assign busy = (state != S_IDLE);
@@ -48,7 +49,9 @@ module rasterizador_quadrado (
                     state <= S_PALETTE_WAIT;
                 end
 
-                S_PALETTE_WAIT: state <= S_SETUP; // aguarda 1 ciclo de latência da palette_ram
+                S_PALETTE_WAIT: state <= S_PALETTE_WAIT2; // palette_ram tem 2 ciclos de latencia (endereco + saida registrados)
+
+                S_PALETTE_WAIT2: state <= S_SETUP;
 
                 S_SETUP: begin
                     color_reg <= palette_rd_data; // já válido aqui

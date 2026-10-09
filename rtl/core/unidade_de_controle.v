@@ -20,7 +20,7 @@
 // Conteudo dos registradores, conforme a ISA (isa_coprocessador_grafico.txt):
 //   formato G: reg_a = valor de Ra, reg_b = valor de Rb
 //   formato A: reg_a = valor de Rn, reg_b = valor de Rm
-//   args = R7..R0 concatenados (R0 = args[31:0])
+//   parametros do rasterizador: vem direto do banco (registradores 37-43)
 //
 // O modulo engine_mux, no fim do arquivo, seleciona os sinais compartilhados
 // (leitura da paleta e escrita no framebuffer) conforme o motor ativo.
@@ -34,7 +34,6 @@ module unidade_de_controle (
     // ---- Do banco de registradores ----
     input  wire [31:0]  reg_a,             // Rn (formato A) ou Ra (formato G)
     input  wire [31:0]  reg_b,             // Rm (formato A) ou Rb (formato G)
-    input  wire [255:0] args,              // R7..R0
 
     // ---- Caminho da ULA ----
     output wire         alu_valid,         // habilita a ULA
@@ -90,16 +89,6 @@ module unidade_de_controle (
     output wire         start_sprite,
     output wire         start_square,
     output wire         start_triangle,
-
-    // ---- Parametros do rasterizador ----
-    output wire [8:0]   rast_v0x,
-    output wire [7:0]   rast_v0y,
-    output wire [8:0]   rast_v1x,
-    output wire [7:0]   rast_v1y,
-    output wire [8:0]   rast_v2x,
-    output wire [7:0]   rast_v2y,
-    output wire [7:0]   rast_color,
-    output wire         rast_palette,
 
     // ---- Fim das operacoes dos motores ----
     input  wire         done_bg,
@@ -207,33 +196,6 @@ module unidade_de_controle (
     assign start_sprite   = execute & is_draw_sprites;
     assign start_square   = execute & is_draw_rect;
     assign start_triangle = execute & is_draw_tri;
-
-    // ------------------------------------------------------------------------
-    // Parametros do rasterizador, tirados de R0-R7
-    //   DRAW_RECT: R0=x0, R1=y0, R2=x1, R3=y1 (cantos opostos),
-    //              R4=indice de cor, R5=palette_sel
-    //   DRAW_TRI:  R0=x0, R1=y0, R2=x1, R3=y1, R4=x2, R5=y2,
-    //              R6=indice de cor, R7=palette_sel
-    // Os valores sao estaveis enquanto o motor roda, pois o PC fica parado na
-    // instrucao de desenho e nenhuma outra instrucao altera R0-R7.
-    // ------------------------------------------------------------------------
-    wire [31:0] r0 = args[31:0];
-    wire [31:0] r1 = args[63:32];
-    wire [31:0] r2 = args[95:64];
-    wire [31:0] r3 = args[127:96];
-    wire [31:0] r4 = args[159:128];
-    wire [31:0] r5 = args[191:160];
-    wire [31:0] r6 = args[223:192];
-    wire [31:0] r7 = args[255:224];
-
-    assign rast_v0x     = r0[8:0];
-    assign rast_v0y     = r1[7:0];
-    assign rast_v1x     = r2[8:0];
-    assign rast_v1y     = r3[7:0];
-    assign rast_v2x     = r4[8:0];   // so usado no triangulo
-    assign rast_v2y     = r5[7:0];   // so usado no triangulo
-    assign rast_color   = is_draw_tri ? r6[7:0] : r4[7:0];
-    assign rast_palette = is_draw_tri ? r7[0]   : r5[0];
 
     // ------------------------------------------------------------------------
     // 4. Motor ativo e conclusao
