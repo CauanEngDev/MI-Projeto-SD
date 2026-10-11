@@ -1,0 +1,309 @@
+============================================================
+ISA DO COPROCESSADOR GRAFICO (DE1-SoC / Verilog)
+Especificacao dos formatos de instrucao e descricao das instrucoes
+============================================================
+
+1. VISAO GERAL
+------------------------------------------------------------
+- Instrucoes de 32 bits, largura fixa, opcode de 5 bits (32 opcodes possiveis).
+- Modelo load-store estilo LEGv8: ULA e motores operam sobre registradores.
+- Espaco de registradores unificado (0-43), dos quais estao em uso:
+    0-30  registradores gerais
+    31    XZR (zero fixo)
+    33    STATUS ({29'b0, vblank, waiting, running}; somente leitura,
+          escrito pelo hardware)
+    36    FLAGS ({30'b0, N, Z}, escrito apenas pela ULA)
+    37    V0X     (9 bits)   vertice 0, coordenada X
+    38    V0Y     (8 bits)   vertice 0, coordenada Y
+    39    V1X     (9 bits)   vertice 1, coordenada X
+    40    V1Y     (8 bits)   vertice 1, coordenada Y
+    41    V2X     (9 bits)   vertice 2, coordenada X
+    42    V2Y     (8 bits)   vertice 2, coordenada Y
+    43    COLOR   (9 bits)   {palette_sel, indice de cor}
+  Os registradores 32, 34 e 35 (antes CTRL, SCROLL e RASTER_CTRL, do HPS)
+  ficam sem uso e leem 0, assim como 44-63.
+- Escrita em registradores: so o write-back da ULA escreve, via Rd (6 bits).
+  O Rd pode alvejar 0-30 e 37-43; escritas em 31-36 e 44-63 sao descartadas.
+- Os registradores 37-43 (vertices e cor) sao dedicados ao rasterizador: suas
+  saidas ficam ligadas direto ao rasterizador_top. Sao escritos e lidos pela
+  ULA como qualquer outro registrador (PASS, ADD, SUB, ...). Guardam so a
+  largura do campo (X: 9 bits, Y: 8 bits, COLOR: 9 bits) e a leitura devolve o
+  valor zero-extendido para 32 bits.
+- Banco de registradores com 2 leituras combinacionais e 1 escrita sincrona.
+  Por isso nenhuma instrucao le mais de 2 registradores. DRAW_RECT e DRAW_TRI
+  nao leem operandos pelas portas de leitura: usam as saidas dedicadas
+  (registradores 37-43).
+- Busca ativa; memoria de instrucoes, incremento do PC e ULA ja criados.
+  O PC e de 16 bits, enderecado em bytes (PC + 4); a memoria de instrucoes
+  tem 16384 palavras de 32 bits.
+- Sem HPS: o programa vem do init_file (.mif) da instruction_memory e as
+  memorias de conteudo (paleta, tilemap, padroes, sprites) sao escritas apenas
+  pelas instrucoes SET_* e WRITE_*. Nao ha arbitragem de escrita.
+- Sem instrucoes de desvio por enquanto (ficam para outro momento). O PC
+  apenas incrementa e o programa e linear.
+- Reinicio automatico: ao terminar o programa (HALT ou fim da memoria) a busca
+  reinicia no PC 0 na proxima borda de subida de vblank (e troca os bancos do
+  framebuffer no mesmo instante). Como o reinicio ja
+  acontece no inicio do vblank, o programa nao deve comecar com WAIT_VBLANK.
+- Os registradores so voltam a zero no reset, nao no reinicio do programa:
+  seus valores persistem de um frame para o seguinte (ver secao 6, item 7).
+- Instrucoes de desenho seguram o PC ate o sinal DONE do motor
+  correspondente (stall: instrucao bloqueante e DONE = 0 -> enable do PC = 0).
+  Assim os motores nunca disputam o framebuffer.
+- Framebuffer com double buffer (2 bancos de 320x240x9 bits). A troca de bancos
+  e automatica: o HALT marca o fim do frame e, quando o vblank chega, o hardware
+  troca os bancos e reinicia o programa. Nao ha instrucao de troca.
+
+
+2. TABELA DE OPCODES
+------------------------------------------------------------
+Opcode   Instrucao            Formato
+00000    NOP                  N
+00001    ADD                  A
+00010    SUB                  A
+00011    AND                  A
+00100    LSL                  A
+00101    LSR                  A
+00110    PASS                 A
+00111    SET_PALETTE          G
+01000    DRAW_RECT            N
+01001    DRAW_TRI             N
+01010    SET_SPRITE_POS       G
+01011    SET_SPRITE_ATTR      G
+01100    SET_TILEMAP          G
+01101    SCROLL_BG            G
+01110    WRITE_SPRITE_DATA    G
+01111    WRITE_TILE_DATA      G
+10000    DRAW_BG              N
+10001    DRAW_SPRITES         N
+10010    WAIT_VBLANK          N
+10011    HALT                 N
+
+Opcodes 10100 a 11111 reservados (desvios, LOAD/STORE, etc.). Se executados,
+sao tratados como NOP e sinalizados pela unidade de busca (invalid_opcode).
+
+
+3. FORMATOS DE INSTRUCAO (32 bits)
+------------------------------------------------------------
+
+Formato A - ULA (ADD, SUB, AND, LSL, LSR, PASS)
+
+ 31      27 26 25     21 20     15 14 13 12 11            0
++----------+--+---------+---------+----+-----+---------------+
+|  opcode  | I | Rd[4:0] |   Rn    |Rd5 | rsv |  Rm ou imm12  |
++----------+--+---------+---------+----+-----+---------------+
+   5 bits   1     5         6        1    2         12
+
+- I = 0: segundo operando e o registrador Rm (bits 5:0).
+- I = 1: segundo operando e imm12, zero-extendido para 32 bits.
+- Rd tem 6 bits: Rd = {bit 14, bits 25:21}. O bit 14 (Rd5) e o bit mais
+  significativo; antes ele fazia parte do campo reservado. Rd de 0 a 31
+  mantem a codificacao anterior (bit 14 = 0). Os registradores 37-43 exigem
+  bit 14 = 1 (37 = 100101b: bit 14 = 1, bits 25:21 = 00101).
+- LSL e LSR usam b[4:0] como shamt, onde b e o VALOR do segundo operando
+  (valor lido de Rm se I = 0, imm12 se I = 1). Nao sao os bits do campo que
+  contem o numero do registrador. Com isso a porta shamt da ULA fica redundante.
+- PASS copia o segundo operando para Rd (Rn ignorado).
+- Rn e Rm tem 6 bits (enderecam 0-43); Rd tem 6 bits (alvos 0-30 e 37-43).
+
+
+Formato G - Graficos com ate 2 registradores
+
+ 31      27 26     21 20     15 14                      0
++----------+---------+---------+-------------------------+
+|  opcode  |   Ra    |   Rb    |        reservado        |
++----------+---------+---------+-------------------------+
+   5 bits     6 bits    6 bits           15 bits
+
+
+Formato N - Sem operandos na instrucao
+
+ 31      27 26                                          0
++----------+---------------------------------------------+
+|  opcode  |                 reservado                   |
++----------+---------------------------------------------+
+   5 bits                   27 bits
+
+
+4. OPERANDOS DAS INSTRUCOES
+------------------------------------------------------------
+Instrucao            Formato  Operandos
+SET_PALETTE          G        Ra = {palette_sel, indice} (9 bits)
+                              Rb = cor RGB (9 bits, RRRGGGBBB)
+SET_SPRITE_POS       G        Ra = id do sprite (5 bits)
+                              Rb[16:0] = {pos_y[7:0], pos_x[8:0]}
+SET_SPRITE_ATTR      G        Ra = id do sprite (5 bits)
+                              Rb[14:0] = {enable, priority[4:0], flip_v,
+                              flip_h, palette_sel, pattern_index[5:0]}
+SET_TILEMAP          G        Ra = posicao no mapa (0-1199, 11 bits)
+                              Rb = pattern_id (8 bits)
+SCROLL_BG            G        Ra[8:0] = valor do deslocamento
+                              Rb[0] = eixo (0 = X, 1 = Y)
+WRITE_TILE_DATA      G        Ra = endereco na Tile Pattern RAM (14 bits)
+                              Rb = indice de cor (8 bits)
+WRITE_SPRITE_DATA    G        Ra = endereco na Sprite Pattern RAM (14 bits)
+                              Rb = indice de cor (8 bits)
+DRAW_RECT            N        V0X, V0Y (37, 38) e V1X, V1Y (39, 40) =
+                              cantos opostos; COLOR (43) =
+                              {palette_sel, indice de cor}
+DRAW_TRI             N        V0X, V0Y (37, 38), V1X, V1Y (39, 40) e
+                              V2X, V2Y (41, 42) = vertices;
+                              COLOR (43) = {palette_sel, indice de cor}
+NOP, DRAW_BG, DRAW_SPRITES, WAIT_VBLANK, HALT: sem operandos.
+
+Parametros do rasterizador: os registradores 37-43 mantem o valor ate serem
+  escritos de novo. DRAW_RECT e DRAW_TRI usam os valores correntes, sem
+  precisar reescrever o que nao mudou (mesma cor em varios desenhos, vertice
+  compartilhado entre triangulos). O rasterizador valida os vertices
+  (X < 320 e Y < 240); fora disso o comando e rejeitado (invalid_cmd).
+
+Atributos do sprite: ficam em registradores dentro do motor_sprite (nao ha
+  sprite_attribute_ram). SET_SPRITE_POS grava x e y; SET_SPRITE_ATTR grava os
+  demais campos. Cada instrucao escreve so o seu campo, sem read-modify-write.
+
+
+5. DESCRICAO DAS INSTRUCOES
+------------------------------------------------------------
+-- Aritmeticas e logicas (formato A) --
+NOP                Nao faz nada; o PC apenas incrementa.
+ADD                Rd = Rn + (Rm ou imm12).
+SUB                Rd = Rn - (Rm ou imm12).
+AND                Rd = Rn AND (Rm ou imm12).
+LSL                Rd = Rn deslocado a esquerda pelo shamt (b[4:0]).
+LSR                Rd = Rn deslocado a direita pelo shamt (b[4:0]).
+PASS               Rd = segundo operando (Rm ou imm12); usada para carregar constantes,
+                   inclusive vertices e cor (Rd = 37-43).
+                   A ULA atualiza as flags Z e N (registrador 36).
+
+-- Configuracao de memorias e registradores de video (formato G) --
+SET_PALETTE        Escreve uma cor RGB de 9 bits na Palette RAM no endereco
+                   {palette_sel, indice}. O indice 0 e a cor transparente dos sprites.
+SET_SPRITE_POS     Define posicao X/Y do sprite indicado.
+SET_SPRITE_ATTR    Define padrao, paleta, espelhamentos, prioridade (0-31) e enable
+                   do sprite indicado.
+SET_TILEMAP        Escreve na Background Tile RAM o pattern_id da posicao do mapa
+                   (1200 posicoes; cada padrao e um tile de 8x8).
+SCROLL_BG          Atualiza o deslocamento do background em um eixo por instrucao
+                   (o motor_background recebe uma escrita por eixo).
+WRITE_TILE_DATA    Escreve um pixel (indice de cor) na Background Tile Pattern RAM.
+WRITE_SPRITE_DATA  Escreve um pixel (indice de cor) na Sprite Pattern RAM.
+
+-- Desenho e controle de frame --
+DRAW_BG            Dispara o motor_background, que renderiza o fundo inteiro no
+                   framebuffer. Bloqueante ate DONE. Como o fundo cobre a tela,
+                   serve tambem para limpar o quadro.
+DRAW_RECT          Dispara o rasterizador de retangulo preenchido entre os cantos
+                   (V0X,V0Y) e (V1X,V1Y), com a cor de COLOR.
+                   Bloqueante ate DONE.
+DRAW_TRI           Dispara o rasterizador de triangulo (scanline fill) com os
+                   vertices V0, V1, V2 e a cor de COLOR. Bloqueante ate DONE.
+DRAW_SPRITES       Dispara o motor_sprite, que varre a tela pixel a pixel e, em cada
+                   pixel, desenha o sprite de maior prioridade com pixel opaco
+                   (empate: maior indice; indice de cor 0 e transparente e deixa
+                   ver o sprite de baixo). Bloqueante ate DONE.
+WAIT_VBLANK        Segura o PC ate a proxima borda de subida de vblank.
+HALT               Encerra o frame. No proximo vblank os bancos do framebuffer sao
+                   trocados e a busca reinicia no PC 0.
+
+A ordem das camadas fica sob controle do software, pela ordem das instrucoes
+de desenho: tipicamente DRAW_BG, DRAW_RECT/DRAW_TRI, DRAW_SPRITES, HALT.
+(Para limpar a tela com uma cor, use DRAW_RECT cobrindo (0,0)-(319,239).)
+
+
+6. OBSERVACOES DE IMPLEMENTACAO
+------------------------------------------------------------
+1. Vertices e cor do rasterizador ficam em registradores dedicados dentro do
+   banco de registradores (37-43), com saidas proprias (v0x, v0y, v1x, v1y,
+   v2x, v2y, color_index, palette_sel) ligadas direto ao rasterizador_top.
+   Nao ha barramento args nem encaminhamento pela unidade de controle: ela
+   apenas dispara o start. Os valores ficam estaveis enquanto o motor roda,
+   pois o PC fica parado na instrucao de desenho.
+2. Os valores empacotados do formato G (posicao do sprite, atributos) sao
+   montados pelo programa com LSL e ADD antes da instrucao. Os cantos do
+   DRAW_RECT sao tratados pelo rasterizador em qualquer ordem (ele ordena
+   x e y internamente); o triangulo ordena os vertices por Y.
+3. Auto-scroll do motor_background: nenhuma instrucao o configura; a unidade
+   de controle o mantem desligado (scroll_auto_en = 0).
+4. Double buffer: o banco de tras guarda o quadro de dois frames atras, entao
+   o programa deve redesenhar a tela inteira a cada frame (comece por DRAW_BG
+   ou por um DRAW_RECT cobrindo (0,0)-(319,239)).
+5. Se o rasterizador rejeitar um comando (invalid_cmd), a unidade de controle
+   trata como fim da instrucao para o PC nao travar, e sinaliza cmd_error.
+6. Instrucoes de desvio (B, B_COND), LOAD/STORE e BL/RET ficam para uma
+   etapa posterior; os opcodes 10100-11111 estao livres para isso.
+7. Persistencia entre frames: o reinicio automatico volta o PC a 0, mas nao
+   zera os registradores (so o reset zera). Um registrador que o programa nao
+   reinicializa mantem o valor do frame anterior; por exemplo, ADD V0X, V0X,
+   #1 sem inicializar V0X desloca o canto a cada frame, partindo de 0 apos o
+   reset. Sem desvios nao ha como limitar o percurso por teste; uma opcao e
+   AND com mascara (potencia de 2 menos 1) para dar a volta.
+8. Largura dos registradores de vertice: X guarda 9 bits e Y guarda 8 bits,
+   truncados na escrita. Y >= 256 da a volta em silencio; Y entre 240 e 255 e
+   X >= 320 sao rejeitados pelo rasterizador (invalid_cmd).
+9. Leitura da paleta pelos rasterizadores: a palette_ram tem registrador de
+   endereco e de saida (2 ciclos de latencia), entao os rasterizadores
+   esperam 2 ciclos (S_PALETTE_WAIT e S_PALETTE_WAIT2) antes de capturar a cor.
+
+
+7. INTEGRACAO COM A ULA (alu.v) E DECODIFICACAO
+------------------------------------------------------------
+A ULA e combinacional: op de 3 bits, entradas rn, b e valid; saidas rd, z, n,
+busy (sempre 0) e done (= valid). Pontos que a decodificacao deve tratar:
+
+1. Codificacao do op. A ULA deve ser alinhada aos opcodes da ISA:
+       localparam ADD  = 3'b001;   localparam LSL  = 3'b100;
+       localparam SUB  = 3'b010;   localparam LSR  = 3'b101;
+       localparam AND  = 3'b011;   localparam PASS = 3'b110;
+   Assim op = opcode[2:0], sem logica extra. O valid funciona como filtro:
+       is_alu = (opcode >= 5'b00001) && (opcode <= 5'b00110);
+
+2. Operando b e shamt:
+       b     = I ? {20'b0, imm12} : valor_de_Rm;
+       shamt = b[4:0];
+
+3. Flags. z e n valem 0 quando valid = 0, entao o registrador FLAGS (36)
+   captura z e n em um flip-flop com enable em done. A captura ocorre apenas
+   em instrucoes da ULA.
+
+4. Escrita no banco de registradores: enable = done (a ULA so completa em
+   instrucoes do formato A). O proprio banco decodifica Rd = {bit 14,
+   bits 25:21}: escreve nos gerais se Rd <= 30, nos registradores dedicados
+   se Rd = 37-43, e descarta Rd = 31-36 e 44-63.
+
+5. Handshake: como busy = 0 e done = valid, instrucoes da ULA concluem no
+   mesmo ciclo e nunca seguram o PC. O stall da unidade de busca depende
+   apenas do DONE dos motores de desenho (DRAW_*).
+
+6. Futuro: a ULA nao gera carry nem overflow. Para desvios com sinal
+   (B.LT, B.GE), o N do resultado de SUB erra quando ha overflow. Quando os
+   desvios entrarem, incluir uma flag V ou limitar-se a EQ/NE e comparacoes
+   sem sinal.
+
+
+8. ARQUIVOS DA UNIDADE DE BUSCA E CONTROLE
+------------------------------------------------------------
+unidade_de_busca_de_instrucoes.v  PC, Adder, instruction_memory e logica de busca
+                     (parametros LAT_MEM, INICIAR_AUTO, LOOP_AUTO).
+unidade_de_controle.v  decodificacao, escrita nas memorias, disparo dos motores
+                     e seletor do motor ativo; engine_mux (mux da leitura da
+                     paleta e da escrita no framebuffer).
+banco_registradores.v  registradores gerais (0-30), STATUS, FLAGS e registradores
+                     dedicados do rasterizador (37-43: vertices e cor).
+
+
+9. EXEMPLO DE PROGRAMA (triangulo)
+------------------------------------------------------------
+PASS com I = 1: 0x34000000 | (Rd[4:0] << 21) | (Rd[5] << 14) | imm12
+
+ End.  Hex       Instrucao
+  0    34A04050  PASS V0X,   #80
+  1    34C04028  PASS V0Y,   #40
+  2    34E040F0  PASS V1X,   #240
+  3    35004064  PASS V1Y,   #100
+  4    35204078  PASS V2X,   #120
+  5    354040C8  PASS V2Y,   #200
+  6    35604001  PASS COLOR, #1      (paleta 0, indice 1)
+  7    48000000  DRAW_TRI
+  8    98000000  HALT
+
+Retangulo: V0X, V0Y, V1X, V1Y e COLOR, seguidos de DRAW_RECT (0x40000000).

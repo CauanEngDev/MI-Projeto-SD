@@ -76,7 +76,6 @@ module coprocessador_top (
 
     // Banco de registradores e ULA
     wire [31:0]  reg_a, reg_b;
-    wire [255:0] args;
     wire [31:0]  alu_rd;
     wire         alu_valid, alu_done, alu_busy, alu_z, alu_n;
     wire [2:0]   alu_op;
@@ -252,7 +251,6 @@ module coprocessador_top (
         .execute         (execute),
         .reg_a           (reg_a),
         .reg_b           (reg_b),
-        .args            (args),
 
         .alu_valid       (alu_valid),
         .alu_op          (alu_op),
@@ -294,14 +292,6 @@ module coprocessador_top (
         .start_square    (start_square),
         .start_triangle  (start_triangle),
 
-        .rast_v0x        (rast_v0x),
-        .rast_v0y        (rast_v0y),
-        .rast_v1x        (rast_v1x),
-        .rast_v1y        (rast_v1y),
-        .rast_v2x        (rast_v2x),
-        .rast_v2y        (rast_v2y),
-        .rast_color      (rast_color),
-        .rast_palette    (rast_palette),
 
         .done_bg         (done_bg),
         .done_sprite     (done_sprite),
@@ -315,7 +305,7 @@ module coprocessador_top (
 
     // ------------------------------------------------------------------------
     // Banco de registradores (2 leituras, escrita pelo write-back da ULA)
-    // Os registradores 32-35 pertenciam ao HPS: escritas desligadas.
+    // Registradores 37-43: vertices e cor do rasterizador (saidas dedicadas).
     // ------------------------------------------------------------------------
     banco_registradores u_banco (
         .clk          (clk),
@@ -325,14 +315,16 @@ module coprocessador_top (
         .write_data   (alu_rd),
         .read_data_a  (reg_a),
         .read_data_b  (reg_b),
-        .args         (args),
 
-        .ctrl_we      (1'b0),
-        .ctrl_wdata   (32'b0),
-        .scroll_we    (1'b0),
-        .scroll_wdata (32'b0),
-        .raster_we    (1'b0),
-        .raster_wdata (32'b0),
+        // Vertices e cor do rasterizador (registradores 37-43)
+        .v0x          (rast_v0x),
+        .v0y          (rast_v0y),
+        .v1x          (rast_v1x),
+        .v1y          (rast_v1y),
+        .v2x          (rast_v2x),
+        .v2y          (rast_v2y),
+        .color_index  (rast_color),
+        .palette_sel  (rast_palette),
 
         .status_in    ({29'b0, vblank, waiting, running}),
 
@@ -340,9 +332,6 @@ module coprocessador_top (
         .flag_z       (alu_z),
         .flag_n       (alu_n),
 
-        .ctrl         (),
-        .scroll       (),
-        .raster_ctrl  (),
         .flags        ()
     );
 

@@ -25,11 +25,12 @@
 // Tempo de varredura: 1 ciclo por pixel sem sprite; cerca de 10 ciclos por
 // pixel coberto por um sprite (mais 6 por cada sprite transparente testado).
 //
-// Latencias supostas (iguais as do motor anterior):
-//   - pattern RAM: dado valido 1 ciclo apos o endereco aparecer.
-//   - palette RAM: dado valido no ciclo seguinte ao da escrita de
-//     palette_rd_addr. Se a RAM exigir mais ciclos, use os parametros
-//     PATTERN_EXTRA_WAIT e PALETTE_EXTRA_WAIT.
+// Latencia das RAMs deste projeto:
+//   - pattern_ram e palette_ram registram o endereco e a saida (CLOCK0).
+//   - Os parametros padrao acrescentam a espera necessaria para que o dado
+//     correspondente ao endereco atual esteja estavel antes de ser amostrado.
+//   - Ao substituir as RAMs por modelos combinacionais/simplificados em uma
+//     simulacao, os parametros podem ser reduzidos explicitamente na instancia.
 //
 // Atributos:
 //   spos_wr_data  = {pos_y[7:0], pos_x[8:0]}                          (SET_SPRITE_POS)
@@ -38,8 +39,8 @@
 // ============================================================================
 
 module motor_sprite #(
-    parameter PATTERN_EXTRA_WAIT = 0, // ciclos extras de espera da pattern RAM
-    parameter PALETTE_EXTRA_WAIT = 0  // ciclos extras de espera da palette RAM
+    parameter PATTERN_EXTRA_WAIT = 1, // espera da pattern RAM com endereco/saida registrados
+    parameter PALETTE_EXTRA_WAIT = 2  // espera da palette RAM com endereco/saida registrados
 ) (
     input  wire        clk,
     input  wire        reset,

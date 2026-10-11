@@ -290,14 +290,60 @@ module DE1_SOC_golden_top(
 	// ============================================================
 	// Sprite controlável (mover + espelhar) e spawner
 	// ============================================================
+
 	wire        mover_wr_en, spawner_wr_en;
 	wire [4:0]  mover_wr_addr, spawner_wr_addr;
 	wire [31:0] mover_wr_data, spawner_wr_data;
 
-	wire        arb_spr_attr_wr_en   = mover_wr_en | spawner_wr_en;
-	wire [4:0]  arb_spr_attr_wr_addr = mover_wr_en ? mover_wr_addr : spawner_wr_addr;
-	wire [31:0] arb_spr_attr_wr_data = mover_wr_en ? mover_wr_data : spawner_wr_data;
-	
+	// ------------------------------------------------------------
+	// Arbitragem das escritas vindas dos módulos de teste
+	// ------------------------------------------------------------
+
+	wire        arb_spr_wr_en;
+	wire [4:0]  arb_spr_wr_addr;
+	wire [31:0] arb_spr_wr_data;
+
+	assign arb_spr_wr_en   = mover_wr_en | spawner_wr_en;
+	assign arb_spr_wr_addr = mover_wr_en ? mover_wr_addr : spawner_wr_addr;
+	assign arb_spr_wr_data = mover_wr_en ? mover_wr_data : spawner_wr_data;
+
+	// ------------------------------------------------------------
+	// Conversão da interface antiga de 32 bits
+	// para as duas interfaces do novo motor_sprite
+	//
+	// Formato antigo:
+	// { enable, priority[4:0], flip_v, flip_h,
+	//   palette_sel, pattern[5:0], pos_y[7:0], pos_x[8:0] }
+	//
+	// Total: 32 bits
+	// ------------------------------------------------------------
+
+	wire        spr_spos_we;
+	wire [4:0]  spr_spos_wr_addr;
+	wire [16:0] spr_spos_wr_data;
+
+	wire        spr_sattr_we;
+	wire [4:0]  spr_sattr_wr_addr;
+	wire [14:0] spr_sattr_wr_data;
+
+	assign spr_spos_we      = arb_spr_wr_en;
+	assign spr_spos_wr_addr = arb_spr_wr_addr;
+	assign spr_spos_wr_data = {
+		 arb_spr_wr_data[16:9],  // pos_y
+		 arb_spr_wr_data[8:0]    // pos_x
+	};
+
+	assign spr_sattr_we      = arb_spr_wr_en;
+	assign spr_sattr_wr_addr = arb_spr_wr_addr;
+	assign spr_sattr_wr_data = {
+		 arb_spr_wr_data[31],    // enable
+		 arb_spr_wr_data[30:26], // priority
+		 arb_spr_wr_data[25],    // flip_v
+		 arb_spr_wr_data[24],    // flip_h
+		 arb_spr_wr_data[23],    // palette_sel
+		 arb_spr_wr_data[22:17]  // pattern
+	};
+
 	reg key2_d;
 
 	always @(posedge CLOCK_50 or posedge video_reset) begin
@@ -314,9 +360,10 @@ module DE1_SOC_golden_top(
 	wire flip_h_pulse = key2_press & ~SW[5];
 	wire flip_v_pulse = key2_press &  SW[5];
 
-		sprite_mover_flip sprite_mover_flip_inst (
-		 .clk (CLOCK_50), .reset (video_reset),
-		 .move_pulse   (~KEY[1]),   // ativo-baixo -> inverte pra ativo-alto
+	sprite_mover_flip sprite_mover_flip_inst (
+		 .clk          (CLOCK_50),
+		 .reset        (video_reset),
+		 .move_pulse   (~KEY[1]),
 		 .direction    (SW[4:3]),
 		 .flip_h_pulse (flip_h_pulse),
 		 .flip_v_pulse (flip_v_pulse),
@@ -325,10 +372,11 @@ module DE1_SOC_golden_top(
 		 .attr_wr_data (mover_wr_data)
 	);
 
-		sprite_spawner sprite_spawner_inst (
-		 .clk (CLOCK_50), .reset (video_reset),
-		 .spawn_pulse (~KEY[3]),
-		 .spawn_x     (SW[8:0]),
+	sprite_spawner sprite_spawner_inst (
+		 .clk          (CLOCK_50),
+		 .reset        (video_reset),
+		 .spawn_pulse  (~KEY[3]),
+		 .spawn_x      (SW[8:0]),
 		 .attr_wr_en   (spawner_wr_en),
 		 .attr_wr_addr (spawner_wr_addr),
 		 .attr_wr_data (spawner_wr_data)
@@ -357,9 +405,13 @@ module DE1_SOC_golden_top(
 		  .bg_pattern_wr_data (8'd0),
 
 		  // ---------------- Escrita de atributos de sprite: agora vem dos módulos de teste ----------------
-		  .spr_attr_wr_en   (arb_spr_attr_wr_en),
-		  .spr_attr_wr_addr (arb_spr_attr_wr_addr),
-		  .spr_attr_wr_data (arb_spr_attr_wr_data),
+		  .spos_we      (spr_spos_we),
+			.spos_wr_addr (spr_spos_wr_addr),
+			.spos_wr_data (spr_spos_wr_data),
+
+			.sattr_we      (spr_sattr_we),
+			.sattr_wr_addr (spr_sattr_wr_addr),
+			.sattr_wr_data (spr_sattr_wr_data),
 
 		  .spr_pattern_wr_en   (1'b0),
 		  .spr_pattern_wr_addr (14'd0),
