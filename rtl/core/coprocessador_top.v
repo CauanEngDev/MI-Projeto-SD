@@ -13,9 +13,13 @@
 //                                              framebuffer (2 bancos) --> vga_driver
 //
 // Este topo substitui o top_video anterior: as RAMs, os motores e a sequencia
-// de desenho agora vem da unidade de controle (sem compositor). Do top_video
-// foram mantidos o PLL (50 -> 25 MHz), o vga_driver, o framebuffer com double
-// buffer e a sincronizacao do vblank.
+// de desenho agora vem da unidade de controle (sem compositor sequencial). Do
+// top_video foram mantidos o PLL (50 -> 25 MHz), o vga_driver, o framebuffer
+// com double buffer e a sincronizacao do vblank.
+//
+// Prioridade entre camadas: como a ordem de desenho e do programa, a
+// camada_composicao (entre o engine_mux e o framebuffer) faz valer
+// background < rasterizadores < sprites, independente da ordem dos DRAW_*.
 //
 // Double buffer: o HALT marca o fim do frame; quando o vblank chega, a unidade
 // de busca emite frame_swap, os bancos sao trocados e o programa reinicia
@@ -29,7 +33,7 @@
 // Controles da placa: KEY[0] = reset, KEY[1] = reinicia o programa (sem
 // debounce). LEDR[0] = programa rodando, LEDR[1] = aguardando motor/vblank,
 // LEDR[2] = erro (opcode reservado ou comando rejeitado), com trava,
-// LEDR[3] = PLL travado.
+// LEDR[3] = PLL travado, LEDR[4] = pixel descartado por prioridade (trava).
 // ============================================================================
 
 module coprocessador_top (
@@ -77,7 +81,8 @@ module coprocessador_top (
     // Banco de registradores e ULA
     wire [31:0]  reg_a, reg_b;
     wire [31:0]  alu_rd;
-    wire         alu_valid, alu_done, alu_busy, alu_z, alu_n;
+    wire         alu_valid, alu_done, alu_busy, alu_z, alu_n, alu_v, alu_c;
+    wire [31:0]  flags_q;                   // registrador FLAGS {C, V, N, Z}
     wire [2:0]   alu_op;
     wire [31:0]  alu_b;
     wire [4:0]   alu_shamt;
@@ -129,10 +134,16 @@ module coprocessador_top (
     wire [8:0]   bg_fb_x,   spr_fb_x,   ras_fb_x;
     wire [7:0]   bg_fb_y,   spr_fb_y,   ras_fb_y;
     wire [8:0]   bg_fb_d,   spr_fb_d,   ras_fb_d;
-    wire         fb_we;
+    wire         mux_fb_we;                 // saida do engine_mux (sem filtro)
+    wire [8:0]   mux_fb_x;
+    wire [7:0]   mux_fb_y;
+    wire [8:0]   mux_fb_d;
+    wire         fb_we;                     // saida da camada_composicao (vai ao framebuffer)
     wire [8:0]   fb_wr_x;
     wire [7:0]   fb_wr_y;
     wire [8:0]   fb_wr_data;
+    wire         comp_init_busy;            // mapas de camadas sendo zerados
+    wire         comp_blocked;              // escrita descartada por prioridade
 
     // ------------------------------------------------------------------------
     // Video: PLL, vga_driver e framebuffer com double buffer
@@ -230,10 +241,11 @@ module coprocessador_top (
         .LOOP_AUTO   (1)    // apos o HALT, troca os buffers e reinicia no vblank
     ) u_busca (
         .clk           (clk),
-        .reset         (reset),
+        .reset         (reset | comp_init_busy),   // so comeca com os mapas de camadas zerados
         .start         (start_pulse),
         .engine_done   (engine_done),
         .vblank        (vblank),
+        .flags         (flags_q[3:0]),   // {C, V, N, Z} para os desvios condicionais
         .pc            (pc),
         .instruction   (instruction),
         .execute       (execute),
@@ -331,8 +343,10 @@ module coprocessador_top (
         .flags_we     (flags_we),
         .flag_z       (alu_z),
         .flag_n       (alu_n),
+        .flag_v       (alu_v),
+        .flag_c       (alu_c),
 
-        .flags        ()
+        .flags        (flags_q)
     );
 
     // ------------------------------------------------------------------------
@@ -347,6 +361,8 @@ module coprocessador_top (
         .valid (alu_valid),
         .z     (alu_z),
         .n     (alu_n),
+        .v     (alu_v),
+        .c     (alu_c),
         .busy  (alu_busy),
         .done  (alu_done)
     );
@@ -504,10 +520,37 @@ module coprocessador_top (
         .ras_fb_data  (ras_fb_d),
 
         .pal_rd_addr  (pal_rd_addr),
-        .fb_we        (fb_we),
-        .fb_wr_x      (fb_wr_x),
-        .fb_wr_y      (fb_wr_y),
-        .fb_wr_data   (fb_wr_data)
+        .fb_we        (mux_fb_we),
+        .fb_wr_x      (mux_fb_x),
+        .fb_wr_y      (mux_fb_y),
+        .fb_wr_data   (mux_fb_d)
+    );
+
+    // ------------------------------------------------------------------------
+    // Camada de composicao: garante a prioridade background < rasterizadores
+    // < sprites, qualquer que seja a ordem das instrucoes DRAW_* do programa.
+    // Descarta escritas de camada inferior sobre pixels ja escritos por camada
+    // superior no quadro atual (ver camada_composicao.v). Latencia: 2 ciclos.
+    // ------------------------------------------------------------------------
+    camada_composicao u_composicao (
+        .clk        (clk),
+        .reset      (reset),
+        .clear_all  (start_pulse),     // reinicio manual: zera os mapas de camadas
+        .wr_buf_sel (wr_buf_sel),
+        .engine_sel (engine_sel),
+
+        .in_we      (mux_fb_we),
+        .in_x       (mux_fb_x),
+        .in_y       (mux_fb_y),
+        .in_data    (mux_fb_d),
+
+        .fb_we      (fb_we),
+        .fb_wr_x    (fb_wr_x),
+        .fb_wr_y    (fb_wr_y),
+        .fb_wr_data (fb_wr_data),
+
+        .init_busy  (comp_init_busy),
+        .blocked    (comp_blocked)
     );
 
     // ------------------------------------------------------------------------
@@ -521,6 +564,15 @@ module coprocessador_top (
             err_latch <= 1'b1;
     end
 
-    assign LEDR = {6'b0, pll_locked, err_latch, waiting, running};
+    // LEDR[4]: algum pixel foi descartado pela camada de composicao (trava)
+    reg prio_latch = 1'b0;
+    always @(posedge clk) begin
+        if (reset)
+            prio_latch <= 1'b0;
+        else if (comp_blocked)
+            prio_latch <= 1'b1;
+    end
+
+    assign LEDR = {5'b0, prio_latch, pll_locked, err_latch, waiting, running};
 
 endmodule

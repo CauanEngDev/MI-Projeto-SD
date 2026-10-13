@@ -4,7 +4,7 @@
 //   31    XZR (le 0, escrita descartada)
 //   32    sem uso (le 0)       34-35 sem uso (leem 0)
 //   33    STATUS (somente leitura, vem de status_in)
-//   36    FLAGS  {30'b0, N, Z} (escrito apenas pela ULA)
+//   36    FLAGS  {28'b0, C, V, N, Z} (escrito apenas pela ULA)
 //   37    V0X (9 bits)   38 V0Y (8 bits)
 //   39    V1X (9 bits)   40 V1Y (8 bits)
 //   41    V2X (9 bits)   42 V2Y (8 bits)
@@ -47,12 +47,14 @@ module banco_registradores (
     // STATUS e escrito pelo hardware (nao armazenado aqui)
     input  wire [31:0]  status_in,
 
-    // FLAGS: captura z e n da ULA quando flags_we = 1 (ligar em done)
+    // FLAGS: captura z, n, v e c da ULA quando flags_we = 1 (ligar em done)
     input  wire         flags_we,
     input  wire         flag_z,
     input  wire         flag_n,
+    input  wire         flag_v,
+    input  wire         flag_c,
 
-    output wire [31:0]  flags
+    output wire [31:0]  flags      // {28'b0, C, V, N, Z}
 );
 
     // Enderecos dos registradores dedicados
@@ -70,6 +72,8 @@ module banco_registradores (
     reg [8:0]  reg_color;
     reg        reg_z;
     reg        reg_n;
+    reg        reg_v;
+    reg        reg_c;
 
     // Decodificacao dos campos conforme o layout do documento
     //   Formato A (ULA): Rd=[14,25:21] (6 bits), Rn=[20:15], Rm=[5:0]
@@ -99,7 +103,7 @@ module banco_registradores (
     assign rf[33] = status_in;
     assign rf[34] = 32'b0;
     assign rf[35] = 32'b0;
-    assign rf[36] = {30'b0, reg_n, reg_z};
+    assign rf[36] = {28'b0, reg_c, reg_v, reg_n, reg_z};
     assign rf[37] = {23'b0, reg_v0x};
     assign rf[38] = {24'b0, reg_v0y};
     assign rf[39] = {23'b0, reg_v1x};
@@ -121,7 +125,7 @@ module banco_registradores (
     assign color_index = reg_color[7:0];
     assign palette_sel = reg_color[8];
 
-    assign flags = {30'b0, reg_n, reg_z};
+    assign flags = {28'b0, reg_c, reg_v, reg_n, reg_z};
 
     integer i;
     always @(posedge clk) begin
@@ -134,6 +138,8 @@ module banco_registradores (
             reg_color <= 9'b0;
             reg_z     <= 1'b0;
             reg_n     <= 1'b0;
+            reg_v     <= 1'b0;
+            reg_c     <= 1'b0;
         end
         else begin
             if (write_enable) begin
@@ -156,6 +162,8 @@ module banco_registradores (
             if (flags_we) begin
                 reg_z <= flag_z;
                 reg_n <= flag_n;
+                reg_v <= flag_v;
+                reg_c <= flag_c;
             end
         end
     end

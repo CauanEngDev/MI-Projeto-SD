@@ -7,7 +7,7 @@
 // e apresenta a instrucao corrente a cada ciclo. O PC (em bytes, PC + 4) so
 // avanca quando a instrucao corrente termina.
 //
-// Politica de execucao (sem instrucoes de desvio):
+// Politica de execucao:
 //   - Instrucoes de um ciclo (ULA, SET_*, WRITE_*, SCROLL_BG, NOP):
 //       executam no primeiro ciclo valido e o PC avanca no mesmo ciclo.
 //   - Bloqueantes por DONE (DRAW_RECT, DRAW_TRI, DRAW_BG, DRAW_SPRITES):
@@ -16,7 +16,16 @@
 //   - HALT: encerra o programa. Com LOOP_AUTO = 1 o programa reinicia sozinho
 //       no proximo vblank; com LOOP_AUTO = 0 so retoma com "start" ou reset.
 //   - Fim da memoria sem HALT: tratado como HALT (o PC nao da a volta).
-//   - Opcodes reservados (10100 a 11111): tratados como NOP e sinalizados.
+//   - Desvios (B = 10100, B_COND = 10101): executam em um ciclo, como as demais
+//       instrucoes de um ciclo; so mudam o PC seguinte. Alvo = PC + 4 * offset,
+//       com offset de 14 bits (instrucao[13:0], em palavras, relativo ao
+//       proprio desvio; a soma da a volta na memoria de 16384 palavras, entao
+//       qualquer endereco e alcancavel). B_COND avalia a condicao
+//       (instrucao[26:23]) sobre o registrador FLAGS {C, V, N, Z}; a ULA
+//       atualiza as flags a cada instrucao, entao o desvio deve vir logo apos
+//       o SUB/ADD de comparacao. Condicao reservada (1111): nao desvia e
+//       sinaliza invalid_opcode.
+//   - Opcodes reservados (10110 a 11111): tratados como NOP e sinalizados.
 //
 // Double buffer: o HALT marca o fim do frame. Quando o vblank chega, a saida
 // frame_swap pulsa e o topo troca os bancos do framebuffer, de modo que o
@@ -55,6 +64,8 @@ module unidade_de_busca_de_instrucoes #(
     input  wire        engine_done,    // fim da operacao do motor atual
                                        // (vem da unidade de controle)
     input  wire        vblank,         // 1 durante o apagamento vertical
+    input  wire [3:0]  flags,          // {C, V, N, Z}, do banco de registradores
+                                       // (usadas pelos desvios condicionais)
 
     // Saidas para a unidade de controle e para o banco de registradores
     output wire [15:0] pc,             // contador de programa (em bytes)
@@ -78,7 +89,9 @@ module unidade_de_busca_de_instrucoes #(
     localparam [4:0] OP_DRAW_BG      = 5'b10000;
     localparam [4:0] OP_DRAW_SPRITES = 5'b10001;
     localparam [4:0] OP_WAIT_VBLANK  = 5'b10010;
-    localparam [4:0] OP_HALT         = 5'b10011; // ultimo opcode valido
+    localparam [4:0] OP_HALT         = 5'b10011;
+    localparam [4:0] OP_B            = 5'b10100;
+    localparam [4:0] OP_B_COND       = 5'b10101; // ultimo opcode valido
 
     // ------------------------------------------------------------------------
     // Estado interno
@@ -104,7 +117,26 @@ module unidade_de_busca_de_instrucoes #(
 
     wire is_wait_vblank = (opcode == OP_WAIT_VBLANK); // espera borda de vblank
     wire is_halt        = (opcode == OP_HALT);        // encerra o programa
-    wire is_invalid     = (opcode >  OP_HALT);        // opcode reservado
+    wire is_b           = (opcode == OP_B);           // desvio incondicional
+    wire is_b_cond      = (opcode == OP_B_COND);      // desvio condicional
+    wire is_branch      = is_b | is_b_cond;
+    wire is_invalid     = (opcode >  OP_B_COND);      // opcode reservado
+
+    // Condicao do desvio condicional
+    wire cond_ok, cond_invalida;
+    avalia_condicao u_cond (
+        .cond     (instruction[26:23]),
+        .flags    (flags),
+        .ok       (cond_ok),
+        .invalida (cond_invalida)
+    );
+
+    // O desvio e tomado se for incondicional ou se a condicao valer
+    wire take = is_b | (is_b_cond & cond_ok);
+
+    // Alvo: PC + 4 * offset (offset de 14 bits em palavras; a soma de 16 bits
+    // da a volta na memoria)
+    wire [15:0] branch_target = pc + {instruction[13:0], 2'b00};
 
     // ------------------------------------------------------------------------
     // Borda de subida de vblank (inicio do apagamento vertical)
@@ -145,15 +177,19 @@ module unidade_de_busca_de_instrucoes #(
     // ------------------------------------------------------------------------
     // Proximo PC (em bytes)
     //   - reset ou restart: volta a 0
+    //   - advance de desvio tomado: alvo do desvio (vale tambem na ultima
+    //     palavra da memoria)
     //   - advance: PC + 4, exceto na ultima palavra (nao da a volta; o
     //     programa termina)
     //   - caso contrario: mantem (stall)
     // ------------------------------------------------------------------------
     wire [15:0] pc_plus4;
     wire        last_word = &pc[15:2]; // PC na ultima palavra da memoria
-    wire [15:0] pc_next = (reset | restart)         ? 16'd0    :
-                          (advance & ~last_word)    ? pc_plus4 :
-                                                      pc;
+    wire        jump      = advance & take;
+    wire [15:0] pc_next = (reset | restart)               ? 16'd0         :
+                          jump                            ? branch_target :
+                          (advance & ~last_word)          ? pc_plus4      :
+                                                            pc;
 
     // Program Counter (modulo original)
     Program_counter pc_register(
@@ -226,7 +262,7 @@ module unidade_de_busca_de_instrucoes #(
                 halted    <= 1'b1;
                 prog_done <= 1'b1;
             end
-            if (advance & last_word) begin
+            if (advance & last_word & ~take) begin
                 halted    <= 1'b1;
                 prog_done <= 1'b1;
             end
@@ -243,6 +279,6 @@ module unidade_de_busca_de_instrucoes #(
 
     assign running        = ~halted;
     assign waiting        = issued & ~halted;
-    assign invalid_opcode = execute & is_invalid;
+    assign invalid_opcode = execute & (is_invalid | (is_b_cond & cond_invalida));
 
 endmodule

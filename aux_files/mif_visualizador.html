@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visualizador MIF — Coprocessador Gráfico</title>
+<style>
+:root{color-scheme:dark;--bg:#11151c;--panel:#1b222d;--line:#303b4b;--text:#e7edf5;--muted:#9eacbf;--accent:#73b7ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:22px 26px;border-bottom:1px solid var(--line);background:#151b24}h1{font-size:22px;margin:0 0 6px}header p{margin:0;color:var(--muted)}main{padding:18px;max-width:1500px;margin:auto}.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}.controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;color:var(--muted)}input,select,button{font:inherit;color:var(--text);background:#111720;border:1px solid #3a4658;border-radius:7px;padding:9px}input[type=file]{max-width:280px}input[type=number]{width:100px}button{cursor:pointer;background:#24568a;border-color:#3976b5}button:hover{background:#2e6ca9}.secondary{background:#2a3442}.status{color:var(--muted);font-size:13px;line-height:1.5;margin-top:12px}.view{height:calc(100vh - 300px);min-height:300px;overflow:auto;background:#0b0e13;border:1px solid var(--line);border-radius:8px;padding:12px}canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block;max-width:none}.hint{font-size:13px;color:var(--muted);line-height:1.5}.topline{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}.pill{border:1px solid var(--line);border-radius:999px;padding:5px 9px;color:var(--muted);font-size:12px}@media(max-width:700px){main{padding:10px}.view{height:55vh}header{padding:18px}}
+</style>
+</head>
+<body>
+<header><h1>Visualizador de arquivos MIF</h1><p>Coprocessador gráfico · funciona localmente no navegador, sem instalar bibliotecas.</p></header>
+<main>
+<section class="panel">
+<div class="controls">
+<div class="field"><label for="mifFile">Arquivo .mif</label><input id="mifFile" type="file" accept=".mif,.txt"></div>
+<div class="field"><label for="paletteFile">Paleta .mif (opcional)</label><input id="paletteFile" type="file" accept=".mif,.txt"></div>
+<div class="field"><label for="mode">Modo de visualização</label><select id="mode"><option>Auto</option><option>Índices + paleta</option><option>RGB 3:3:3 (9 bits)</option><option>Escala de cinza</option><option>Mapa de tiles</option><option>Padrões 8x8 / sprites</option></select></div>
+<div class="field"><label for="imgW">Largura (px)</label><input id="imgW" type="number" min="1" value="320"></div>
+<div class="field"><label for="imgH">Altura (px)</label><input id="imgH" type="number" min="1" value="240"></div>
+<div class="field"><label for="zoom">Zoom</label><select id="zoom"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>6</option><option>8</option></select></div>
+<button id="renderBtn">Visualizar</button>
+<button id="saveBtn" class="secondary">Salvar PNG</button>
+</div>
+<div id="status" class="status">Abra um arquivo .mif para começar. Nenhum arquivo é enviado para a internet.</div>
+</section>
+<section class="panel"><div class="topline"><strong>Pré-visualização</strong><span class="pill" id="dimensions">Aguardando arquivo</span></div><div class="view" style="margin-top:12px"><canvas id="canvas" width="1" height="1"></canvas></div></section>
+<p class="hint">Dica: <code>praia_320x240.mif</code> contém pixels indexados; carregue também <code>palette_default1.mif</code>. Para <code>bg_tile_ram.mif</code>, escolha “Mapa de tiles”. Para padrões de sprites, escolha “Padrões 8x8 / sprites”. Arquivos de instruções de 32 bits são exibidos como diagnóstico dos valores, não como cena renderizada.</p>
+</main>
+<script>
+const $=id=>document.getElementById(id);let current=null,palette=null,currentName='imagem';
+function radix(name){return ({UNS:10,DEC:10,DECIMAL:10,HEX:16,OCT:8,BIN:2})[String(name||'UNS').toUpperCase()]||10}
+function parseMif(text){
+ text=text.replace(/--[^\r\n]*/g,'').replace(/%[\s\S]*?%/g,'');
+ const header=(n,d)=>{const m=text.match(new RegExp('\\b'+n+'\\s*=\\s*(\\d+)\\s*;','i'));return m?Number(m[1]):d};
+ const width=header('WIDTH',8),declaredDepth=header('DEPTH',0);
+ const ar=(text.match(/ADDRESS_RADIX\s*=\s*(\w+)\s*;/i)||[])[1]||'UNS';
+ const dr=(text.match(/DATA_RADIX\s*=\s*(\w+)\s*;/i)||[])[1]||'HEX';
+ const bodyMatch=text.match(/CONTENT\s+BEGIN([\s\S]*?)END\s*;/i);const body=bodyMatch?bodyMatch[1]:text;
+ const entries=[];let maxAddr=-1;
+ const re=/\[\s*([0-9A-Fa-f]+)\s*\.\.\s*([0-9A-Fa-f]+)\s*\]\s*:\s*([0-9A-Fa-f]+)\s*;|([0-9A-Fa-f]+)\s*:\s*([0-9A-Fa-f]+)\s*;/g;let m;
+ while((m=re.exec(body))!==null){if(m[1]!==undefined){const a=parseInt(m[1],radix(ar)),b=parseInt(m[2],radix(ar)),v=parseInt(m[3],radix(dr));if(Number.isFinite(a)&&Number.isFinite(b)&&Number.isFinite(v)){entries.push([a,b,v]);maxAddr=Math.max(maxAddr,b)}}else{const a=parseInt(m[4],radix(ar)),v=parseInt(m[5],radix(dr));if(Number.isFinite(a)&&Number.isFinite(v)){entries.push([a,a,v]);maxAddr=Math.max(maxAddr,a)}}}
+ const depth=declaredDepth||maxAddr+1;if(!depth||depth>20000000)throw Error('Profundidade inválida ou grande demais: '+depth);
+ const data=new Uint32Array(depth);for(const [a,b,v] of entries){const start=Math.max(0,a),end=Math.min(depth-1,b);for(let i=start;i<=end;i++)data[i]=v>>>0}
+ return {width,depth,data};
+}
+function rgb333(v){return [((v>>6)&7)*255/7|0,((v>>3)&7)*255/7|0,(v&7)*255/7|0]}
+function diagnostic(v){if(v===0)return [0,0,0];return [(v*73)%256,(v*151)%256,(v*199)%256]}
+function chooseMode(){let mode=$('mode').value;if(mode!=='Auto')return mode;return current.width===9?'RGB 3:3:3 (9 bits)':palette?'Índices + paleta':'Escala de cinza'}
+function render(){if(!current)return;try{const mode=chooseMode(),data=current.data;let w,h,pixelColor;
+ if(mode==='Padrões 8x8 / sprites'){const count=Math.max(1,Math.ceil(data.length/64)),cols=16;w=cols*8;h=Math.ceil(count/cols)*8;pixelColor=(v)=>palette&&v<palette.length?palette[v]:diagnostic(v)}
+ else{w=Number($('imgW').value);h=Number($('imgH').value);if(!Number.isInteger(w)||!Number.isInteger(h)||w<1||h<1||w*h>20000000)throw Error('Informe largura e altura válidas (máximo de 20 milhões de pixels).');
+ if(mode==='RGB 3:3:3 (9 bits)')pixelColor=v=>rgb333(v&511);
+ else if(mode==='Índices + paleta')pixelColor=v=>palette&&v<palette.length?palette[v]:diagnostic(v);
+ else if(mode==='Mapa de tiles')pixelColor=v=>{const hue=(v*47)%256;return [(hue*3)%256,(hue*7+60)%256,(hue*11+120)%256]};
+ else pixelColor=v=>{const max=Math.pow(2,Math.min(current.width,16))-1;const c=Math.max(0,Math.min(255,Math.floor(v*255/Math.max(1,max))));return [c,c,c]};}
+ const off=document.createElement('canvas');off.width=w;off.height=h;const ctx=off.getContext('2d',{willReadFrequently:false}),im=ctx.createImageData(w,h),limit=Math.min(data.length,w*h);
+ for(let i=0;i<limit;i++){let c;if(mode==='Padrões 8x8 / sprites'){const tile=Math.floor(i/64),pos=i%64,x=(tile%16)*8+(pos%8),y=Math.floor(tile/16)*8+Math.floor(pos/8);c=pixelColor(data[i]);const j=(y*w+x)*4;im.data[j]=c[0];im.data[j+1]=c[1];im.data[j+2]=c[2];im.data[j+3]=255;continue}else c=pixelColor(data[i]);const j=i*4;im.data[j]=c[0];im.data[j+1]=c[1];im.data[j+2]=c[2];im.data[j+3]=255}
+ ctx.putImageData(im,0,0);const z=Number($('zoom').value),canvas=$('canvas');canvas.width=w*z;canvas.height=h*z;const out=canvas.getContext('2d');out.imageSmoothingEnabled=false;out.clearRect(0,0,canvas.width,canvas.height);out.drawImage(off,0,0,canvas.width,canvas.height);
+ $('dimensions').textContent=`${w} × ${h} px · zoom ${z}×`;$('status').textContent=`${currentName} | WIDTH=${current.width} bits | DEPTH=${current.depth} | valores carregados: ${current.data.length} | modo: ${mode}${palette?' | paleta carregada':''}`;
+ }catch(e){$('status').textContent='Erro: '+e.message}}
+$('mifFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{current=parseMif(await f.text());currentName=f.name;const n=f.name.toLowerCase();if(n.includes('palette'))$('mode').value='RGB 3:3:3 (9 bits)';else if(n.includes('tilemap')||n.includes('tile_ram'))$('mode').value='Mapa de tiles';else if(n.includes('pattern')||n.includes('sprite'))$('mode').value='Padrões 8x8 / sprites';else if(current.depth===76800){$('mode').value='Índices + paleta';$('imgW').value=320;$('imgH').value=240}else $('mode').value='Auto';$('status').textContent='Arquivo carregado. Preparando visualização…';render()}catch(err){$('status').textContent='Não foi possível ler o MIF: '+err.message}});
+$('paletteFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const p=parseMif(await f.text());palette=Array.from(p.data,v=>rgb333(v));$('status').textContent=`Paleta ${f.name} carregada (${p.depth} entradas).`;if(current)render()}catch(err){$('status').textContent='Não foi possível ler a paleta: '+err.message}});
+$('renderBtn').addEventListener('click',render);$('mode').addEventListener('change',render);$('zoom').addEventListener('change',render);$('saveBtn').addEventListener('click',()=>{const a=document.createElement('a');a.download=(currentName.replace(/\.mif$/i,'')||'visualizacao')+'.png';a.href=$('canvas').toDataURL('image/png');a.click()});
+</script>
+</body></html>
