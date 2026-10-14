@@ -1,0 +1,161 @@
+-- gerado por gerador_mif.c
+WIDTH=32;
+DEPTH=16384;
+ADDRESS_RADIX=HEX;
+DATA_RADIX=HEX;
+CONTENT BEGIN
+    0000 : 17EF0000;  -- testa inicializacao
+    0001 : A880000A;  -- B_COND ja_inicializado_0
+    0002 : 340F8064;  -- posicao inicial X do Sonic
+    0003 : 342F8050;  -- posicao inicial Y do Sonic
+    0004 : 344F8003;  -- velocidade inicial X
+    0005 : 346F8002;  -- velocidade inicial Y
+    0006 : 348F8023;  -- posicao inicial X do Sonic
+    0007 : 34AF8023;  -- posicao inicial Y do Sonic
+    0008 : 34CF8003;  -- velocidade inicial X
+    0009 : 34EF8002;  -- velocidade inicial Y
+    000A : 37CF8001;  -- marca inicializacao concluida
+    000B : 08000002;  -- atualiza X
+    000C : 17E00130;  -- verifica limite direito
+    000D : AE800003;  -- B_COND x_direita_1
+    000E : 340F8130;  -- limita X no extremo direito
+    000F : 104F8002;  -- inverte velocidade X
+    0010 : 17E00000;  -- verifica limite esquerdo
+    0011 : AD000003;  -- B_COND x_esquerda_2
+    0012 : 340F8000;  -- limita X no extremo esquerdo
+    0013 : 104F8002;  -- inverte velocidade X
+    0014 : 08208003;  -- atualiza Y
+    0015 : 17E080E0;  -- verifica limite inferior
+    0016 : AE800003;  -- B_COND y_baixo_3
+    0017 : 342F80E0;  -- limita Y no extremo inferior
+    0018 : 106F8003;  -- inverte velocidade Y
+    0019 : 17E08000;  -- verifica limite superior
+    001A : AD000003;  -- B_COND y_cima_4
+    001B : 342F8000;  -- limita Y no extremo superior
+    001C : 106F8003;  -- inverte velocidade Y
+    001D : 08820006;  -- atualiza X
+    001E : 17E20130;  -- verifica limite direito
+    001F : AE800003;  -- B_COND x_direita_5
+    0020 : 348F8130;  -- limita X no extremo direito
+    0021 : 10CF8006;  -- inverte velocidade X
+    0022 : 17E20000;  -- verifica limite esquerdo
+    0023 : AD000003;  -- B_COND x_esquerda_6
+    0024 : 348F8000;  -- limita X no extremo esquerdo
+    0025 : 10CF8006;  -- inverte velocidade X
+    0026 : 08A28007;  -- atualiza Y
+    0027 : 17E280E0;  -- verifica limite inferior
+    0028 : AE800003;  -- B_COND y_baixo_7
+    0029 : 34AF80E0;  -- limita Y no extremo inferior
+    002A : 10EF8007;  -- inverte velocidade Y
+    002B : 17E28000;  -- verifica limite superior
+    002C : AD000003;  -- B_COND y_cima_8
+    002D : 34AF8000;  -- limita Y no extremo superior
+    002E : 10EF8007;  -- inverte velocidade Y
+    002F : 36EF8000;  -- deslocamento X
+    0030 : 370F8000;  -- seleciona eixo X
+    0031 : 6AEC0000;  -- SCROLL_BG X
+    0032 : 36EF8000;  -- deslocamento Y
+    0033 : 370F8001;  -- seleciona eixo Y
+    0034 : 6AEC0000;  -- SCROLL_BG Y
+    0035 : 80000000;  -- DRAW_BG
+    0036 : 34AFC12C;  -- V0X
+    0037 : 34CFC078;  -- V0Y
+    0038 : 34EFC081;  -- V1X
+    0039 : 350FC0C8;  -- V1Y
+    003A : 356FC0FA;  -- COLOR
+    003B : 40000000;  -- DRAW_RECT
+    003C : 26808009;  -- empacota Y
+    003D : 0A8A0000;  -- empacota posicao
+    003E : 372F8021;  -- enable e prioridade 1
+    003F : 272C8009;  -- atributos base do Sonic
+    0040 : 13E1001F;  -- verifica sinal da velocidade X
+    0041 : AD800002;  -- B_COND ativa_flip_horizontal_9
+    0042 : A0000002;  -- B fim_flip_horizontal_10
+    0043 : 0F2C8080;  -- ativa flip horizontal
+    0044 : 13E1801F;  -- verifica sinal da velocidade Y
+    0045 : AD800002;  -- B_COND ativa_flip_vertical_11
+    0046 : A0000002;  -- B fim_flip_vertical_12
+    0047 : 0F2C8100;  -- ativa flip vertical
+    0048 : 36AF8000;  -- ID do sprite
+    0049 : 52AA0000;  -- SET_SPRITE_POS
+    004A : 5AAC8000;  -- SET_SPRITE_ATTR
+    004B : 26828009;  -- empacota Y
+    004C : 0A8A0004;  -- empacota posicao
+    004D : 372F8021;  -- enable e prioridade 1
+    004E : 272C8009;  -- atributos base do Sonic
+    004F : 13E3001F;  -- verifica sinal da velocidade X
+    0050 : AD800002;  -- B_COND ativa_flip_horizontal_13
+    0051 : A0000002;  -- B fim_flip_horizontal_14
+    0052 : 0F2C8080;  -- ativa flip horizontal
+    0053 : 13E3801F;  -- verifica sinal da velocidade Y
+    0054 : AD800002;  -- B_COND ativa_flip_vertical_15
+    0055 : A0000002;  -- B fim_flip_vertical_16
+    0056 : 0F2C8100;  -- ativa flip vertical
+    0057 : 36AF8001;  -- ID do sprite
+    0058 : 52AA0000;  -- SET_SPRITE_POS
+    0059 : 5AAC8000;  -- SET_SPRITE_ATTR
+    005A : 36CF8000;  -- atributos desabilitados
+    005B : 36AF8002;  -- ID de sprite a desabilitar
+    005C : 5AAB0000;  -- desabilita sprite
+    005D : 36AF8003;  -- ID de sprite a desabilitar
+    005E : 5AAB0000;  -- desabilita sprite
+    005F : 36AF8004;  -- ID de sprite a desabilitar
+    0060 : 5AAB0000;  -- desabilita sprite
+    0061 : 36AF8005;  -- ID de sprite a desabilitar
+    0062 : 5AAB0000;  -- desabilita sprite
+    0063 : 36AF8006;  -- ID de sprite a desabilitar
+    0064 : 5AAB0000;  -- desabilita sprite
+    0065 : 36AF8007;  -- ID de sprite a desabilitar
+    0066 : 5AAB0000;  -- desabilita sprite
+    0067 : 36AF8008;  -- ID de sprite a desabilitar
+    0068 : 5AAB0000;  -- desabilita sprite
+    0069 : 36AF8009;  -- ID de sprite a desabilitar
+    006A : 5AAB0000;  -- desabilita sprite
+    006B : 36AF800A;  -- ID de sprite a desabilitar
+    006C : 5AAB0000;  -- desabilita sprite
+    006D : 36AF800B;  -- ID de sprite a desabilitar
+    006E : 5AAB0000;  -- desabilita sprite
+    006F : 36AF800C;  -- ID de sprite a desabilitar
+    0070 : 5AAB0000;  -- desabilita sprite
+    0071 : 36AF800D;  -- ID de sprite a desabilitar
+    0072 : 5AAB0000;  -- desabilita sprite
+    0073 : 36AF800E;  -- ID de sprite a desabilitar
+    0074 : 5AAB0000;  -- desabilita sprite
+    0075 : 36AF800F;  -- ID de sprite a desabilitar
+    0076 : 5AAB0000;  -- desabilita sprite
+    0077 : 36AF8010;  -- ID de sprite a desabilitar
+    0078 : 5AAB0000;  -- desabilita sprite
+    0079 : 36AF8011;  -- ID de sprite a desabilitar
+    007A : 5AAB0000;  -- desabilita sprite
+    007B : 36AF8012;  -- ID de sprite a desabilitar
+    007C : 5AAB0000;  -- desabilita sprite
+    007D : 36AF8013;  -- ID de sprite a desabilitar
+    007E : 5AAB0000;  -- desabilita sprite
+    007F : 36AF8014;  -- ID de sprite a desabilitar
+    0080 : 5AAB0000;  -- desabilita sprite
+    0081 : 36AF8015;  -- ID de sprite a desabilitar
+    0082 : 5AAB0000;  -- desabilita sprite
+    0083 : 36AF8016;  -- ID de sprite a desabilitar
+    0084 : 5AAB0000;  -- desabilita sprite
+    0085 : 36AF8017;  -- ID de sprite a desabilitar
+    0086 : 5AAB0000;  -- desabilita sprite
+    0087 : 36AF8018;  -- ID de sprite a desabilitar
+    0088 : 5AAB0000;  -- desabilita sprite
+    0089 : 36AF8019;  -- ID de sprite a desabilitar
+    008A : 5AAB0000;  -- desabilita sprite
+    008B : 36AF801A;  -- ID de sprite a desabilitar
+    008C : 5AAB0000;  -- desabilita sprite
+    008D : 36AF801B;  -- ID de sprite a desabilitar
+    008E : 5AAB0000;  -- desabilita sprite
+    008F : 36AF801C;  -- ID de sprite a desabilitar
+    0090 : 5AAB0000;  -- desabilita sprite
+    0091 : 36AF801D;  -- ID de sprite a desabilitar
+    0092 : 5AAB0000;  -- desabilita sprite
+    0093 : 36AF801E;  -- ID de sprite a desabilitar
+    0094 : 5AAB0000;  -- desabilita sprite
+    0095 : 36AF801F;  -- ID de sprite a desabilitar
+    0096 : 5AAB0000;  -- desabilita sprite
+    0097 : 88000000;  -- DRAW_SPRITES
+    0098 : 98000000;  -- HALT
+    [0099..3FFF] : 00000000; -- preenchimento
+END;
