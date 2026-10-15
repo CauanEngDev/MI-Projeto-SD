@@ -1,7 +1,5 @@
-`include "rtl/include/isa.vh"
-
 module alu (
-    input        [4:0]  op,
+    input        [2:0]  op,
     output reg   [31:0] rd,
     input        [31:0] rn,
     input        [31:0] b,
@@ -11,21 +9,45 @@ module alu (
     input               valid,
     output wire         z,
     output wire         n,
+    output wire         v,     // overflow com sinal (so ADD/SUB; demais: 0)
+    output wire         c,     // carry (ADD) / "nao houve emprestimo" (SUB); demais: 0
     output wire         busy,
     output wire         done
 );
 
+    // Opcodes da ALU, alinhados aos opcodes da ISA (op = opcode[2:0])
+    localparam ADD  = 3'b001;
+    localparam SUB  = 3'b010;
+    localparam AND  = 3'b011;
+    localparam LSL  = 3'b100;
+    localparam LSR  = 3'b101;
+    localparam PASS = 3'b110;
+
+    // Soma e subtracao em 33 bits, para obter o carry e o overflow.
+    // SUB = rn + ~b + 1; nesse caso c = 1 quando NAO ha emprestimo (rn >= b sem
+    // sinal), como no ARMv8/LEGv8.
+    wire [32:0] soma = {1'b0, rn} + {1'b0, b};
+    wire [32:0] subt = {1'b0, rn} + {1'b0, ~b} + 33'd1;
+
+    reg c_r, v_r;
+
     always @(*) begin
-        rd = 32'b0; // Define valor padrão para quando valid não é acionado
+        rd  = 32'b0; // Define valor padrão para quando valid não é acionado
+        c_r = 1'b0;
+        v_r = 1'b0;
 
         if (valid) begin
             case (op)
                 ADD: begin
-                    rd = rn + b;
+                    rd  = soma[31:0];
+                    c_r = soma[32];
+                    v_r = (rn[31] == b[31]) & (soma[31] != rn[31]);
                 end
 
                 SUB: begin
-                    rd = rn - b;
+                    rd  = subt[31:0];
+                    c_r = subt[32];
+                    v_r = (rn[31] != b[31]) & (subt[31] != rn[31]);
                 end
 
                 AND: begin
@@ -51,4 +73,6 @@ module alu (
     assign done = valid; // Por rodar em um único ciclo, valid e done são o mesmo valor
     assign z = valid ? (rd == 32'b0) : 1'b0;
     assign n = valid ? rd[31] : 1'b0;
+    assign v = v_r;
+    assign c = c_r;
 endmodule
