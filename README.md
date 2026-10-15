@@ -16,8 +16,8 @@
 * [2. Levantamento de Requisitos](#2-levantamento-de-requisitos)
 
   * [2.1 Requisitos Funcionais](#21-requisitos-funcionais)
-  * [2.2 Requisitos Não Funcionais](#22-requisitos-nao-funcionais)
-  * [2.3 Requisitos de Memória](#23-requisitos-de-memória)
+  * [2.2 Requisitos Não Funcionais](#22-requisitos-não-funcionais)
+  * [2.3 Requisitos de Memória](#23-requisitos-de-memória-e-organização-interna)
 
 * [3. Fundamentação Teórica](#3-fundamentação-teórica)
 
