@@ -309,9 +309,10 @@ As proximas secoes apresentam cada uma dessas partes em maior profundidade, deta
 
 
 
+
 ## 2. Levantamento de Requisitos
 
-A partir da análise do enunciado do Problema #1 e das especificações para a plataforma Intel/Altera **DE1-SoC**, os requisitos do sistema foram estruturados entre **Requisitos Funcionais (RF)**, **Requisitos Não Funcionais (RNF)** e um **Mapeamento Detalhado da Organização de Memória**.
+A partir da análise do enunciado do Problema #2 de Sistemas Digitais (2026.2) e da implementação presente no repositório, os requisitos foram organizados em **Requisitos Funcionais (RF)**, **Requisitos Não Funcionais (RNF)** e **Requisitos de Memória e Organização Interna**. A classificação considera os requisitos explícitos do problema e distingue as funcionalidades identificáveis no código daquelas cuja validação depende de resultados de simulação, síntese ou demonstração em hardware.
 
 ---
 
@@ -319,101 +320,137 @@ A partir da análise do enunciado do Problema #1 e das especificações para a p
 
 | ID | Requisito | Detalhamento Técnico | Status |
 | :--- | :--- | :--- | :--- |
-| **RF01** | **Resolução Lógica** | Processamento interno da cena em $320 \times 240$ pixels. | **IMPLEMENTADO** |
-| **RF02** | **Saída de Vídeo VGA** | Sinalização física padrão VGA $640 \times 480 @ 60\text{Hz}$ ($25.175\text{ MHz}$ pixel clock). | **IMPLEMENTADO** |
-| **RF03** | **Pixel Scaling ($2 \times 2$)** | Duplicação do tamanho do pixel lógico no motor VGA (mapeamento $1\text{ pixel lógico} \to 4\text{ pixels físicos}$). | **IMPLEMENTADO** |
-| **RF04** | **Tilemap de Background** | Grade de $40 \times 30$ tiles cobrindo a resolução de $320 \times 240$ | **IMPLEMENTADO** |
-| **RF05** | **Tiles de $8 \times 8$ Pixels** | Dimensão fixa dos blocos gráficos da camada de background. | **IMPLEMENTADO** |
-| **RF06** | **Scrolling Horizontal e Vertical** | Deslocamento contínuo em X e Y com lógica de *wraparound* (repetição das bordas da matriz). | **IMPLEMENTADO** |
-| **RF07** | **Banco de Padrões de Background** | Suporte de memória interna para armazenar até 256 tiles gráficos únicos ($8 \times 8$). | **IMPLEMENTADO** |
-| **RF08** | **Engine de Sprites** | Unidade dedicada para renderização de no mínimo 32 sprites independentes. | **IMPLEMENTADO** |
-| **RF09** | **Dimensão dos Sprites ($16 \times 16$)** | Sprites compostos por arranjos de $2 \times 2$ tiles de $8 \times 8$ pixels. | **IMPLEMENTADO** |
-| **RF10** | **Atributos de Sprites** | Posição X ($9\text{ bits}$), Y ($8\text{ bits}$), Enable ($1\text{ bit}$), Flip H/V ($2\text{ bits}$), Prioridade e Seleção de Paleta. | **IMPLEMENTADO** |
-| **RF11** | **Transparência por Cor Nula** | Índice de cor `0x00` tratado como transparente na sobreposição de camadas (Sprites e Polígonos). | **IMPLEMENTADO** |
-| **RF12** | **Rasterização de Retângulos** | Unidade aritmética para preenchimento de retângulos parametrizados por $(X_0, Y_0, \text{Largura}, \text{Altura}, \text{Cor})$. | **IMPLEMENTADO** |
-| **RF13** | **Rasterização de Triângulos** | Algoritmo de renderização baseado em lógica inteira (varredura por *scanline*). | **IMPLEMENTADO** |
-| **RF14** | **Paleta de Cores Programável** | Look-Up Table (LUT) de 256 entradas convertendo índices de 8 bits em saídas RGB (3 bits por canal / $9\text{ bits}$ total). | **IMPLEMENTADO** |
-| **RF15** | **Double Buffering** | Implementação de dois bancos de memória (*Front* e *Back Buffer*) para renderização sem *screen tearing*. | **IMPLEMENTADO** |
-| **RF16** | **Troca de Buffer em VBlank** | *Swap* dos ponteiros de exibição travado estritamente durante o intervalo de sincronismo vertical (VBlank). | **IMPLEMENTADO** |
-| **RF17** | **Testes de Módulos e Integração** | Testbenches unitários para os motores gráficos/rasterizadores e testbench top-level cobrindo cenários de borda. | **IMPLEMENTADO** |
-| **RF18** | **Driver Linux (Assembly ARM)** | Driver por acesso de memória mapeada (MMIO). | **NÃO IMPLEMENTADO** *(Etapa posterior)* |
-| **RF19** | **Aplicação/Jogo Final em C** | Lógica de jogo integrando os controles e acelerômetro. | **NÃO IMPLEMENTADO** *(Etapa posterior)* |
+| **RF01** | **ISA de 32 bits** | Conjunto de instruções próprio, com instruções de largura fixa de 32 bits e opcode de 5 bits. | **IMPLEMENTADO NO RTL** |
+| **RF02** | **Unidade de Busca de Instruções** | Busca ativa de instruções em memória interna, com atualização do contador de programa (PC) e suporte a desvios. | **IMPLEMENTADO NO RTL** |
+| **RF03** | **Registrador de Instrução (IR)** | Armazenamento e disponibilização da instrução para decodificação e execução. | **A VALIDAR** — confirmar a correspondência explícita com o requisito de IR no datapath integrado. |
+| **RF04** | **Unidade de Controle** | Decodificação dos opcodes e geração dos sinais de controle para a ULA, o banco de registradores, as memórias e os motores gráficos. | **IMPLEMENTADO NO RTL** |
+| **RF05** | **Datapath** | Integração do banco de registradores, ULA, unidade de busca, controle e unidades funcionais. | **IMPLEMENTADO NO RTL** |
+| **RF06** | **Banco de Registradores** | Armazenamento de operandos gerais, flags e registradores dedicados às coordenadas dos vértices e à cor do rasterizador. | **IMPLEMENTADO NO RTL** |
+| **RF07** | **Registradores de Estado** | Disponibilização de informações de estado do coprocessador e das flags utilizadas nas operações e nos desvios condicionais. | **IMPLEMENTADO NO RTL** |
+| **RF08** | **Unidade Lógica e Aritmética (ULA)** | Execução das operações `ADD`, `SUB`, `AND`, `LSL`, `LSR` e `PASS`, com geração das flags utilizadas pelos desvios. | **IMPLEMENTADO NO RTL** |
+| **RF09** | **Programa Gráfico em Assembly da ISA Própria** | Programa de demonstração codificado para a ISA criada pela equipe e armazenado na memória interna de instruções. | **SUPORTE PRESENTE** — a conformidade do programa entregue com todos os requisitos deve ser verificada. |
+| **RF10** | **Definição da Sintaxe da ISA** | Documentação dos formatos de instrução, operandos, campos de codificação, opcodes e regras de execução. | **DOCUMENTAÇÃO PRESENTE** — conferir se a versão final está incluída e atualizada no repositório. |
+| **RF11** | **Motor de Background** | Geração do plano de fundo a partir de um mapa de tiles e de uma memória de padrões gráficos. | **IMPLEMENTADO NO RTL** |
+| **RF12** | **Motor de Sprites** | Renderização de até 32 sprites, com posição, habilitação, padrão, seleção de paleta, prioridade e espelhamento horizontal e vertical. | **IMPLEMENTADO NO RTL** — validar os comportamentos por simulação e hardware. |
+| **RF13** | **Rasterizador de Polígonos** | Rasterização de retângulos preenchidos e triângulos, acionada por instruções da ISA. | **IMPLEMENTADO NO RTL** |
+| **RF14** | **Compositor Gráfico** | Composição das camadas com prioridade entre background, rasterizadores e sprites. | **IMPLEMENTADO NO RTL** |
+| **RF15** | **Controlador VGA** | Geração dos sinais de vídeo para saída VGA de 640 × 480 pixels, a partir da imagem lógica de 320 × 240 pixels. | **IMPLEMENTADO NO RTL** |
+| **RF16** | **Sincronização com VGA** | Utilização do `vblank` para sincronização do quadro e troca dos bancos do framebuffer. | **IMPLEMENTADO NO RTL** |
+| **RF17** | **Comunicação entre Unidades Funcionais** | Uso de sinais de controle, incluindo `busy`, `done` e sinais de início de operação, conforme a unidade acionada. | **IMPLEMENTADO NO RTL** — a validação dos protocolos deve ser documentada pelos testes. |
+| **RF18** | **Memória Interna de Instruções** | Armazenamento do programa gráfico em memória de 16.384 palavras de 32 bits, configurada para inicialização por arquivo de memória. | **IMPLEMENTADO NO RTL** |
+| **RF19** | **Testbenches dos Módulos Principais** | O enunciado exige testes para cada módulo principal. O repositório contém testbenches para diversos módulos e comportamentos específicos. | **PARCIALMENTE DOCUMENTADO** — a cobertura completa e os resultados de execução precisam ser comprovados. |
+| **RF20** | **Testbench de Integração** | O enunciado exige um testbench de integração do coprocessador. Existem testes de sistema associados a cenários específicos, mas é necessário confirmar e documentar a cobertura integral exigida. | **A VALIDAR** |
+| **RF21** | **Driver Linux em Assembly ARM** | Na alternativa de busca passiva, o enunciado prevê comunicação com o coprocessador por fila de comandos via MMIO e um programa Assembly ARM. | **NÃO IMPLEMENTADO NESTA ARQUITETURA** — o projeto adota busca ativa, alternativa permitida pelo enunciado. |
+| **RF22** | **Aplicação de Jogo em C** | Aplicação prevista como etapa posterior, destinada a utilizar o coprocessador gráfico. | **ETAPA POSTERIOR** — não constitui requisito de implementação imediata do caminho de busca ativa escolhido. |
+
+> **Nota sobre os status:** “Implementado no RTL” identifica funcionalidades observáveis na implementação; não significa que tenham sido aprovadas em todos os testes ou demonstradas com sucesso na placa. Os itens que dependem de evidências de execução permanecem indicados como validação pendente.
 
 ---
 
 ## 2.2 Requisitos Não Funcionais
 
-1. **Plataforma e Hardware Alvo:**
-  - FPGA Altera/Intel **Cyclone V SE (5CSEMA5F31C6)** contida na placa **DE1-SoC**.
-2. **Frequências de Clock e Domínios de Sincronismo:**
-  - **System Clock ($50\text{ MHz}$):** Utilizado pelo núcleo de processamento do co-processador, rasterizador de polígonos e interface de comandos.
-  - **VGA Pixel Clock ($25.175\text{ MHz}$):** Gerado via **PLL (Phase-Locked Loop)** interno da FPGA para sincronização rigorosa do gerador de sinais VGA ($640 \times 480 @ 60\text{Hz}$).
-3. **Linguagem de Descrição de Hardware:**
-  - Todo o coprocessador sintetizável é codificado estritamente em **Verilog HDL (IEEE 1364-2001)**.
-4. **Interface de Controle (Protocolo de Comandos):**
-  - Receptor de instruções com palavras de **32 bits**, estruturado para permitir integração direta a um barramento de periféricos no modelo MMIO.
-5. **Estabilidade Visual e Ausência de Glitches:**
-  - O sinal VGA opera sem perda de sincronismo (*glitch* no *H-Sync*/*V-Sync*) durante operações de escrita simultânea do rasterizador nas memórias internas.
-6. **Otimização de Recursos Internos (M10K Blocks):**
-  - Utilização otimizada dos blocos de RAM embutida (Block RAM / M10K) da Cyclone V para garantir que o *Double Buffering* e os bancos de padrões caibam dentro dos limites físicos do chip.
+1. **Plataforma e hardware-alvo**
+   - Placa **DE1-SoC**, equipada com FPGA Intel Cyclone V, dispositivo `5CSEMA5F31C6`.
+   - Projeto desenvolvido em Verilog e organizado para compilação no Quartus.
+
+2. **Frequências de clock e temporização**
+   - **Clock de sistema: 50 MHz**, utilizado pela lógica do coprocessador.
+   - **Clock de pixel: 25 MHz**, configurado pelo PLL para o subsistema VGA.
+   - A frequência máxima alcançada, a margem de temporização e o atendimento às restrições de *timing* devem ser confirmados pelo relatório de compilação e análise temporal do Quartus.
+
+3. **Resolução e apresentação de vídeo**
+   - Resolução lógica de **320 × 240 pixels**.
+   - Saída VGA de **640 × 480 pixels**, com escala de 2 × 2 pixels físicos para cada pixel lógico.
+   - A taxa efetiva de atualização e a estabilidade da saída devem ser verificadas por medição ou demonstração; não são inferidas apenas da resolução e dos clocks configurados.
+
+4. **Organização da arquitetura**
+   - Integração de busca de instruções, unidade de controle, datapath, banco de registradores, ULA, registradores de estado e unidades funcionais gráficas.
+   - O compositor, o controle de quadro e o controlador VGA devem operar continuamente, independentemente da execução de instruções específicas, conforme estabelecido no enunciado.
+
+5. **Sincronização e integridade do quadro**
+   - Utilização de sincronização com `vblank` para a troca dos bancos do framebuffer.
+   - A ausência de *screen tearing*, *glitches* ou outros artefatos não deve ser declarada sem testes específicos que comprovem esses comportamentos.
+
+6. **Linguagem e ferramentas**
+   - Implementação do hardware em Verilog HDL.
+   - Projeto e arquivos de configuração destinados ao Quartus e à FPGA da placa DE1-SoC.
+   - Os resultados finais devem identificar a versão das ferramentas efetivamente utilizada nos testes.
+
+7. **Reprodutibilidade e documentação**
+   - O repositório deve conter código RTL, projeto Quartus, documentação da ISA, programa gráfico, testbenches e scripts necessários à reprodução dos testes.
+   - O README deve apresentar os resultados efetivamente obtidos, as limitações identificadas e as funcionalidades que não atenderem aos requisitos.
+
+8. **Análise de recursos e desempenho**
+   - O enunciado exige relatório de síntese, utilização de recursos, frequência máxima e análise de *timing*.
+   - A ocupação de blocos M10K, a frequência máxima e os gargalos devem ser informados com base nos relatórios gerados pelas ferramentas, e não apenas por estimativas teóricas.
 
 ---
 
 ## 2.3 Requisitos de Memória e Organização Interna
 
-A arquitetura utiliza memórias estáticas organizadas internamente na FPGA para atender às exigências do pipeline gráfico em tempo real a $60\text{ fps}$.
+A arquitetura utiliza memórias internas para armazenar o programa gráfico, o mapa de tiles, os padrões gráficos, a paleta e os pixels do framebuffer. As capacidades abaixo são calculadas a partir das dimensões configuradas nos arquivos de memória do projeto. Elas representam capacidades nominais, não resultados de ocupação obtidos após a síntese.
 
-### Detalhamento dos Blocos de Memória
+### Memória de Instruções
 
-* **Tilemap do Background:**
-  * **Dimensões:** Grade de $40 \times 30$ posições ($1.200$ palavras).
-  * **Largura da Palavra:** $8\text{ bits}$ (endereça até 256 padrões de tiles gráficos).
-  * **Capacidade Total:** $1.200\text{ Bytes} \approx 1,17\text{ KiB}$.
+- **Profundidade:** 16.384 palavras.
+- **Largura da palavra:** 32 bits.
+- **Capacidade nominal:** 524.288 bits, equivalentes a **64 KiB**.
+- **Finalidade:** armazenar as instruções executadas pela unidade de busca ativa.
+- **Inicialização:** por arquivo de memória, como `.mif`, conforme a configuração da memória.
 
-* **Memória de Padrões do Background (Pattern RAM):**
-  * **Capacidade:** 256 tiles únicos de $8 \times 8$ pixels ($16.384$ pixels armazenados).
-  * **Profundidade de Cor:** $8\text{ bits/pixel}$ (índice da paleta).
-  * **Capacidade Total:** $16.384\text{ Bytes} = 16\text{ KiB}$.
+### Mapa de Tiles do Background
 
-* **Tabela de Atributos de Sprites (OAM - Object Attribute Memory):**
-  * **Quantidade de Sprites:** 32 objetos.
-  * **Tamanho por Registro:** $32\text{ bits}$.
-  * **Capacidade Total:** $32 \times 32\text{ bits} = 128\text{ Bytes}$.
-  * **Mapeamento de Bitfields ($32\text{ bits}$):**
-    * `[8:0]` — Posição X ($9\text{ bits}$, intervalo $0$ a $319$).
-    * `[16:9]` — Posição Y ($8\text{ bits}$, intervalo $0$ a $239$).
-    * `[24:17]` — Índice do Padrão/Tile Inicial ($8\text{ bits}$, intervalo $0$ a $255$).
-    * `[25]` — Bit de Habilitação (*Sprite Enable*).
-    * `[26]` — Flip Horizontal (*H-Flip*).
-    * `[27]` — Flip Vertical (*V-Flip*).
-    * `[29:28]` — Seleção de Prioridade de Camada ($2\text{ bits}$).
-    * `[31:30]` — Seleção de Sub-paleta / Reservado.
+- **Dimensões:** 40 × 30 posições, totalizando 1.200 entradas.
+- **Largura da entrada:** 8 bits.
+- **Capacidade nominal:** 9.600 bits, equivalentes a **1.200 bytes (aproximadamente 1,17 KiB)**.
+- **Finalidade:** associar cada posição do mapa a um padrão gráfico de tile.
 
-* **Memória de Padrões de Sprites (Sprite Pattern RAM):**
-  * **Capacidade:** Suporte a 64 sprites únicos de $16 \times 16$ pixels ($16.384$ pixels armazenados).
-  * **Profundidade de Cor:** $8\text{ bits/pixel}$.
-  * **Capacidade Total:** $16.384\text{ Bytes} = 16\text{ KiB}$.
+### Memória de Padrões do Background
 
-* **Paleta de Cores (Color LUT):**
-  * **Entradas:** 256 posições de cor.
-  * **Largura do Pixel:** $9\text{ bits}$ ($3\text{ bits Red}$, $3\text{ bits Green}$, $3\text{ bits Blue}$) adaptados ao DAC da placa DE1-SoC.
-  * **Capacidade Total:** $256 \times 9\text{ bits} = 2.304\text{ bits} = 288\text{ Bytes}$.
+- **Profundidade configurada:** 16.384 palavras.
+- **Largura da palavra:** 8 bits.
+- **Capacidade nominal:** 131.072 bits, equivalentes a **16 KiB**.
+- **Finalidade:** armazenar índices de cor dos pixels utilizados pelos padrões de tiles.
+- **Dimensão do tile:** 8 × 8 pixels. A quantidade de padrões representáveis depende da organização e do endereçamento utilizados pelo motor.
 
-* **Framebuffer Integrado (Double Buffering):**
-  * **Resolução Lógica:** $320 \times 240\text{ pixels}$ ($76.800\text{ pixels/frame}$).
-  * **Tamanho do Pixel no Banco:** $8\text{ bits}$ (Índice de Cor) $+ 1\text{ bit}$ (Controle/Prioridade) = $9\text{ bits}$.
-  * **Capacidade por Banco:** $76.800 \times 9\text{ bits} = 691.200\text{ bits} \approx 84,37\text{ KiB}$ por banco.
-  * **Capacidade Total ($2 \times\text{Bancos - Front/Back}$):** $153.600\text{ palavras} = 1.382.400\text{ bits} \approx 168,75\text{ KiB}$.
+### Memória de Padrões de Sprites
 
----
+- **Profundidade configurada:** 16.384 palavras.
+- **Largura da palavra:** 8 bits.
+- **Capacidade nominal:** 131.072 bits, equivalentes a **16 KiB**.
+- **Finalidade:** armazenar os índices de cor dos pixels dos padrões de sprites.
+- **Observação:** a capacidade da memória não determina, por si só, a dimensão de cada sprite; o tamanho e o endereçamento efetivos dependem da implementação do motor.
 
-### Consumo Teórico Estimado de RAM Interna
+### Atributos de Sprites
 
-$$\text{Total RAM} = \text{Tilemap} + \text{Patterns (BG + Sprite)} + \text{OAM} + \text{Paleta} + \text{Framebuffer (2x)}$$
+- **Quantidade suportada pelo motor:** até 32 sprites.
+- **Campos de atributos:** habilitação, prioridade, espelhamento horizontal e vertical, seleção de paleta e índice do padrão gráfico.
+- **Posição:** coordenadas X e Y armazenadas com larguras de 9 e 8 bits, respectivamente.
+- **Armazenamento ativo:** os atributos são mantidos em estruturas internas do motor de sprites. Embora exista um arquivo de RAM de atributos no projeto Quartus, a implementação atual do motor não utiliza essa RAM como armazenamento ativo dos atributos.
 
-$$\text{Total RAM} \approx 1,17\text{ KiB} + 32\text{ KiB} + 0,125\text{ KiB} + 0,28\text{ KiB} + 168,75\text{ KiB} \approx \mathbf{202,32\text{ KiB}}$$
+### Paleta de Cores
 
-> **Nota:** A FPGA Cyclone V (5CSEMA5F31C6) possui aproximadamente **$4.450\text{ KiB}$** de memória M10K disponível. A arquitetura projetada consome menos de **$5\%$** do total de memória RAM interna, permitindo alocação eficiente de recursos e sintetizabilidade sem gargalos de hardware.
+- **Profundidade configurada:** 512 entradas.
+- **Largura da saída:** 9 bits por entrada, correspondentes à representação RGB `RRRGGGBBB`.
+- **Capacidade nominal:** 4.608 bits, equivalentes a **576 bytes**.
+- **Finalidade:** converter índices de cor em valores RGB utilizados pelo subsistema gráfico.
+
+### Framebuffer com Double Buffering
+
+- **Resolução lógica:** 320 × 240 pixels.
+- **Quantidade de pixels por banco:** 76.800.
+- **Largura configurada do pixel:** 9 bits.
+- **Capacidade nominal por banco:** 691.200 bits, equivalentes a **84,375 KiB**.
+- **Quantidade de bancos:** dois, para permitir a renderização em um banco enquanto o outro é apresentado.
+- **Capacidade nominal dos dois bancos:** 1.382.400 bits, equivalentes a **168,75 KiB**.
+
+A troca dos bancos está associada ao sincronismo de quadro. A capacidade nominal calculada não inclui automaticamente todas as estruturas auxiliares, como mapas de prioridade por pixel, nem representa o total final de blocos M10K consumidos após síntese.
+
+### Considerações sobre o consumo de memória
+
+A soma das capacidades nominais das memórias listadas acima é uma estimativa parcial da arquitetura. Ela não deve ser apresentada como o consumo total da FPGA, pois pode excluir estruturas adicionais, como os mapas de camadas utilizados pela composição, e não considera o mapeamento final de cada memória nos recursos físicos do dispositivo.
+
+O consumo real de memória, a quantidade de blocos M10K utilizados, a frequência máxima e os resultados de *timing* devem ser obtidos dos relatórios de síntese e implementação do Quartus, conforme exigido pelo Problema #2.
 
 
 
