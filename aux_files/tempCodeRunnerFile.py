@@ -1,1 +1,0 @@
-sprite_palette_sonic
