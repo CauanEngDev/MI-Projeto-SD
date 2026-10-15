@@ -2148,13 +2148,13 @@ Assim, considerando o escopo definido para esta etapa, o projeto apresenta um gr
 - Heitor Abdalla Mascarenhas
 
 
-### Instituicao:
+### Instituição:
 - Universidade Estadual de Feira de Santana - UEFS
 
 ### Disciplina:
 - Sistema Digital
 
-### Periodo:
+### Período:
 - 2026.2
 
 
