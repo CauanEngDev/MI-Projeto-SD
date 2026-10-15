@@ -19,16 +19,23 @@
   * [2.2 Requisitos Não Funcionais](#22-requisitos-não-funcionais)
   * [2.3 Requisitos de Memória e Organização Interna](#23-requisitos-de-memória-e-organização-interna)
 
-* [3. Fundamentação Teórica](#3-fundamentação-teórica)
-
-  * [3.1 Representação Gráfica Indexada](#31-representação-gráfica-indexada)
-  * [3.2 Background Baseado em Tiles](#32-background-baseado-em-tiles)
-  * [3.3 Scroll e Wraparound](#33-scroll-e-wraparound)
-  * [3.4 Sprites](#34-sprites)
-  * [3.5 Espelhamento](#35-espelhamento)
-  * [3.6 Rasterização](#36-rasterização)
-  * [3.7 Double Buffering](#37-double-buffering)
-  * [3.8 VGA](#38-vga)
+* [3. Fundamentação Teórica](#3-fundamentação-teórica)\
+  * [3.1 Arquitetura de Conjunto de Instruções (ISA)](#31-arquitetura-de-conjunto-de-instruções-isa)\
+  * [3.2 Arquitetura do Coprocessador Gráfico](#32-arquitetura-do-coprocessador-gráfico)\
+  * [3.3 Unidade de Busca de Instruções e Contador de Programa](#33-unidade-de-busca-de-instruções-e-contador-de-programa)\
+  * [3.4 Unidade de Controle e Decodificação](#34-unidade-de-controle-e-decodificação)\
+  * [3.5 Registrador de Instrução e Datapath](#35-registrador-de-instrução-e-datapath)\
+  * [3.6 Banco de Registradores](#36-banco-de-registradores)\
+  * [3.7 Unidade Lógica e Aritmética (ULA)](#37-unidade-lógica-e-aritmética-ula)\
+  * [3.8 Memórias de Instruções e de Dados Gráficos](#38-memórias-de-instruções-e-de-dados-gráficos)\
+  * [3.9 Representação de Cores por Índices e Paletas](#39-representação-de-cores-por-índices-e-paletas)\
+  * [3.10 Background Baseado em Tiles](#310-background-baseado-em-tiles)\
+  * [3.11 Sprites e Atributos Gráficos](#311-sprites-e-atributos-gráficos)\
+  * [3.12 Rasterização de Primitivas Geométricas](#312-rasterização-de-primitivas-geométricas)\
+  * [3.13 Compositor e Prioridade entre Camadas](#313-compositor-e-prioridade-entre-camadas)\
+  * [3.14 Framebuffer e Double Buffering](#314-framebuffer-e-double-buffering)\
+  * [3.15 Controlador VGA e Resolução de Vídeo](#315-controlador-vga-e-resolução-de-vídeo)\
+  * [3.16 FPGA e Descrição de Hardware em Verilog](#316-fpga-e-descrição-de-hardware-em-verilog)\
 
 * [4. Arquitetura do Sistema](#4-arquitetura-do-sistema)
 
@@ -481,475 +488,541 @@ O consumo real de memória, a quantidade de blocos M10K utilizados, a frequênci
 
 
 
-# 3. FUNDAMENTACAO TEORICA
 
-A fundamentacao teorica deste projeto apresenta os principais conceitos de computacao grafica utilizados na construcao do sistema de video implementado em FPGA.
+# 3. FUNDAMENTAÇÃO TEÓRICA
 
-A arquitetura combina diferentes tecnicas de representacao, armazenamento e processamento de imagens, permitindo que elementos graficos sejam gerados diretamente em hardware e posteriormente combinados em um quadro destinado a exibicao em um monitor VGA.
+A fundamentação teórica deste projeto aborda os conceitos de arquitetura de computadores, sistemas digitais e computação gráfica utilizados no desenvolvimento de um coprocessador gráfico programável em FPGA. Diferentemente de um sistema em que os módulos gráficos precisam ser acionados individualmente por sinais externos, um coprocessador programável permite descrever operações por meio de instruções de uma arquitetura de conjunto de instruções (*Instruction Set Architecture* — ISA).
 
-Os principais conceitos abordados sao a representacao grafica indexada, o uso de tiles para construcao do background, scroll e wraparound, sprites, espelhamento, rasterizacao de primitivas geometricas, double buffering e a geracao da saida VGA.
+O projeto tem como objetivo integrar os mecanismos de geração gráfica desenvolvidos anteriormente a uma arquitetura capaz de buscar e executar instruções, manipular registradores e acionar unidades funcionais especializadas. Essa organização aproxima o coprocessador dos princípios empregados na construção de processadores convencionais, adaptando-os às necessidades de geração e composição de imagens.
 
-A utilizacao desses conceitos permite organizar o processamento grafico em modulos especializados, reduzindo a dependencia do processador para a geracao individual dos pixels e explorando caracteristicas proprias da implementacao em FPGA, como processamento dedicado, paralelismo e acesso estruturado a memorias.
+A implementação utiliza Verilog para descrever os circuitos digitais e uma FPGA para executar a lógica projetada. O sistema reúne uma unidade de busca de instruções, uma unidade de controle, um banco de registradores, uma Unidade Lógica e Aritmética (ULA), mecanismos de controle de fluxo e unidades funcionais gráficas, incluindo os motores de background, sprites e rasterização. Os resultados dessas operações são encaminhados ao sistema de composição e ao controlador VGA.
 
+Além da implementação em hardware, o projeto conta com uma especificação própria da ISA, programas Assembly, ferramentas de montagem e geração de arquivos de inicialização de memória e um simulador HTML utilizado para acompanhar a execução das instruções e seus efeitos gráficos.
 
-## 3.1 Representacao Grafica Indexada
+Os conceitos apresentados a seguir fundamentam as decisões de organização do sistema e explicam a relação entre o programa executado, o processamento digital e a imagem produzida.
 
-A representacao grafica indexada e uma tecnica na qual os pixels de uma imagem nao armazenam diretamente todos os componentes de sua cor. Em vez disso, cada pixel armazena um indice que referencia uma entrada de uma paleta de cores.
+## 3.1 Arquitetura de Conjunto de Instruções (ISA)
 
-No projeto, os padroes utilizados por tiles e sprites sao armazenados utilizando indices de 8 bits. Dessa forma, cada pixel do padrao representa uma posicao dentro da paleta, e nao diretamente os valores de vermelho, verde e azul.
+A arquitetura de conjunto de instruções, conhecida pela sigla ISA (*Instruction Set Architecture*), define a interface entre o software e o hardware de um processador. Ela especifica as operações disponíveis, os formatos das instruções, os registradores acessíveis, os operandos utilizados e as regras que determinam o comportamento de cada operação.
 
-O processo pode ser representado de forma simplificada por:
+Uma ISA estabelece, portanto, o contrato funcional que deve ser respeitado tanto pelos programas quanto pela implementação em hardware. Um programa escrito para uma determinada arquitetura precisa utilizar instruções compatíveis com os formatos e as operações definidos por ela (PATTERSON; HENNESSY, 2016).
 
-    INDICE DO PIXEL
+No projeto, foi definida uma ISA própria para o coprocessador gráfico, com instruções de largura fixa de 32 bits e campo de código de operação (*opcode*) de 5 bits. Esse campo permite representar até \(2^5 = 32\) códigos distintos, embora nem todas as combinações precisem corresponder a instruções implementadas.
+
+A arquitetura adota um modelo de utilização de registradores para operações aritméticas e lógicas, enquanto as instruções específicas acionam funcionalidades gráficas. Assim, o programa pode preparar valores em registradores e utilizá-los em operações da ULA ou em comandos relacionados à geração de imagens.
+
+Entre as instruções definidas na especificação do projeto estão:
+
+- **Operações da ULA:** instruções como `ADD`, `SUB` e `PASS`, utilizadas para realizar operações aritméticas, lógicas ou transferir valores;
+- **Configuração gráfica:** instruções como `SET_PALETTE`, `SET_SPR_POS` e `SET_SPR_ATTR`;
+- **Desenho de primitivas:** instruções como `DRAW_RECT` e `DRAW_TRI`;
+- **Manipulação de recursos gráficos:** instruções como `SET_TILEMAP`, `WRITE_SPRITE_DATA` e `WRITE_TILE_DATA`;
+- **Controle da execução:** instruções como `WAIT_VBLANK` e `HALT`;
+- **Controle de fluxo:** instruções de desvio, incluindo `B` e `B_COND`.
+
+Essas instruções permitem que um programa descreva uma sequência de operações gráficas sem precisar controlar diretamente, em cada etapa, todos os sinais internos dos motores.
+
+O fluxo conceitual de execução pode ser representado por:
+
+    PROGRAMA ASSEMBLY
            |
            v
-    +----------------+
-    |     PALETA     |
-    +----------------+
+    CODIFICAÇÃO DAS INSTRUÇÕES
            |
            v
-      COR RGB DE 9 BITS
+    MEMÓRIA DE INSTRUÇÕES
+           |
+           v
+    BUSCA E DECODIFICAÇÃO
+           |
+           v
+    EXECUÇÃO NO COPROCESSADOR
+           |
+           v
+    RESULTADO GRÁFICO
 
-A cor utilizada pelo sistema possui 9 bits, organizados no formato:
+A definição da ISA é importante porque organiza a comunicação entre o programa e o hardware, tornando possível testar as instruções individualmente e verificar como elas se combinam para produzir operações gráficas mais complexas.
 
-RRR GGG BBB
+## 3.2 Arquitetura do Coprocessador Gráfico
 
-Sao utilizados 3 bits para cada componente de cor, permitindo representar oito niveis de intensidade para vermelho, verde e azul. Dessa combinacao resultam ate 512 possibilidades de cor.
+Um coprocessador é uma unidade de processamento especializada em determinadas classes de operações. Em vez de executar todas as tarefas de um processador de propósito geral, ele concentra recursos de hardware nas funções para as quais foi projetado.
 
-A principal vantagem dessa abordagem esta na separacao entre o padrao grafico e a sua representacao de cor. Em vez de armazenar uma palavra completa de cor para cada pixel, a memoria de padroes armazena apenas o indice correspondente.
+No presente projeto, essa especialização está relacionada à geração e à composição de imagens. A arquitetura reúne unidades de processamento convencionais, responsáveis pela execução das instruções, e unidades funcionais gráficas, responsáveis por produzir os elementos visuais.
 
-Isso reduz a quantidade de memoria necessaria para armazenar os recursos graficos e tambem permite que diferentes elementos compartilhem os mesmos padroes.
+A organização pode ser resumida da seguinte forma:
 
-Outra vantagem e a possibilidade de modificar a aparencia de um recurso por meio da alteracao da paleta, sem que seja necessario modificar todos os pixels armazenados na memoria de padroes.
+    +-----------------------------+
+    |     MEMÓRIA DE INSTRUÇÕES   |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   UNIDADE DE BUSCA          |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   UNIDADE DE CONTROLE       |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   BANCO DE REGISTRADORES    |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   ULA E DATAPATH            |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   UNIDADES GRÁFICAS         |
+    |   Background, Sprites,      |
+    |   Rasterização              |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   COMPOSIÇÃO E FRAMEBUFFER  |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   CONTROLADOR VGA           |
+    +-----------------------------+
 
-No contexto deste projeto, essa organizacao e utilizada tanto pelo motor de background quanto pelo motor de sprites, estabelecendo uma interface comum entre os padroes graficos armazenados e as cores efetivamente utilizadas na imagem final.
+O diagrama apresenta a organização conceitual do sistema. Na implementação, os caminhos de dados e os sinais de controle conectam os módulos de acordo com as interfaces definidas no código Verilog.
 
+A principal característica dessa arquitetura é que as operações gráficas passam a ser comandadas por instruções da ISA. O programa configura parâmetros, prepara os dados necessários e solicita operações às unidades funcionais, enquanto o hardware realiza o processamento correspondente.
 
-## 3.2 Background Baseado em Tiles
+Essa organização permite separar a interpretação do programa da execução das operações gráficas, facilitando a evolução da arquitetura e a validação de seus componentes.
 
-O background baseado em tiles e uma tecnica de construcao de imagens na qual um cenario e formado pela repeticao e combinacao de pequenos blocos graficos.
+## 3.3 Unidade de Busca de Instruções e Contador de Programa
 
-Em vez de armazenar cada pixel de um cenario completo de forma independente, o sistema armazena um conjunto de padroes de tiles e utiliza uma estrutura de referencias, denominada tilemap, para determinar qual padrao deve aparecer em cada posicao.
+A unidade de busca de instruções é responsável por obter as instruções que serão executadas pelo coprocessador. Para isso, ela utiliza uma memória de instruções e um contador de programa (*Program Counter* — PC), que identifica a posição da próxima instrução a ser buscada.
 
-No projeto, cada tile possui dimensao:
+Na implementação do projeto, a busca é ativa: o próprio coprocessador obtém as instruções de uma memória interna, inicializada por um arquivo de configuração. Essa decisão permite executar programas sem depender de um processador externo para enviar cada comando individualmente.
 
-8 x 8 pixels
+A memória de instruções possui 16384 palavras de 32 bits. Considerando a largura das instruções, sua capacidade nominal é:
 
-Considerando a resolucao logica utilizada pelo sistema:
+\[
+16384 \times 32 = 524288 \text{ bits}
+\]
 
-320 x 240 pixels
+Isso corresponde a 65536 bytes, ou 64 KiB.
 
-a tela pode ser dividida em:
-
-320 / 8 = 40 tiles na horizontal
-
-240 / 8 = 30 tiles na vertical
-
-Portanto, uma tela logica completa e composta por:
-
-40 x 30 = 1200 posicoes de tiles.
-
-O tilemap armazena uma referencia para o padrao grafico que deve ser utilizado em cada uma dessas posicoes. Os padroes dos tiles, por sua vez, ficam armazenados em uma memoria especifica.
-
-A determinacao de um pixel do background pode ser entendida como uma decomposicao da coordenada da tela.
-
-Primeiramente, a coordenada do pixel e combinada com os valores de scroll. A coordenada resultante identifica a posicao correspondente no cenario.
-
-Em seguida, essa coordenada e dividida conceitualmente em duas partes:
-
-- Coordenada do tile: identifica qual entrada do tilemap deve ser acessada;
-- Coordenada local: identifica qual pixel deve ser lido dentro do tile.
-
-Como cada tile possui 8 x 8 pixels, existem 64 posicoes possiveis dentro de cada padrao.
+O contador de programa utilizado na arquitetura possui 16 bits e trabalha com endereçamento em bytes. Como as instruções possuem 32 bits, cada instrução ocupa quatro bytes. Na execução sequencial, o endereço do PC avança em quatro unidades, salvo quando uma instrução de controle de fluxo determina outro destino.
 
 O processo pode ser representado por:
+
+    +-------------------+
+    | CONTADOR DE       |
+    | PROGRAMA (PC)     |
+    +-------------------+
+              |
+              v
+    +-------------------+
+    | MEMÓRIA DE        |
+    | INSTRUÇÕES        |
+    +-------------------+
+              |
+              v
+       INSTRUÇÃO LIDA
+              |
+              v
+       EXECUÇÃO DA ISA
+              |
+              v
+      ATUALIZAÇÃO DO PC
+
+Quando ocorre um desvio, o próximo endereço deixa de corresponder necessariamente à instrução seguinte. No caso de um desvio incondicional, o fluxo é direcionado ao destino especificado; em um desvio condicional, essa alteração depende da condição avaliada pela arquitetura.
+
+A unidade de busca é, portanto, fundamental para transformar um conjunto de instruções armazenado em memória em uma sequência ordenada de operações executadas pelo hardware.
+
+## 3.4 Unidade de Controle e Decodificação
+
+A unidade de controle coordena a execução das instruções. Sua função consiste em interpretar o código de operação e os demais campos relevantes da instrução, determinando quais operações devem ocorrer e quais sinais precisam ser ativados.
+
+Em uma arquitetura digital, a unidade de controle deve considerar não apenas o tipo da instrução, mas também o estado atual do sistema. Operações que envolvem unidades gráficas podem exigir vários ciclos de clock, enquanto outras podem ser concluídas em menos tempo.
+
+Por esse motivo, a execução de uma instrução não se resume necessariamente a um único ciclo. A unidade de controle pode precisar aguardar a conclusão de uma operação, observar sinais de estado e somente então permitir o avanço para a próxima instrução.
+
+No projeto, a ISA inclui instruções de controle como `WAIT_VBLANK` e `HALT`, além de instruções que acionam recursos gráficos. Essas operações possuem finalidades diferentes: enquanto uma instrução pode configurar dados, outra pode solicitar uma operação gráfica, aguardar uma condição de sincronização ou encerrar a execução do programa.
+
+O funcionamento geral da decodificação pode ser representado por:
+
+    INSTRUÇÃO DE 32 BITS
+             |
+             v
+    +----------------------+
+    | EXTRAÇÃO DOS CAMPOS  |
+    +----------------------+
+             |
+             v
+    +----------------------+
+    | DECODIFICAÇÃO DO     |
+    | OPCODE E OPERANDOS   |
+    +----------------------+
+             |
+             v
+    +----------------------+
+    | GERAÇÃO DOS SINAIS   |
+    | DE CONTROLE          |
+    +----------------------+
+             |
+             v
+    EXECUÇÃO DA OPERAÇÃO
+
+A unidade de controle também precisa considerar o término das operações e as condições de sincronização. Esse gerenciamento é importante porque os motores gráficos não necessariamente concluem suas tarefas no mesmo número de ciclos.
+
+Conceitos como `busy`, `done` e `valid` são úteis nesse contexto. De maneira geral, `busy` indica que uma unidade está ocupada, `done` sinaliza a conclusão de uma operação e `valid` pode indicar que uma informação ou solicitação é válida. A utilização exata desses sinais depende da interface implementada em cada módulo.
+
+## 3.5 Registrador de Instrução e Datapath
+
+O registrador de instrução (*Instruction Register* — IR) é um elemento utilizado em arquiteturas de processadores para manter a instrução atualmente selecionada para execução. Sua função conceitual é separar a obtenção da instrução de seu processamento, mantendo os bits da instrução disponíveis para a decodificação e o controle.
+
+O datapath, por sua vez, corresponde ao conjunto de componentes e caminhos pelos quais os dados são armazenados, selecionados, transformados e encaminhados durante a execução das instruções. Ele pode incluir registradores, ULA, multiplexadores, extensores de operandos e conexões entre unidades funcionais.
+
+Esses conceitos são complementares: a unidade de controle determina o que deve ser feito, enquanto o datapath fornece os recursos utilizados para realizar as operações.
+
+No coprocessador gráfico, o datapath precisa permitir a manipulação dos operandos da ISA e a preparação dos parâmetros utilizados pelas unidades gráficas. Por exemplo, coordenadas e valores de cor podem ser calculados ou transferidos por instruções da ULA antes de serem utilizados pelo rasterizador.
+
+É importante distinguir o papel arquitetural do IR da existência de um módulo independente com esse nome. A presença de uma instrução buscada e decodificada não comprova, isoladamente, que todos os requisitos de armazenamento explícito da instrução estejam implementados em um registrador dedicado. Essa distinção deve ser considerada ao descrever a implementação concreta do projeto.
+
+## 3.6 Banco de Registradores
+
+Um banco de registradores é um conjunto de posições de armazenamento de pequena capacidade utilizadas para manter operandos e resultados temporários durante a execução das instruções. Em comparação com memórias maiores, os registradores permitem acesso rápido aos dados necessários às operações do processador.
+
+No projeto, a especificação da ISA descreve um espaço de registradores numerados, com registradores gerais e posições reservadas para funções específicas. Os registradores gerais são utilizados como operandos da ULA, enquanto alguns registradores possuem associação direta com os recursos gráficos.
+
+Entre os registradores especiais descritos na especificação estão:
+
+- `XZR`: registrador de valor zero;
+- `STATUS`: conjunto de indicadores de estado, incluindo informações relacionadas à execução e à sincronização;
+- `FLAGS`: registrador de indicadores aritméticos e lógicos;
+- `V0X`, `V0Y`, `V1X`, `V1Y`, `V2X` e `V2Y`: registradores associados às coordenadas dos vértices utilizados pelo rasterizador;
+- `COLOR`: registrador associado à informação de cor utilizada pelo rasterizador.
+
+Os registradores dedicados ao rasterizador permitem que os parâmetros geométricos sejam preparados por instruções da ULA e disponibilizados à unidade gráfica por conexões internas.
+
+Essa organização reduz a necessidade de criar uma instrução diferente para cada possível combinação de coordenadas e cores. Em vez disso, o programa pode utilizar instruções de manipulação de registradores para preparar os valores e, posteriormente, solicitar a operação gráfica correspondente.
+
+A especificação do projeto descreve um banco com duas portas de leitura combinacional e uma porta de escrita síncrona. Isso permite disponibilizar dois operandos para uma operação, enquanto os resultados podem ser armazenados em uma posição de destino.
+
+O banco de registradores, portanto, funciona como um ponto central de armazenamento e comunicação entre as instruções executadas pela ULA e os parâmetros consumidos pelas unidades funcionais gráficas.
+
+## 3.7 Unidade Lógica e Aritmética (ULA)
+
+A Unidade Lógica e Aritmética (ULA) é o componente responsável por realizar operações aritméticas e lógicas sobre os operandos fornecidos pela arquitetura. Entre as operações tradicionalmente realizadas por uma ULA estão adição, subtração, operações booleanas e comparações.
+
+No projeto, a ULA é utilizada para executar operações previstas na ISA e para manipular valores armazenados no banco de registradores. Esses valores podem representar operandos gerais ou parâmetros utilizados pelas unidades gráficas.
+
+Por exemplo, antes de desenhar um retângulo ou triângulo, o programa pode preparar coordenadas e informações de cor nos registradores correspondentes. A ULA permite calcular ou transferir esses valores por meio das instruções disponíveis.
+
+O fluxo básico de uma operação pode ser representado por:
+
+    REGISTRADOR A ----+
+                     |
+                     v
+                  +------+
+    REGISTRADOR B -> ULA |
+                  +------+
+                     |
+                     v
+               RESULTADO
+                     |
+                     v
+             BANCO DE REGISTRADORES
+
+A ULA também pode produzir indicadores de estado, como zero, negativo, carry e overflow, conforme a operação executada. Esses indicadores são úteis para avaliar condições e controlar desvios condicionais.
+
+No projeto, a especificação descreve um registrador `FLAGS` associado a esses indicadores. A instrução `B_COND` utiliza o mecanismo de avaliação de condições para determinar se o fluxo do programa deve ser alterado.
+
+A ULA contribui, assim, para a execução das operações fundamentais da ISA e para o controle do fluxo de instruções.
+
+## 3.8 Memórias de Instruções e de Dados Gráficos
+
+As memórias são componentes fundamentais do coprocessador porque armazenam tanto o programa que será executado quanto os dados necessários à geração das imagens.
+
+A memória de instruções contém palavras de 32 bits que representam as operações codificadas pela ISA. Já as memórias gráficas armazenam informações como índices de cor, padrões de tiles, mapa do background, padrões de sprites e pixels do framebuffer.
+
+No projeto, a memória de instruções é inicializada por um arquivo `.mif` (*Memory Initialization File*). Esse formato permite especificar valores que serão utilizados para inicializar uma memória durante a compilação do projeto no Quartus.
+
+O fluxo de preparação do programa é:
+
+    PROGRAMA ASSEMBLY
+           |
+           v
+    MONTAGEM / CODIFICAÇÃO
+           |
+           v
+    ARQUIVO .MIF
+           |
+           v
+    MEMÓRIA DE INSTRUÇÕES
+           |
+           v
+    EXECUÇÃO NA FPGA
+
+O repositório inclui ferramentas auxiliares relacionadas à montagem e à geração desses arquivos. Dessa forma, as instruções podem ser preparadas a partir de uma descrição de programa e convertidas para o formato esperado pela memória de instruções, evitando a necessidade de inserir manualmente cada palavra binária.
+
+Os arquivos `.mif` também podem ser utilizados para inicializar memórias que contêm recursos gráficos. Nesses casos, o conteúdo precisa respeitar a largura, a profundidade e a organização esperadas pelo módulo correspondente.
+
+Essa separação entre programa e recursos gráficos facilita a preparação de diferentes demonstrações e permite modificar o comportamento do coprocessador sem alterar a estrutura física de todos os módulos.
+
+É importante observar que a capacidade nominal de uma memória não corresponde necessariamente à quantidade de recursos físicos efetivamente utilizada após a síntese. A ocupação real depende da inferência das memórias, das otimizações do compilador e da configuração final do projeto no Quartus.
+
+## 3.9 Representação de Cores por Índices e Paletas
+
+Uma técnica utilizada em sistemas gráficos é a representação indexada de cores. Nesse modelo, cada pixel não armazena diretamente todos os componentes RGB da cor; em vez disso, armazena um índice que referencia uma entrada de uma paleta.
+
+No projeto, os padrões gráficos de tiles e sprites utilizam índices de 8 bits. Esses índices são utilizados para consultar a paleta, que fornece a representação da cor utilizada na imagem.
+
+A cor de saída possui 9 bits, organizados no formato `RRRGGGBBB`, com três bits para cada componente de cor. Assim, cada componente pode assumir oito níveis de intensidade, permitindo representar até \(8^3 = 512\) combinações de cores.
+
+O processo de conversão pode ser representado por:
+
+    ÍNDICE DO PIXEL
+           |
+           v
+    +------------------+
+    | PALETA DE CORES  |
+    +------------------+
+           |
+           v
+       COR DE 9 BITS
+       RRR GGG BBB
+           |
+           v
+       FRAMEBUFFER
+
+A representação indexada separa a informação do padrão gráfico da cor efetivamente apresentada. Isso permite que diferentes pixels compartilhem entradas da paleta e que a cor associada a um índice seja alterada sem modificar todos os padrões que utilizam esse índice.
+
+No projeto, a paleta é utilizada pelos motores gráficos para converter os índices dos pixels em valores de cor apropriados ao framebuffer. Essa organização também facilita a geração e a conversão de recursos gráficos por meio das ferramentas auxiliares do repositório.
+
+## 3.10 Background Baseado em Tiles
+
+Tiles são pequenos blocos gráficos utilizados para construir cenários a partir da repetição e combinação de padrões. Em vez de armazenar individualmente todos os pixels de um cenário completo, o sistema mantém os padrões dos tiles em uma memória e utiliza um mapa para indicar qual padrão deve ocupar cada posição.
+
+No projeto, cada tile possui dimensões de 8 × 8 pixels. A resolução lógica utilizada pelos motores gráficos é de 320 × 240 pixels. Portanto, o background pode ser organizado em:
+
+\[
+\frac{320}{8}=40 \text{ tiles por linha}
+\]
+
+\[
+\frac{240}{8}=30 \text{ linhas de tiles}
+\]
+
+O mapa do background possui, assim, 40 × 30, ou 1200 posições de tiles para preencher a área lógica da tela.
+
+A determinação de um pixel do background envolve a identificação do tile correspondente e da posição local do pixel dentro desse tile. O índice do tile permite consultar o padrão gráfico apropriado, enquanto as coordenadas locais determinam qual pixel deve ser lido.
+
+O fluxo pode ser representado por:
 
     COORDENADA DO PIXEL
             |
             v
-    +-------------------+
-    |  SCROLL / OFFSET  |
-    +-------------------+
+       TILEMAP
             |
             v
-    COORDENADA DO CENARIO
-            |
-            +----------------+
-            |                |
-            v                v
-       TILEMAP          COORDENADA
-                        LOCAL DO TILE
-            |                |
-            v                v
-       PADRAO DO TILE ---> PIXEL
-                             |
-                             v
-                            COR
-
-A principal vantagem dessa tecnica e a reutilizacao dos padroes. Um mesmo tile pode aparecer diversas vezes no cenario sem que seja necessario armazenar varias copias de seus pixels.
-
-Essa organizacao reduz o consumo de memoria e permite representar cenarios maiores e mais variados a partir de uma quantidade relativamente pequena de padroes graficos.
-
-
-## 3.3 Scroll e Wraparound
-
-O scroll e uma tecnica utilizada para produzir o deslocamento visual de um cenario. Em uma arquitetura baseada em tiles, esse deslocamento pode ser realizado alterando as coordenadas utilizadas para consultar o cenario, sem que seja necessario mover fisicamente os dados armazenados no tilemap.
-
-No projeto, sao utilizados deslocamentos nos eixos horizontal e vertical, permitindo modificar a regiao do cenario que esta sendo apresentada na tela.
-
-De forma conceitual:
-
-    COORDENADA DA TELA
-            +
-    OFFSET DE SCROLL
+      ÍNDICE DO TILE
             |
             v
-    COORDENADA DO CENARIO
+     PADRÃO DO TILE
             |
             v
-    CONSULTA AO TILEMAP
+      ÍNDICE DE COR
+            |
+            v
+          PALETA
+            |
+            v
+       COR DO PIXEL
 
-Assim, quando o valor de scroll e alterado, uma mesma posicao da tela pode passar a representar outra regiao do cenario.
+A principal vantagem dessa técnica é a reutilização dos padrões. Um mesmo tile pode aparecer em diferentes posições do cenário sem que seja necessário armazenar cópias independentes de todos os seus pixels.
 
-Essa estrategia evita a necessidade de deslocar fisicamente os dados armazenados na memoria. O tilemap e os padroes graficos permanecem em suas respectivas memorias, enquanto a coordenada utilizada durante a consulta e modificada de acordo com o deslocamento desejado.
+Essa organização reduz a quantidade de dados necessária para representar cenários e permite que o motor de background gere a imagem consultando o mapa e os padrões armazenados nas respectivas memórias.
 
-O wraparound complementa esse mecanismo ao permitir que o deslocamento seja tratado de forma ciclica. Quando uma coordenada utilizada para acessar o cenario ultrapassa os limites definidos, ela pode retornar ao inicio da regiao correspondente.
+## 3.11 Sprites e Atributos Gráficos
 
-Esse comportamento pode ser representado de forma simplificada por:
+Sprites são elementos gráficos que podem ser posicionados independentemente do background. Eles são frequentemente utilizados para representar personagens, objetos e outros componentes móveis de uma cena.
 
-    +-----------------------------+
-    |          CENARIO            |
-    |                             |
-    |  INICIO ------------ FIM    |
-    |    ^                 |      |
-    |    |_________________|      |
-    |         WRAPAROUND          |
-    +-----------------------------+
+Diferentemente do background, que é organizado por meio de um tilemap, o motor de sprites utiliza informações de posição, padrão gráfico, paleta e outros atributos para determinar como cada elemento deve ser apresentado.
 
-Dessa maneira, o final do cenario pode ser conectado ao seu inicio, permitindo que o deslocamento continue sem a necessidade de interromper o movimento ou reconstruir o tilemap.
+No projeto, o motor de sprites processa os atributos e os padrões gráficos necessários à renderização. A especificação da ISA contempla instruções para configurar a posição e os atributos de sprites, além de instruções para escrever seus dados gráficos.
 
-A combinacao entre scroll e wraparound permite produzir movimento continuo do background, mantendo os dados graficos armazenados de forma organizada e evitando operacoes desnecessarias de movimentacao da imagem.
+A palavra de atributos definida na especificação possui 32 bits e contempla campos relacionados a habilitação, prioridade, espelhamento horizontal e vertical, seleção de paleta e identificação do padrão gráfico. A organização exata desses campos deve seguir a codificação utilizada pelo projeto.
 
+Durante a renderização, o motor utiliza as informações de configuração para determinar a posição ocupada pelo sprite e consultar seus pixels. Os índices de cor são convertidos pela paleta e os pixels resultantes são encaminhados ao processo de composição.
 
-## 3.4 Sprites
+A utilização de atributos permite modificar a posição e a aparência de um sprite sem precisar reconstruir todo o seu padrão gráfico. Isso favorece a reutilização dos recursos armazenados e simplifica a programação das cenas.
 
-Sprites sao elementos graficos independentes do background, utilizados para representar objetos que possuem posicao e atributos proprios dentro da cena.
+## 3.12 Rasterização de Primitivas Geométricas
 
-Enquanto o background e organizado a partir de uma estrutura de tiles, os sprites sao armazenados e processados individualmente pelo motor de sprites. Cada sprite possui uma entrada de atributos armazenada em uma memoria dedicada.
+Rasterização é o processo de converter uma descrição geométrica em uma representação discreta formada por pixels. Uma primitiva, como um retângulo ou triângulo, pode ser descrita por coordenadas e vértices; entretanto, a imagem final é armazenada em uma grade de posições discretas.
 
-No projeto, cada entrada da memoria de atributos possui:
+No projeto, existem unidades de rasterização destinadas ao desenho de retângulos e triângulos. Esses módulos recebem os parâmetros das primitivas e determinam quais pixels devem ser produzidos para representar as regiões geométricas.
 
-32 bits
+No caso de um retângulo preenchido, as coordenadas fornecidas permitem determinar os limites horizontais e verticais da região. O rasterizador percorre os pixels correspondentes e gera as escritas necessárias no framebuffer.
 
-A memoria de atributos utiliza um endereco de 5 bits, permitindo armazenar:
+Para um triângulo, a descrição é feita por três vértices. A partir deles, o rasterizador determina a região interna da primitiva e os pixels que pertencem ao seu preenchimento.
 
-2^5 = 32 entradas de sprites.
+O fluxo geral pode ser representado por:
 
-A interface utilizada pelo sistema pode ser representada por:
-
-    +--------------------------+
-    | MEMORIA DE ATRIBUTOS     |
-    |                          |
-    | 32 entradas              |
-    | 32 bits por entrada     |
-    +--------------------------+
-                |
-                v
-         ATRIBUTOS DO SPRITE
-                |
-                v
-          MOTOR DE SPRITES
-
-A palavra de atributos de 32 bits e utilizada para armazenar as informacoes necessarias para configurar cada sprite. Essas informacoes sao produzidas pelos modulos de controle de sprites e posteriormente armazenadas na memoria de atributos.
-
-O sistema possui, por exemplo, modulos responsaveis pelo controle de movimento e espelhamento de um sprite e pela criacao de novos sprites. Esses modulos geram os dados de atributos que sao escritos na memoria dedicada. :contentReference[oaicite:0]{index=0}
-
-Durante a renderizacao, o motor de sprites realiza a leitura dessas entradas por meio do endereco do atributo e utiliza os dados obtidos juntamente com a memoria de padroes e a paleta de cores para determinar os pixels que devem ser escritos no framebuffer. A interface do motor recebe a palavra de atributos de 32 bits, o padrao grafico e os dados da paleta. :contentReference[oaicite:1]{index=1} :contentReference[oaicite:2]{index=2}
-
-Os padroes graficos dos sprites sao armazenados separadamente da memoria de atributos. Cada dado lido da memoria de padroes possui 8 bits, correspondendo ao indice de cor utilizado pelo pixel do padrao.
-
-Essa separacao entre atributos, padroes graficos e paleta permite organizar o processamento dos sprites em diferentes memorias e modulos especializados:
-
-    ATRIBUTOS
-        |
-        v
-    +--------------------+
-    | MEMORIA DE         |
-    | ATRIBUTOS          |
-    +--------------------+
-        |
-        v
-    MOTOR DE SPRITES
-        |
-        +--------------------+
-        |                    |
-        v                    v
-    PADRAO GRAFICO        PALETA
-        |                    |
-        +---------+----------+
-                  |
-                  v
-             PIXEL RGB
-                  |
-                  v
-             FRAMEBUFFER
-
-Dessa forma, o sprite pode ser entendido como a combinacao entre seus atributos de configuracao, seu padrao grafico e as cores definidas pela paleta. O motor de sprites utiliza essas informacoes para determinar como o objeto deve ser representado na imagem final.
-
-
-## 3.5 Espelhamento
-
-O espelhamento e uma tecnica utilizada para alterar a orientacao de um recurso grafico sem a necessidade de armazenar uma segunda versao do mesmo padrao.
-
-No projeto sao utilizados dois tipos de espelhamento:
-
-- Flip horizontal;
-- Flip vertical.
-
-O principio consiste em alterar a ordem das coordenadas locais utilizadas para acessar os pixels do padrao grafico.
-
-Para um sprite de 16 x 16 pixels, no espelhamento horizontal a coordenada horizontal e acessada em ordem inversa. De forma conceitual:
-
-COORDENADA ORIGINAL:
-
-    0, 1, 2, 3, ..., 13, 14, 15
-
-COORDENADA ESPELHADA:
-
-    15, 14, 13, ..., 2, 1, 0
-
-De maneira equivalente, o espelhamento vertical inverte a ordem das coordenadas no eixo vertical.
-
-O processo pode ser representado por:
-
-               SPRITE
-                  |
-          +-------+-------+
-          |               |
-          v               v
-     FLIP HORIZONTAL   FLIP VERTICAL
-          |               |
-          v               v
-     INVERTE X         INVERTE Y
-          |               |
-          +-------+-------+
-                  |
-                  v
-          PADRAO GRAFICO
-                  |
-                  v
-                PIXEL
-
-Assim, o mesmo padrao armazenado na memoria pode ser apresentado em diferentes orientacoes.
-
-Essa tecnica e importante principalmente pela reutilizacao dos recursos graficos. Em vez de armazenar diferentes imagens para cada orientacao de um objeto, o sistema pode utilizar o mesmo padrao e modificar a forma como seus pixels sao acessados.
-
-No projeto, o controle dessas orientacoes esta associado ao processamento dos atributos dos sprites, permitindo que um mesmo recurso grafico possa ser apresentado com diferentes orientacoes durante a renderizacao.
-
-Dessa forma, o espelhamento contribui para a economia de memoria e aumenta a reutilizacao dos padroes graficos armazenados.
-
-
-## 3.6 Rasterizacao
-
-Rasterizacao e o processo de transformar uma descricao geometrica em uma representacao discreta formada por pixels.
-
-Uma primitiva geometrica pode ser descrita por coordenadas, vertices e relacoes entre pontos. Entretanto, a imagem armazenada no framebuffer e composta por uma quantidade finita de pixels.
-
-A rasterizacao realiza justamente essa conversao entre a representacao geometrica e a representacao discreta da imagem.
-
-No projeto sao implementadas duas primitivas geometricas:
-
-- Retangulos preenchidos;
-- Triangulos preenchidos.
-
-Para os retangulos, o rasterizador utiliza as coordenadas fornecidas para determinar a regiao ocupada pela primitiva. A partir dos limites horizontais e verticais, os pixels pertencentes a essa regiao sao percorridos e enviados para o framebuffer.
-
-O processo pode ser representado por:
-    
-    COORDENADAS DA PRIMITIVA
-              |
-              v
+    COORDENADAS E PARÂMETROS
+               |
+               v
     +----------------------+
-    | DETERMINACAO DOS     |
-    | LIMITES DA REGIAO    |
-    +----------------------+
-              |
-              v
-    +----------------------+
-    | PERCURSO DOS PIXELS  |
-    +----------------------+
-              |
-              v
-          FRAMEBUFFER
-
-No caso dos triangulos, a rasterizacao utiliza os tres vertices fornecidos para determinar a regiao ocupada pela primitiva.
-
-O preenchimento pode ser realizado linha por linha, determinando para cada coordenada vertical o intervalo horizontal correspondente ao interior do triangulo.
-
-De forma simplificada:
-
-         /\
-        /  \
-       /    \
-      /------\
-     /        \
-    /----------\
-
-Cada linha possui um intervalo de pixels que pertence ao interior da primitiva. Esses pixels sao posteriormente utilizados para construir a imagem no framebuffer.
-
-A implementacao em hardware utiliza operacoes aritmeticas adequadas a logica digital, incluindo representacoes inteiras e de ponto fixo. Essa abordagem permite realizar os calculos necessarios sem depender de operacoes de ponto flutuante.
-
-Algumas operacoes aritmeticas utilizadas durante o processo podem ser realizadas por circuitos dedicados e distribuidas em diferentes ciclos de clock. Essa estrategia permite controlar o processamento por meio de maquinas de estados e adequar a rasterizacao ao funcionamento sequencial da FPGA.
-
-De forma geral, o processo de rasterizacao pode ser resumido por:
-
-    DESCRICAO GEOMETRICA
-              |
-              v
-    +----------------------+
-    | RASTERIZADOR         |
+    |     RASTERIZADOR     |
     |                      |
-    | Retangulos           |
-    | Triangulos           |
+    | Retângulos           |
+    | Triângulos           |
     +----------------------+
-              |
-              v
+               |
+               v
         PIXELS GERADOS
-              |
-              v
-          COMPOSITOR
-              |
-              v
-          FRAMEBUFFER
+               |
+               v
+          COMPOSIÇÃO
+               |
+               v
+           FRAMEBUFFER
 
-A rasterizacao constitui, portanto, uma das principais etapas responsaveis por transformar informacoes geometricas em pixels que posteriormente participarao da composicao da imagem final.
+A rasterização transforma os comandos geométricos da ISA em dados gráficos concretos. Dessa forma, o programa pode solicitar o desenho de uma primitiva por meio de uma instrução, enquanto o circuito especializado executa os cálculos necessários para produzir seus pixels.
 
+A divisão entre a descrição geométrica e a geração de pixels permite que o programa opere em um nível mais abstrato, sem precisar especificar individualmente cada pixel que compõe uma figura.
 
-## 3.7 Double Buffering
+## 3.13 Compositor e Prioridade entre Camadas
 
-O double buffering e uma tecnica utilizada para separar o buffer que esta sendo exibido daquele que esta sendo utilizado para construir o proximo quadro.
+O compositor é responsável por organizar a contribuição dos diferentes motores gráficos para a formação da imagem final. Como background, primitivas geométricas e sprites podem ocupar regiões coincidentes, o sistema precisa definir como essas informações serão combinadas.
 
-Quando um unico framebuffer e utilizado simultaneamente para leitura pelo controlador VGA e escrita pelos motores graficos, o conteudo da imagem pode ser modificado enquanto ainda esta sendo transmitido para o monitor.
+Uma estratégia consiste em processar as camadas em uma ordem determinada e encaminhar as escritas ao framebuffer por meio de uma interface compartilhada. A arbitragem seleciona a origem dos dados que serão escritos e evita que múltiplos motores controlem simultaneamente a mesma porta de escrita.
 
-Isso pode fazer com que diferentes partes da tela correspondam a estados diferentes da cena, produzindo artefatos visuais.
+No projeto, o compositor integra os elementos gráficos produzidos pelos motores de background, rasterização e sprites. Os testes de composição presentes no repositório incluem cenários de sobreposição e verificação da ordem de desenho.
 
-Para evitar esse problema, o sistema utiliza dois buffers:
+O fluxo conceitual pode ser representado por:
 
-    +------------------+
-    |    BUFFER A      |
-    |                  |
-    |    EXIBICAO      |
-    +------------------+
-
-    +------------------+
-    |    BUFFER B      |
-    |                  |
-    |   RENDERIZACAO   |
-    +------------------+
-
-Enquanto o controlador VGA realiza a leitura do Buffer A, os motores graficos podem construir o proximo quadro no Buffer B.
-
-Quando o novo quadro esta pronto, os papeis dos buffers sao invertidos:
-
-    BUFFER A -> RENDERIZACAO
-    BUFFER B -> EXIBICAO
-
-A troca dos buffers e sincronizada com o sinal de video e ocorre durante o periodo de vertical blanking, conhecido como VBlank.
-
-O VBlank corresponde ao intervalo entre o final de um quadro e o inicio da apresentacao do proximo quadro. Realizar a troca nesse momento evita, ou reduz significativamente, a possibilidade de alterar o buffer utilizado para exibicao no meio da varredura da imagem.
-
-Dessa forma, o double buffering cria uma separacao entre a etapa de renderizacao e a etapa de exibicao.
-
-O mecanismo pode ser resumido como:
-
-     RENDERIZACAO
+    BACKGROUND
          |
          v
-    BUFFER DE ESCRITA
-         |
-         | quadro pronto
-         v
-       VBLANK
+    PRIMITIVAS GEOMÉTRICAS
          |
          v
-    TROCA DOS BUFFERS
+       SPRITES
          |
          v
-    BUFFER DE EXIBICAO
+      COMPOSIÇÃO
          |
          v
-        VGA
+      FRAMEBUFFER
 
+A ordem apresentada representa a sequência conceitual de composição utilizada no projeto, e não implica que todos os motores estejam necessariamente executando operações em paralelo. A implementação depende do controle e do sequenciamento adotados nos módulos.
 
-## 3.8 VGA
+A prioridade entre sprites constitui outro aspecto importante. Quando diferentes sprites ocupam a mesma região, o sistema precisa determinar qual contribuição deve prevalecer. O motor de sprites contempla atributos de prioridade, e o repositório possui testbenches destinados à verificação desse comportamento.
 
-VGA (Video Graphics Array) e uma interface tradicional de video utilizada para transmitir uma imagem para um monitor por meio de sinais de sincronizacao e dados de cor.
+O compositor e o mecanismo de prioridade contribuem, portanto, para transformar os pixels produzidos pelas unidades funcionais em uma imagem coerente.
 
-No projeto, o controlador VGA representa a etapa final do processamento grafico. Ele realiza a leitura dos dados armazenados no framebuffer e gera os sinais necessarios para a apresentacao da imagem.
+## 3.14 Framebuffer e Double Buffering
 
-O clock principal utilizado pela plataforma e:
+O framebuffer é uma região de memória que armazena os pixels utilizados para representar a imagem. Em vez de gerar diretamente todos os sinais de cor do monitor a partir dos cálculos dos motores gráficos, o sistema escreve os pixels em memória e permite que o controlador de vídeo os leia durante a varredura da tela.
 
-50 MHz
+No projeto, o framebuffer armazena valores de cor de 9 bits por pixel lógico. Considerando a resolução lógica de 320 × 240 pixels, cada buffer possui 76800 posições.
 
-A partir desse sinal, um PLL gera um clock de aproximadamente:
+A capacidade nominal de um buffer é:
 
-25 MHz
+\[
+320 \times 240 \times 9 = 691200 \text{ bits}
+\]
 
-utilizado pelo controlador VGA para realizar a varredura da imagem.
+Isso corresponde a 86400 bytes, ou aproximadamente 84,4 KiB.
 
-A saida fisica utilizada pelo projeto possui resolucao:
+O projeto utiliza dois buffers, permitindo separar a construção de um quadro da leitura utilizada para exibição. Essa técnica é conhecida como *double buffering*.
 
-640 x 480 pixels
+Enquanto um buffer é utilizado para fornecer pixels ao controlador VGA, o outro pode receber os dados do quadro seguinte. Quando o sistema realiza a troca de buffers, o papel de cada memória é invertido.
 
-Entretanto, a representacao interna da imagem utiliza uma resolucao logica de:
+A troca pode ser sincronizada com o período de apagamento vertical (*Vertical Blanking Interval* — VBlank), evitando a mudança do buffer de exibição no meio da varredura do quadro.
 
-320 x 240 pixels
+O mecanismo pode ser representado por:
 
-Para compatibilizar essas duas resolucoes, cada pixel logico e representado por uma area de 2 x 2 pixels fisicos.
+    +-------------------+      +-------------------+
+    | BUFFER DE LEITURA |      | BUFFER DE ESCRITA |
+    |                   |      |                   |
+    | Controlador VGA   |      | Motores gráficos  |
+    +-------------------+      +-------------------+
+               \                    /
+                \                  /
+                 v                v
+                    TROCA NO VBLANK
+                            |
+                            v
+                     NOVOS PAPÉIS
 
-A relacao pode ser representada por:
+O double buffering reduz a possibilidade de a imagem exibida misturar partes de quadros diferentes. Entretanto, o resultado depende da correta sincronização da troca e da conclusão das operações de renderização.
 
-    PIXEL LOGICO
-    
-    +-----+-----+
-    |     |     |
-    |  P  |  P  |
-    +-----+-----+
-    |     |     |
-    |  P  |  P  |
-    +-----+-----+
+## 3.15 Controlador VGA e Resolução de Vídeo
 
-Cada pixel logico, portanto, corresponde a quatro pixels fisicos na saida VGA.
+O controlador VGA é responsável por gerar os sinais de sincronização e os dados de cor utilizados para apresentar a imagem em um monitor compatível.
 
-Considerando uma coordenada logica (x, y), a regiao correspondente na tela fisica possui aproximadamente o dobro das dimensoes:
+No projeto, o controlador de vídeo realiza a leitura dos pixels do framebuffer e produz a saída VGA. A implementação utiliza um clock principal de 50 MHz e um PLL para gerar um clock de pixel de aproximadamente 25 MHz.
 
-(x, y) -> (2x, 2y)
+A resolução física configurada é de 640 × 480 pixels, enquanto os motores gráficos trabalham com uma resolução lógica de 320 × 240 pixels. Essa diferença é tratada por meio de uma representação em que cada pixel lógico corresponde a uma região de 2 × 2 pixels físicos.
 
-Essa estrategia permite que os motores graficos trabalhem com uma quantidade menor de pixels, reduzindo a quantidade de memoria necessaria para o framebuffer e simplificando o processamento interno.
+A relação entre as coordenadas pode ser descrita por:
 
-O controlador VGA realiza a varredura sequencial da imagem fisica e utiliza as coordenadas produzidas pelo contador de video para determinar qual regiao do framebuffer deve ser apresentada.
+\[
+x_{\text{físico}}=2x_{\text{lógico}}
+\]
 
-Assim, a etapa final do fluxo grafico pode ser resumida como:
+\[
+y_{\text{físico}}=2y_{\text{lógico}}
+\]
 
-    FRAMEBUFFER
-         |
-         v
-    COORDENADA FISICA VGA
-         |
-         v
-    MAPEAMENTO 640 x 480
-         |
-         v
-    MAPEAMENTO 320 x 240
-         |
-         v
-    DADOS DE COR
-         |
-         v
-    MONITOR VGA
+Assim, cada pixel lógico é apresentado como quatro pixels físicos adjacentes. Essa estratégia reduz a quantidade de pixels que precisam ser armazenados e processados internamente.
 
-A saida VGA estabelece, portanto, a interface entre a imagem produzida pelos motores graficos e o dispositivo fisico de exibicao.
+O fluxo da imagem até a saída pode ser representado por:
 
+    MOTORES GRÁFICOS
+           |
+           v
+       COMPOSITOR
+           |
+           v
+       FRAMEBUFFER
+           |
+           v
+    CONTROLADOR VGA
+           |
+           v
+      SAÍDA DE VÍDEO
+           |
+           v
+         MONITOR
+
+O controlador VGA constitui a interface final entre o processamento gráfico interno e a exibição física da imagem. Sua operação precisa estar sincronizada com os endereços de leitura do framebuffer e com os sinais de temporização do vídeo.
+
+## 3.16 FPGA e Descrição de Hardware em Verilog
+
+Uma FPGA (*Field-Programmable Gate Array*) é um dispositivo lógico programável que permite implementar circuitos digitais por meio de uma configuração definida pelo projetista. Ao contrário de um programa executado sequencialmente por uma CPU de propósito geral, uma descrição de hardware define estruturas lógicas que podem operar de forma concorrente.
+
+No projeto, o Verilog é utilizado para descrever os módulos do coprocessador, incluindo a unidade de busca, a ULA, o banco de registradores, os motores gráficos, o compositor e os circuitos relacionados à saída VGA.
+
+A organização modular permite desenvolver e verificar componentes de maneira independente antes de integrá-los ao sistema completo. Também possibilita descrever registradores, máquinas de estados, operações combinacionais e interfaces entre módulos.
+
+A síntese converte a descrição de hardware em uma implementação adequada aos recursos disponíveis na FPGA. No fluxo do Quartus, o projeto é analisado, sintetizado, ajustado ao dispositivo selecionado e preparado para programação da placa.
+
+A validação do sistema exige mais do que a compilação: testbenches permitem verificar o comportamento lógico em simulação, enquanto os testes na placa permitem observar a interação dos módulos no hardware real. A análise de utilização de recursos, temporização e frequência máxima também é necessária para avaliar as características físicas da implementação.
+
+Essa abordagem permite integrar lógica de controle e unidades gráficas especializadas em um único dispositivo, tornando possível executar programas que comandam diretamente a geração de imagens.
+
+## Referências
+
+PATTERSON, David A.; HENNESSY, John L. *Computer Organization and Design ARM Edition: The Hardware Software Interface*. 2. ed. Cambridge: Morgan Kaufmann, 2016.
+
+IEEE. *IEEE Standard for Verilog Hardware Description Language*. IEEE Std 1364-2005. New York: Institute of Electrical and Electronics Engineers, 2006.
+
+INTEL. *Cyclone V Device Handbook*. Santa Clara: Intel Corporation. Disponível em: https://www.intel.com/content/www/us/en/products/details/fpga/cyclone/v/docs.html. Acesso em: 15 out. 2026.
 
 
 # 4. Arquitetura do Sistema
@@ -2024,12 +2097,13 @@ Assim, considerando o escopo definido para esta etapa, o projeto apresenta um gr
 
 # 11. Referências
 
-- **INTEL CORPORATION.** *Cyclone V Device Overview*. Santa Clara: Intel Corporation. Disponível em: <https://www.intel.com/content/www/us/en/products/details/fpga/cyclone/v.html>.
-- **INTEL CORPORATION.** *Cyclone V Hard Processor System Technical Reference Manual*. Santa Clara: Intel Corporation.
-- **INTEL CORPORATION.** *Quartus Prime Standard Edition User Guide*. Santa Clara: Intel Corporation.
-- **TERASIC TECHNOLOGIES.** *DE1-SoC Development and Education Board User Manual*. Hsinchu: Terasic Inc. Disponível em: <https://www.terasic.com.tw/cgi-bin/page/archive.pl?Language=English&No=836>.
-- **UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA (UEFS).** *Problema #1 - Desenho do Núcleo de um Co-processador Gráfico em FPGA*. Disciplina de MI - Sistemas Digitais (2026.2), Departamento de Tecnologia, Feira de Santana, 2026.
-- **SIEMENS EDA.** *Questa / ModelSim FPGA Edition Simulation User Guide*. Siemens Industry Software Inc.
+- **PATTERSON, David A.; HENNESSY, John L.** *Computer Organization and Design ARM Edition: The Hardware/Software Interface*. 2. ed. Cambridge: Morgan Kaufmann, 2016. Disponível em: <https://shop.elsevier.com/books/computer-organization-and-design-arm-edition/patterson/978-0-12-801733-3>.
+
+- **IEEE.** *IEEE Standard for Verilog Hardware Description Language*. IEEE Std 1364-2005. New York: IEEE, 2006. DOI: <https://doi.org/10.1109/IEEESTD.2006.99495>. Disponível em: <https://ieeexplore.ieee.org/document/1620780>.
+
+- **INTEL CORPORATION.** *Cyclone V Device Handbook: Volume 1 — Device Interfaces and Integration*. Seção 2: Embedded Memory Blocks in Cyclone V Devices. Disponível em: <https://www.intel.com/programmable/technical-pdfs/683375.pdf>.
+  
+- **UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA (UEFS).** *Problema #2 - Sistema Digital*. Disciplina de MI - Sistemas Digitais (2026.2), Departamento de Tecnologia, Feira de Santana, 2026.
 
 
 
