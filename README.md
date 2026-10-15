@@ -17,7 +17,7 @@
 
   * [2.1 Requisitos Funcionais](#21-requisitos-funcionais)
   * [2.2 Requisitos Não Funcionais](#22-requisitos-não-funcionais)
-  * [2.3 Requisitos de Memória](#23-requisitos-de-memória-e-organização-interna)
+  * [2.3 Requisitos de Memória e Organização Interna](#23-requisitos-de-memória-e-organização-interna)
 
 * [3. Fundamentação Teórica](#3-fundamentação-teórica)
 
@@ -94,21 +94,24 @@
   * [7.4 Configuração Básica](#74-configuração-básica)
   * [7.5 Programação](#75-programação)
 
-* [8. Testes e Erros](#8-testes-e-erros)
-  * [8.0.1 Simulação](#801-simulacao)
-  * [8.1 Testes do Rasterizador de Quadrados](#81-testes-do-rasterizador-de-quadrados)
-  * [8.2 Testes do Motor de Background](#82-testes-do-motor-de-background)
-  * [8.3 Teste de Transparência das Sprites](#83-teste-de-transparência-das-sprites)
-  * [8.4 Teste de Espelhamento](#84-teste-de-espelhamento)
-  * [8.5 Teste de Sobreposição](#85-teste-de-sobreposição)
-  * [8.6 Teste de Prioridade das Sprites](#86-teste-de-prioridade-das-sprites)
-  * [8.7 Teste de Troca de Buffers](#87-teste-de-troca-de-buffers)
-  * [8.8 Testes de Integração](#88-testes-de-integração)
-  * [8.9 Erros, Limitações e Decisões de Projeto](#89-erros-limitações-e-decisões-de-projeto)
 
-    * [8.9.1 Módulos Auxiliares para Demonstração](#891-módulos-auxiliares-para-demonstração)
-    * [8.9.2 Problema Identificado na Demonstração](#892-problema-identificado-na-demonstração)
-    * [8.9.3 Comandos Inválidos](#893-comandos-inválidos)
+* [8. Testes e Erros](#8-testes-e-erros)
+  * [8.1 Testes por Simulação em Verilog](#81-testes-por-simulação-em-verilog)
+  * [8.2 Simulador HTML da ISA](#82-simulador-html-da-isa)
+  * [8.3 Testes com Programas Assembly](#83-testes-com-programas-assembly)
+  * [8.4 Montagem de Instruções e Geração de Arquivos `.mif`](#84-montagem-de-instruções-e-geração-de-arquivos-mif)
+  * [8.5 Testes do Rasterizador de Quadrados](#85-testes-do-rasterizador-de-quadrados)
+  * [8.6 Testes do Rasterizador de Triângulos](#86-testes-do-rasterizador-de-triângulos)
+  * [8.7 Testes do Motor de Background](#87-testes-do-motor-de-background)
+  * [8.8 Testes do Motor de Sprites](#88-testes-do-motor-de-sprites)
+    * [8.8.1 Transparência](#881-transparência)
+    * [8.8.2 Espelhamento](#882-espelhamento)
+    * [8.8.3 Prioridade entre Sprites](#883-prioridade-entre-sprites)
+  * [8.9 Testes do Framebuffer e da Composição Gráfica](#89-testes-do-framebuffer-e-da-composição-gráfica)
+  * [8.10 Testes de Integração e Desvios](#810-testes-de-integração-e-desvios)
+  * [8.11 Testes na FPGA DE1-SoC](#811-testes-na-fpga-de1-soc)
+  * [8.12 Erros, Limitações e Decisões de Projeto](#812-erros-limitações-e-decisões-de-projeto)
+
 
 * [9. Análise do Resultado](#9-análise-do-resultado)
 
@@ -348,23 +351,23 @@ A partir da análise do enunciado do Problema #2 de Sistemas Digitais (2026.2) e
 | :--- | :--- | :--- | :--- |
 | **RF01** | **ISA de 32 bits** | Conjunto de instruções próprio, com instruções de largura fixa de 32 bits e opcode de 5 bits. | **IMPLEMENTADO NO RTL** |
 | **RF02** | **Unidade de Busca de Instruções** | Busca ativa de instruções em memória interna, com atualização do contador de programa (PC) e suporte a desvios. | **IMPLEMENTADO NO RTL** |
-| **RF03** | **Registrador de Instrução (IR)** | Armazenamento e disponibilização da instrução para decodificação e execução. | **A VALIDAR** — confirmar a correspondência explícita com o requisito de IR no datapath integrado. |
+| **RF03** | **Registrador de Instrução (IR)** | Armazenamento e disponibilização da instrução para decodificação e execução. | **VALIDADO** — correspondência existente com o requisito de IR no datapath integrado. |
 | **RF04** | **Unidade de Controle** | Decodificação dos opcodes e geração dos sinais de controle para a ULA, o banco de registradores, as memórias e os motores gráficos. | **IMPLEMENTADO NO RTL** |
 | **RF05** | **Datapath** | Integração do banco de registradores, ULA, unidade de busca, controle e unidades funcionais. | **IMPLEMENTADO NO RTL** |
 | **RF06** | **Banco de Registradores** | Armazenamento de operandos gerais, flags e registradores dedicados às coordenadas dos vértices e à cor do rasterizador. | **IMPLEMENTADO NO RTL** |
 | **RF07** | **Registradores de Estado** | Disponibilização de informações de estado do coprocessador e das flags utilizadas nas operações e nos desvios condicionais. | **IMPLEMENTADO NO RTL** |
 | **RF08** | **Unidade Lógica e Aritmética (ULA)** | Execução das operações `ADD`, `SUB`, `AND`, `LSL`, `LSR` e `PASS`, com geração das flags utilizadas pelos desvios. | **IMPLEMENTADO NO RTL** |
-| **RF09** | **Programa Gráfico em Assembly da ISA Própria** | Programa de demonstração codificado para a ISA criada pela equipe e armazenado na memória interna de instruções. | **SUPORTE PRESENTE** — a conformidade do programa entregue com todos os requisitos deve ser verificada. |
+| **RF09** | **Programa Gráfico em Assembly da ISA Própria** | Programa de demonstração codificado para a ISA criada pela equipe e armazenado na memória interna de instruções. | **SUPORTE PRESENTE** — implementado também por um simulador em html. |
 | **RF10** | **Definição da Sintaxe da ISA** | Documentação dos formatos de instrução, operandos, campos de codificação, opcodes e regras de execução. | **DOCUMENTAÇÃO PRESENTE** — conferir se a versão final está incluída e atualizada no repositório. |
 | **RF11** | **Motor de Background** | Geração do plano de fundo a partir de um mapa de tiles e de uma memória de padrões gráficos. | **IMPLEMENTADO NO RTL** |
-| **RF12** | **Motor de Sprites** | Renderização de até 32 sprites, com posição, habilitação, padrão, seleção de paleta, prioridade e espelhamento horizontal e vertical. | **IMPLEMENTADO NO RTL** — validar os comportamentos por simulação e hardware. |
+| **RF12** | **Motor de Sprites** | Renderização de até 32 sprites, com posição, habilitação, padrão, seleção de paleta, prioridade e espelhamento horizontal e vertical. | **IMPLEMENTADO NO RTL** — comportamentos por simulação e hardware validados. |
 | **RF13** | **Rasterizador de Polígonos** | Rasterização de retângulos preenchidos e triângulos, acionada por instruções da ISA. | **IMPLEMENTADO NO RTL** |
 | **RF14** | **Compositor Gráfico** | Composição das camadas com prioridade entre background, rasterizadores e sprites. | **IMPLEMENTADO NO RTL** |
 | **RF15** | **Controlador VGA** | Geração dos sinais de vídeo para saída VGA de 640 × 480 pixels, a partir da imagem lógica de 320 × 240 pixels. | **IMPLEMENTADO NO RTL** |
 | **RF16** | **Sincronização com VGA** | Utilização do `vblank` para sincronização do quadro e troca dos bancos do framebuffer. | **IMPLEMENTADO NO RTL** |
 | **RF17** | **Comunicação entre Unidades Funcionais** | Uso de sinais de controle, incluindo `busy`, `done` e sinais de início de operação, conforme a unidade acionada. | **IMPLEMENTADO NO RTL** — a validação dos protocolos deve ser documentada pelos testes. |
 | **RF18** | **Memória Interna de Instruções** | Armazenamento do programa gráfico em memória de 16.384 palavras de 32 bits, configurada para inicialização por arquivo de memória. | **IMPLEMENTADO NO RTL** |
-| **RF19** | **Testbenches dos Módulos Principais** | O enunciado exige testes para cada módulo principal. O repositório contém testbenches para diversos módulos e comportamentos específicos. | **PARCIALMENTE DOCUMENTADO** — a cobertura completa e os resultados de execução precisam ser comprovados. |
+| **RF19** | **Testbenches dos Módulos Principais** | O enunciado exige testes para cada módulo principal. O repositório contém testbenches para diversos módulos e comportamentos específicos. | **PARCIALMENTE DOCUMENTADO** |
 | **RF20** | **Testbench de Integração** | O enunciado exige um testbench de integração do coprocessador. Existem testes de sistema associados a cenários específicos, mas é necessário confirmar e documentar a cobertura integral exigida. | **A VALIDAR** |
 | **RF21** | **Driver Linux em Assembly ARM** | Na alternativa de busca passiva, o enunciado prevê comunicação com o coprocessador por fila de comandos via MMIO e um programa Assembly ARM. | **NÃO IMPLEMENTADO NESTA ARQUITETURA** — o projeto adota busca ativa, alternativa permitida pelo enunciado. |
 | **RF22** | **Aplicação de Jogo em C** | Aplicação prevista como etapa posterior, destinada a utilizar o coprocessador gráfico. | **ETAPA POSTERIOR** — não constitui requisito de implementação imediata do caminho de busca ativa escolhido. |
@@ -1677,178 +1680,178 @@ O repositório do projeto está organizado conforme a estrutura abaixo:
 
 ---
 
+
 # 8. Testes e Erros
 
-Os testes do coprocessador foram realizados inicialmente por meio de testbenches desenvolvidos em Verilog, utilizando o ModelSim para simulação dos módulos individualmente. Os testes utilizaram memórias comportamentais como modelos das RAMs presentes no projeto, permitindo verificar os sinais de leitura, escrita no framebuffer, seleção de paletas e funcionamento dos motores de renderização.
+A validação do coprocessador gráfico foi realizada por meio de diferentes estratégias complementares: simulação dos módulos em Verilog, execução de programas Assembly em um simulador desenvolvido em HTML, geração de arquivos de inicialização de memória e testes do sistema integrado na FPGA DE1-SoC.
 
-A estratégia adotada foi validar inicialmente os módulos de forma isolada e, posteriormente, verificar o comportamento conjunto das diferentes camadas de renderização. Dessa forma, foi possível identificar erros de funcionamento antes da integração completa com o sistema de vídeo.
+A utilização dessas estratégias permitiu analisar o comportamento do projeto em diferentes níveis. Enquanto os testbenches verificam condições específicas dos circuitos digitais, o simulador HTML possibilita acompanhar a execução das instruções da ISA e observar seus efeitos sobre os registradores e a imagem produzida. Já os testes na placa permitem verificar o funcionamento do sistema integrado com as memórias, os motores gráficos e a saída VGA.
 
-### 8.0.1 Simulação
+Também foram desenvolvidas ferramentas auxiliares para facilitar a criação e a execução de programas destinados ao coprocessador. Entre elas estão o simulador da ISA, o montador de Assembly e o gerador de arquivos `.mif`, utilizados para preparar programas e dados que podem ser carregados nas memórias do projeto.
 
-Para executar os *testbenches* do projeto, é necessário primeiro **compilar o projeto** no Quartus. Em seguida, deve-se configurar a ferramenta de simulação em **Assignments → Settings**, selecionando o **ModelSim-Altera** como ferramenta de simulação.
+## 8.1 Testes por Simulação em Verilog
 
-Após essa configuração, o processo de execução de um *testbench* é:
+O repositório contém testbenches desenvolvidos em Verilog para verificar o funcionamento de módulos individuais e de partes integradas do coprocessador. Esses arquivos permitem aplicar entradas controladas, observar os sinais internos e comparar os resultados obtidos com os valores esperados.
 
-1. Acesse **Tools → Run Simulation Tool → Compile**.
-2. Selecione o arquivo do *testbench* que deseja testar.
-3. Clique em **Compile** e, após a compilação, em **Done**.
-4. Na página do ModelSim, localize a região **Library** e abra a biblioteca **work**.
-5. Localize o *testbench* desejado e dê **duplo clique** sobre ele para iniciar a simulação.
-6. Na janela da simulação, clique com o botão direito e selecione **Add → Wave** para adicionar os sinais à visualização de ondas.
-7. No terminal do ModelSim, execute:
+Entre os principais componentes contemplados pelos testes estão:
 
-```text
-run -all
+- **Unidade de busca de instruções:** verificação do fluxo de busca, da execução automática, do reinício e do tratamento do término do programa;
+- **Rasterizadores:** análise da geração de pixels para quadrados e triângulos, incluindo a verificação das coordenadas e das cores escritas no framebuffer;
+- **Motor de background:** verificação do deslocamento automático do cenário (*scroll*) e de sua atualização entre quadros;
+- **Motor de sprites:** análise da transparência, do espelhamento horizontal e vertical e da prioridade entre sprites;
+- **Framebuffer:** verificação da troca entre buffers e da independência dos conteúdos armazenados;
+- **Composição gráfica:** análise da ordem de desenho, da sobreposição de elementos e da arbitragem das escritas no framebuffer;
+- **Desvios da ISA:** testes de instruções de desvio, incluindo `B` e `B_COND`, por meio de simulações do sistema integrado.
+
+Os testbenches possuem verificações automáticas para comparar pixels, quantidades de escritas, valores de registradores e outros sinais com os resultados esperados. Quando uma condição não é satisfeita, alguns testes registram mensagens de erro; outros também contabilizam as falhas e apresentam um resumo ao final da execução.
+
+A existência desses mecanismos facilita a identificação de erros e a repetição dos testes após alterações no código. Entretanto, a presença de um testbench no repositório, isoladamente, não comprova que sua execução mais recente tenha sido aprovada.
+
+## 8.2 Simulador HTML da ISA
+
+Além das simulações em Verilog, foi desenvolvido um simulador em HTML para testar a arquitetura de conjunto de instruções (*Instruction Set Architecture* — ISA) do coprocessador gráfico.
+
+A ferramenta permite escrever um programa em Assembly, montar as instruções e executar o programa dentro do ambiente de simulação. Ela também permite acompanhar o estado dos registradores, o contador de programa (*Program Counter* — PC), a quantidade de instruções executadas e o resultado gráfico produzido.
+
+Durante a execução, é possível observar como as instruções modificam os registradores e como os comandos gráficos afetam a imagem. O simulador considera a ordem de composição definida para o projeto, na qual o background é processado antes dos rasterizadores e das sprites.
+
+A ferramenta também oferece suporte ao carregamento de arquivos `.mif` correspondentes às memórias gráficas, incluindo paleta, mapa de tiles, padrões do background e padrões de sprites. Isso permite utilizar dados de inicialização do próprio projeto na simulação, aproximando os cenários testados daqueles preparados para a FPGA.
+
+Esse recurso foi importante para investigar a relação entre o programa Assembly e o resultado visual esperado, facilitando a identificação de problemas de codificação, de utilização dos registradores e de interpretação das instruções antes dos testes em hardware.
+
+## 8.3 Testes com Programas Assembly
+
+O projeto contém programas Assembly utilizados para exercitar a ISA e comandar as funcionalidades gráficas. Entre os comandos presentes nos programas estão instruções para configuração de paletas, escrita de dados de tiles, desenho de primitivas, configuração de sprites, movimentação do background e controle da execução.
+
+Um dos arquivos presentes na raiz do repositório é `programa.asm`, que contém um programa de teste com operações de configuração de paleta e preenchimento de dados do background. Também existe o arquivo `aux_files/demo_programa_4sprites.asm`, utilizado como outro exemplo de programa para a arquitetura.
+
+A execução dos programas no simulador HTML permite verificar se as instruções são reconhecidas e montadas, se os registradores são utilizados conforme os operandos especificados e se os comandos gráficos produzem o efeito esperado na imagem simulada.
+
+Os testes de desvios também são contemplados por programas específicos, permitindo verificar o comportamento de instruções de salto e de desvio condicional. Para esses casos, o repositório inclui cenários automatizados de teste do sistema integrado.
+
+É importante distinguir a simulação da ISA da validação do hardware: o simulador HTML facilita a análise da lógica e dos efeitos esperados das instruções, mas não substitui os testes do circuito sintetizado na FPGA.
+
+## 8.4 Montagem de Instruções e Geração de Arquivos `.mif`
+
+Para facilitar a preparação de programas destinados ao hardware, o projeto contém ferramentas auxiliares de montagem e geração de arquivos de inicialização de memória.
+
+O arquivo `aux_files/montador.py` integra o conjunto de ferramentas relacionado à montagem de programas. O repositório também contém o código-fonte `aux_files/compiladorISA.c`, responsável por gerar programas codificados no formato Memory Initialization File (`.mif`).
+
+O gerador em C permite configurar ações gráficas, incluindo desenho de retângulos e triângulos, quantidade de sprites e deslocamento do background. A partir dessas configurações, as instruções são codificadas em palavras de 32 bits e gravadas em um arquivo `.mif`, com largura de 32 bits e profundidade de 16384 posições.
+
+O arquivo gerado pode ser associado à memória de instruções do projeto no Quartus, permitindo que o coprocessador execute o programa após a compilação e a programação da FPGA. Esse procedimento evita a necessidade de codificar manualmente cada instrução binária e torna mais simples modificar os comandos utilizados na demonstração.
+
+O gerador também considera desvios e rótulos internos, resolvendo os destinos correspondentes durante a geração do programa. Dessa forma, a ferramenta contribui para testar programas mais elaborados, incluindo sequências de ações e animações.
+
+Os arquivos `.mif` não se limitam ao programa de instruções. O projeto também contém arquivos destinados à inicialização de dados gráficos, como paleta, mapa de tiles, padrões do background e padrões de sprites. Esses arquivos devem corresponder às dimensões e aos formatos esperados pelas respectivas memórias do hardware.
+
+A utilização dessas ferramentas estabelece um fluxo de trabalho entre a descrição do programa, sua codificação, a inicialização das memórias e a execução na FPGA.
+
+## 8.5 Testes do Rasterizador de Quadrados
+
+O testbench `tb/tb_rasterizer_square.v` verifica a geração de pixels pelo rasterizador de quadrados.
+
+O teste compara os pixels escritos no framebuffer de teste com a região esperada, verificando a cor e a quantidade de pixels produzidos. Também verifica possíveis escritas fora dos limites da região definida, incluindo as bordas esquerda, direita, superior e inferior.
+
+Essas verificações permitem detectar erros de delimitação, preenchimento ou escrita no framebuffer. O testbench registra mensagens de aprovação ou erro conforme as comparações realizadas.
+
+## 8.6 Testes do Rasterizador de Triângulos
+
+O arquivo `tb/tb_rasterizer_triangle.v` verifica o preenchimento de triângulos por meio da análise das coordenadas e das cores produzidas pelo rasterizador.
+
+O testbench compara as posições dos pixels escritos com as regiões esperadas para cada linha do triângulo, utilizando os limites calculados para o preenchimento. Também verifica se os pixels são escritos com a cor correspondente.
+
+O teste contempla a identificação de divergências entre os limites esperados e os observados, além de registrar um aviso para triângulos degenerados em que todos os vértices possuem a mesma coordenada vertical.
+
+## 8.7 Testes do Motor de Background
+
+O arquivo `tb/tb_motor_background.v` contém um teste direcionado ao mecanismo de deslocamento automático do background.
+
+Nesse cenário, o deslocamento horizontal é configurado para avançar um pixel por quadro. O testbench acompanha a evolução do valor de `scroll_x` ao longo de cinco quadros e verifica se o deslocamento alcança o valor esperado.
+
+O teste também permite observar a atualização dos parâmetros utilizados pelo motor durante o processamento dos quadros. Dessa forma, auxilia na identificação de problemas relacionados ao controle do scroll e à consistência do deslocamento aplicado à imagem.
+
+## 8.8 Testes do Motor de Sprites
+
+O comportamento do motor de sprites é analisado por testbenches específicos, que verificam diferentes propriedades da renderização.
+
+### 8.8.1 Transparência
+
+O arquivo `tb/tb_motor_sprite_transparencia.v` verifica se pixels transparentes deixam de produzir escritas no framebuffer. O teste contabiliza as escritas realizadas pelo motor e apresenta o resultado da verificação.
+
+Essa propriedade é importante para que as regiões transparentes de uma sprite não apaguem ou substituam os pixels das camadas gráficas posicionadas atrás dela.
+
+### 8.8.2 Espelhamento
+
+O arquivo `tb/tb_motor_sprite_espelhamento.v` verifica as configurações de espelhamento horizontal (`flip_h`), vertical (`flip_v`) e combinado, além da configuração original sem espelhamento.
+
+O testbench utiliza um padrão assimétrico para permitir a identificação das alterações de posição dos pixels. Dessa forma, é possível comparar a imagem produzida com a imagem esperada para cada configuração.
+
+A validação em simulação é complementada pela observação do comportamento na FPGA, pois a interação entre os sinais de controle, os módulos integrados e as memórias pode revelar problemas que não aparecem nos testes isolados.
+
+### 8.8.3 Prioridade entre Sprites
+
+O arquivo `tb/tb_motor_sprite_prioridade.v` verifica o comportamento do sistema quando duas sprites ocupam a mesma região da tela.
+
+O teste configura sprites sobrepostas e verifica tanto a quantidade de escritas quanto o conteúdo final do framebuffer. A expectativa é que o resultado respeite a regra de prioridade implementada pelo motor, mantendo visível a sprite que deve prevalecer segundo essa configuração.
+
+## 8.9 Testes do Framebuffer e da Composição Gráfica
+
+O projeto possui testbenches voltados ao armazenamento e à composição dos elementos gráficos.
+
+O arquivo `tb/tb_framebuffer_troca_buffers.v` verifica a troca entre os dois buffers, observando se cada um mantém seu conteúdo independentemente do outro. Esse teste auxilia na validação da estratégia de *double buffering*.
+
+Já o arquivo `tb/tb_composicao_ordem_desenho.v` verifica a ordem de composição entre background, rasterizador e sprites. O resultado esperado considera a sprite sobre o retângulo e o retângulo sobre o background, de acordo com a ordem definida para a composição.
+
+O testbench `tb/tb_compositor_sobreposicao.v` também está presente no repositório para verificar situações de sobreposição. Em conjunto, esses testes ajudam a identificar problemas de arbitragem, seleção de camadas e escrita no framebuffer.
+
+A integração dos módulos é especialmente importante porque o funcionamento correto de cada motor isoladamente não garante, por si só, que a imagem final seja composta corretamente.
+
+## 8.10 Testes de Integração e Desvios
+
+Além dos testes dos módulos gráficos, o repositório contém testes direcionados à unidade de busca de instruções e ao comportamento do coprocessador integrado.
+
+O arquivo `tb/tb_unidade_de_busca_de_instrucoes.v` possui verificações automatizadas relacionadas à execução de programas, ao início e reinício da execução, ao término por `HALT` e às condições de funcionamento da unidade de busca.
+
+Para os desvios, o diretório `tb/sim_top/` contém o testbench `tb_top_desvios.v`, o script `testes_desvios.py` e o script de execução `run.sh`. Esses recursos foram organizados para permitir testes do coprocessador integrado, incluindo instruções `B` e `B_COND`.
+
+Os scripts utilizam o Icarus Verilog para compilar e executar determinadas simulações, enquanto os modelos auxiliares em `stubs_ip_quartus.v` substituem IPs do Quartus, como PLL e memórias, durante esses testes.
+
+A partir da raiz do repositório, o script de desvios pode ser executado com:
+
+```bash
+python3 tb/sim_top/testes_desvios.py
 ```
 
-Esse comando executa a simulação até que o *testbench* seja finalizado, permitindo analisar os sinais e verificar o comportamento do módulo testado. Todos os arquivos que correspondem a um *testbench* se iniciam com as letar *tb*.
+Para executar a simulação de integração relacionada à prioridade, pode-se utilizar:
 
-## 8.1 Testes do Rasterizador de Quadrados
-
-O rasterizador de quadrados foi testado considerando diferentes posições e dimensões dos retângulos, além de diferentes configurações de paleta.
-
-O primeiro teste utilizou um quadrado pequeno entre as coordenadas `(10,10)` e `(15,15)`, verificando se todos os pixels da região eram preenchidos com a cor esperada. Também foi realizada uma verificação dos pixels imediatamente externos à região, garantindo que não houvesse escrita fora dos limites especificados.
-
-Em seguida, foi testada a utilização dos vértices em ordem invertida. Nesse caso, as coordenadas foram fornecidas como `(50,40)` e `(45,35)`, verificando se o módulo realizava corretamente a normalização dos limites do quadrado.
-
-Também foi considerado o caso extremo em que os dois vértices são iguais, formando um quadrado de apenas um pixel. Por fim, foi realizado um teste com uma região maior, próxima ao canto superior esquerdo da tela, e outro utilizando o mesmo índice de cor em uma segunda paleta.
-
-Os testes verificaram tanto a quantidade de pixels escritos quanto a posição e a cor dos pixels armazenados no framebuffer de teste.
-
-## 8.2 Testes do Motor de Background
-
-O motor de background foi testado utilizando modelos comportamentais das memórias de tiles, padrões e paleta. O teste também avaliou o mecanismo de scroll automático.
-
-Foi configurado um scroll horizontal, com deslocamento de um pixel por frame. Foram executados cinco frames consecutivos e, ao final de cada processamento, foram observados os valores de `scroll_x` e `frame_scroll_x`.
-
-O objetivo foi verificar se o deslocamento era atualizado corretamente entre os frames e se o valor utilizado durante a renderização permanecia consistente com o frame em processamento.
-
-Além do controle de scroll, as escritas realizadas pelo motor no framebuffer foram monitoradas durante a simulação para confirmar que o background estava efetivamente produzindo pixels.
-
-## 8.3 Teste de Transparência das Sprites
-
-O teste de transparência verificou o comportamento do motor de sprites quando o índice de cor armazenado no pattern representa um pixel transparente.
-
-Foi configurada uma sprite de 16×16 pixels na posição `(50,50)`, com todos os pixels do pattern configurados com índice de cor `0`. O resultado esperado era que nenhum desses pixels produzisse uma escrita no framebuffer.
-
-Durante a simulação, todas as escritas do sinal `fb_we` foram contabilizadas. Caso alguma escrita fosse detectada, o testbench registrava um erro, pois pixels transparentes não devem alterar o conteúdo existente no framebuffer.
-
-O teste foi utilizado para validar que a transparência ocorre antes da escrita do pixel, evitando que regiões transparentes da sprite sobrescrevam as camadas inferiores.
-
-## 8.4 Teste de Espelhamento
-
-O comportamento de espelhamento foi testado considerando as quatro possíveis configurações dos bits de flip da sprite:
-
-* Sem espelhamento;
-* Espelhamento horizontal (`flip_h`);
-* Espelhamento vertical (`flip_v`);
-* Espelhamento horizontal e vertical simultaneamente (`flip_h + flip_v`).
-
-Para tornar o efeito do espelhamento verificável, foi utilizado um padrão assimétrico de 16×16 pixels. Dessa forma, uma simples mudança na posição dos pixels permite identificar se a transformação foi realizada corretamente.
-
-No teste combinado de `flip_h + flip_v`, por exemplo, a barra vertical originalmente posicionada à esquerda deveria aparecer à direita, enquanto a barra horizontal originalmente posicionada na parte inferior deveria aparecer na parte superior. O testbench verifica também a quantidade de pixels escritos e as posições esperadas no framebuffer.
-
-Ao final da execução, o testbench contabiliza as falhas encontradas e informa se o teste completo de espelhamento foi aprovado.
-
-## 8.5 Teste de Sobreposição
-
-O teste de sobreposição foi utilizado para verificar o comportamento do pipeline quando diferentes elementos de renderização ocupam a mesma região da tela.
-
-Nesse cenário, background, polígono e sprite são configurados de forma que suas áreas de escrita coincidam. Cada camada utiliza uma cor diferente, permitindo observar qual camada permanece no framebuffer após a composição.
-
-O testbench verifica individualmente a quantidade de pixels escritos por cada componente. Em um dos cenários utilizados, background, polígono e sprite realizam 256 escritas cada, totalizando 768 escritas. Ao final, os pixels da região de sobreposição são verificados e devem apresentar a cor correspondente à última camada renderizada.
-
-Esse teste também permite verificar, de forma indireta, a sequência de composição utilizada pelo sistema, garantindo que as camadas sejam processadas na ordem estabelecida pela arquitetura.
-
-## 8.6 Teste de Prioridade das Sprites
-
-O sistema possui um mecanismo de prioridade para determinar qual sprite deve permanecer visível quando duas ou mais sprites ocupam a mesma região.
-
-Para validar esse mecanismo, foram configuradas duas sprites de 16×16 pixels na posição `(50,50)`. A primeira sprite possui prioridade `0` e utiliza a cor vermelha, enquanto a segunda possui prioridade `1` e utiliza a cor azul.
-
-Como ambas ocupam os mesmos 256 pixels, o resultado esperado é que cada sprite produza 256 escritas, totalizando 512 escritas. Após a composição, entretanto, todos os pixels da região devem apresentar a cor da sprite de maior prioridade.
-
-O testbench verifica tanto os contadores individuais quanto o conteúdo final do framebuffer. A aprovação ocorre somente quando são detectadas 512 escritas, sendo 256 provenientes de cada sprite, e todos os pixels da região `(50,50)` até `(65,65)` apresentam a cor azul.
-
-## 8.7 Teste de Troca de Buffers
-
-A troca de buffers foi testada utilizando dois framebuffers independentes, denominados `BUFFER 0` e `BUFFER 1`. Cada buffer foi associado a uma cor diferente para facilitar a identificação durante a simulação.
-
-Inicialmente, foi escrita a cor vermelha na posição `(100,100)` do `BUFFER 0` e a cor azul na mesma posição do `BUFFER 1`. Em seguida, o teste selecionou o `BUFFER 0` para leitura e verificou a presença da cor vermelha. Posteriormente, a seleção foi alterada para o `BUFFER 1`, que deveria apresentar a cor azul.
-
-Por fim, o teste retornou ao `BUFFER 0` e verificou novamente seu conteúdo. Também foi verificado que os dois buffers mantiveram seus conteúdos independentes após as trocas.
-
-Esse teste valida o princípio utilizado pelo sistema de double buffering: enquanto um buffer pode ser utilizado para exibição, o outro pode receber os dados referentes ao próximo frame, permitindo realizar a troca posteriormente sem destruir o conteúdo do frame atualmente exibido.
-
-## 8.8 Testes de Integração
-
-Após a validação individual dos motores, foram realizados testes de integração para verificar a comunicação entre os componentes responsáveis pela composição da imagem.
-
-O compositor é responsável por controlar a sequência de processamento entre background, polígonos e sprites, enquanto realiza a arbitragem dos recursos compartilhados. Na arquitetura integrada, os três motores possuem suas próprias interfaces de escrita e o compositor seleciona qual delas será conectada à porta física de escrita do framebuffer. Da mesma forma, as solicitações de leitura da paleta são arbitradas pelo compositor.
-
-A sequência utilizada durante a composição é:
-
-```text
-START
-  |
-  v
-BACKGROUND
-  |
-  v
-POLÍGONOS
-  |
-  v
-SPRITES
-  |
-  v
-DONE
+```bash
+sh tb/sim_top/run.sh
 ```
 
-Dessa maneira, os testes de integração verificam não somente a geração dos pixels, mas também o correto sequenciamento dos motores e a composição das diferentes camadas no framebuffer.
+Esses comandos dependem das ferramentas indicadas nos próprios scripts e da disponibilidade dos arquivos necessários. A execução deve ser acompanhada pela saída do simulador para identificar eventuais falhas ou mensagens de timeout.
 
-## 8.9 Erros, Limitações e Decisões de Projeto
+## 8.11 Testes na FPGA DE1-SoC
 
-Durante o desenvolvimento dos testbenches foram identificados problemas relacionados principalmente à sincronização das memórias e ao controle da sequência de renderização.
+Após o desenvolvimento e a integração dos módulos, foram realizados testes na placa DE1-SoC para observar o comportamento do sistema em hardware e verificar a saída VGA.
 
-Como as memórias utilizadas no hardware possuem comportamento síncrono, seus dados não ficam disponíveis imediatamente após a aplicação do endereço. Por esse motivo, os testbenches dos motores de background e do framebuffer utilizam modelos de memória com latência de leitura, permitindo reproduzir mais fielmente o comportamento esperado no hardware.
+Nessa etapa, o projeto foi compilado no Quartus e programado na FPGA. Os arquivos de inicialização das memórias gráficas e o programa de instruções foram utilizados para preparar a demonstração, permitindo observar o background, as primitivas geométricas e as sprites na imagem exibida.
 
-Outro ponto importante foi a necessidade de considerar a latência durante a leitura da paleta. O testbench do rasterizador de quadrados utiliza uma memória de paleta com saída registrada e uma latência de um ciclo, reproduzindo o comportamento esperado pelo módulo.
+A demonstração em hardware complementa as simulações porque permite observar a interação entre os módulos, as memórias e os sinais de controle em funcionamento integrado. Ela também possibilita verificar se os resultados observados no simulador correspondem ao comportamento real do sistema.
 
-Também foram necessários testes específicos para verificar condições que poderiam provocar escrita incorreta no framebuffer, como pixels transparentes, coordenadas invertidas, sobreposição de elementos e seleção incorreta dos bancos de memória.
+Durante os testes, foram utilizadas entradas físicas da placa para controlar funções da demonstração, conforme a configuração implementada no projeto. Os sinais de estado disponibilizados nos LEDs também auxiliam na observação de condições de execução, espera e erro.
 
-### 8.9.1 Módulos auxiliares para demonstração
+## 8.12 Erros, Limitações e Decisões de Projeto
 
-Como a unidade de controle do coprocessador foi definida como parte do desenvolvimento da **Fase 2**, foi necessário utilizar uma solução temporária para permitir a demonstração das funcionalidades implementadas nesta etapa.
+A utilização conjunta de simulação, ferramentas de montagem e testes em hardware permitiu investigar o comportamento do coprocessador em diferentes níveis. Ainda assim, é necessário distinguir os recursos implementados daqueles cuja validação permanece incompleta.
 
-Para isso, foram desenvolvidos módulos auxiliares responsáveis por gerar comandos de teste e modificar os atributos das sprites. Entre eles estão o `test_driver` e o `sprite_mover_flip`.
+Uma limitação identificada durante a demonstração na FPGA está relacionada ao espelhamento horizontal das sprites. Embora exista um testbench dedicado ao espelhamento e o motor possua suporte aos sinais `flip_h` e `flip_v`, foi observado na demonstração que o espelhamento horizontal não apresentou o comportamento esperado. Essa divergência indica a necessidade de investigar a integração entre o controle dos atributos da sprite e o caminho de renderização utilizado no hardware.
 
-O módulo `test_driver` atua como um controlador simplificado da demonstração. Ele gera o início de cada frame e, durante a fase de polígonos, pode comandar a execução de um quadrado e de um triângulo com parâmetros previamente definidos. Também permite habilitar ou desabilitar a renderização dos polígonos por meio de uma entrada externa.
+Esse caso evidencia a importância de combinar testes isolados com testes integrados: uma propriedade verificada em um ambiente controlado deve também ser observada no sistema completo antes de ser considerada validada em hardware.
 
-Já o módulo `sprite_mover_flip` foi desenvolvido para permitir a movimentação de uma sprite e o acionamento dos comandos de espelhamento horizontal e vertical. O módulo mantém a posição da sprite e os estados dos bits `flip_h` e `flip_v`, atualizando a memória de atributos da sprite quando ocorre uma movimentação ou alteração de espelhamento.
+Outra consideração diz respeito à execução dos testbenches. Os arquivos de teste contêm verificações automáticas e mensagens para indicar erros, aprovações e timeouts, mas os resultados devem ser confirmados pela execução dos respectivos scripts ou pela análise dos registros gerados. Portanto, não se deve considerar todos os testes aprovados apenas porque seus arquivos estão presentes no repositório.
 
-Esses módulos não substituem a unidade de controle definitiva do coprocessador. Eles foram utilizados especificamente como uma solução auxiliar para conectar e demonstrar, em hardware, os módulos de renderização desenvolvidos na fase atual.
-
-### 8.9.2 Problema identificado na demonstração
-
-A execução da demonstração em hardware foi importante para complementar os testes realizados no ModelSim. Durante essa etapa foi identificado um problema no funcionamento do **espelhamento horizontal das sprites**.
-
-Embora os testbenches utilizados durante a validação dos módulos tenham sido capazes de verificar as diferentes configurações de `flip_h` e `flip_v`, a execução integrada na FPGA revelou que o espelhamento horizontal não apresentava o comportamento esperado na demonstração.
-
-Esse resultado evidenciou uma diferença entre a validação individual realizada em simulação e o comportamento observado no sistema integrado em hardware. O problema foi identificado especificamente durante a utilização do módulo auxiliar `sprite_mover_flip`, que permitia acionar o espelhamento por meio de pulsos externos.
-
-A identificação desse erro também demonstrou a importância da etapa de demonstração em hardware como complemento aos testes de simulação. Enquanto os testbenches permitem verificar o comportamento lógico de módulos específicos em condições controladas, a execução na FPGA possibilita observar a interação entre os módulos e as condições reais de operação do sistema.
-
-O problema do espelhamento horizontal permanece, portanto, como uma pendência identificada nesta fase e deverá ser investigado e corrigido durante a continuidade do desenvolvimento.
-
-### 8.9.3 Comandos Inválidos
-
-Apesar de o rasterizador possuir o sinal `invalid_cmd`, não foi desenvolvido um testbench específico para validação de comandos inválidos nesta fase do projeto.
-
-Essa funcionalidade está relacionada ao tratamento dos comandos recebidos pelo coprocessador e depende de uma unidade de controle responsável pela interpretação e gerenciamento desses comandos. Foi tomada a decisão de direcionar o desenvolvimento dessa unidade de controle para a **Fase 2 do projeto**.
-
-Dessa forma, os testes realizados nesta etapa foram concentrados na validação dos módulos de renderização e de sua integração, incluindo rasterização, background, sprites, composição, transparência, espelhamento, prioridade e troca de buffers.
-
-A ausência desse teste nesta fase representa, portanto, uma limitação de escopo do desenvolvimento atual, e não uma indicação de que o comportamento de comandos inválidos tenha sido validado.
+Por fim, as ferramentas de simulação e geração de arquivos `.mif` constituem parte importante do processo de desenvolvimento. Elas facilitam a preparação dos programas, a inspeção dos registradores e a reprodução de cenários gráficos, reduzindo a dependência de alterações manuais na memória de instruções. A continuidade da validação deve priorizar a investigação das divergências encontradas em hardware e a documentação dos resultados efetivamente obtidos em cada teste.
 
 
 
