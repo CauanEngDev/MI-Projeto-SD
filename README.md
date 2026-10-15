@@ -123,11 +123,9 @@
   * [9.6 Melhorias Possíveis](#96-melhorias-possíveis)
   * [9.7 Funcionalidades Não Atendidas](#97-funcionalidades-não-atendidas)
 
-* [10. Controles da Demonstração na FPGA](#10-controles-da-demonstração-na-fpga)
+* [10. Equipe do Desenvolvimento](#10-equipe-do-desenvolvimento)
 
-* [11. Equipe do Desenvolvimento](#11-equipe-do-desenvolvimento)
-
-* [12. Referências](#12-referências)
+* [11. Referências](#11-referências)
 
 Projeto desenvolvido para o Problema #1 - 2026.2 / Sistema Digital, com o objetivo de implementar, em FPGA, um nucleo de coprocessamento grafico inspirado na arquitetura de consoles de 16 bits. A solucao implementa geracao de background por tiles, sprites com atributos e prioridade, rasterizacao de poligonos, framebuffer com double buffering e saida VGA.
 
@@ -2003,46 +2001,8 @@ Da mesma forma, a interface de controle definitiva baseada em comandos e MMIO ai
 Assim, considerando o escopo definido para esta etapa, o projeto apresenta um grau elevado de atendimento aos requisitos funcionais de renderização, com as principais pendências concentradas no controle do coprocessador e na correção do espelhamento horizontal das sprites.
 
 
-# 10. Controles DA DEMONSTRACAO NA FPGA
 
-Na versao atual do top-level foram identificados os seguintes controles:
-
-KEY[0]
-Reset
-
-SW[0]
-Habilita scroll automatico
-
-SW[1]
-Seleciona eixo do scroll
-
-SW[2]
-Seleciona direcao do scroll
-
-SW[4:3]
-Direcao de movimento do sprite
-
-KEY[1]
-Movimento do sprite
-
-SW[5]
-Seleciona flip horizontal ou vertical
-
-KEY[2]
-Executa flip
-
-SW[8:0]
-Define posicao X para criacao de sprite
-
-KEY[3]
-Cria novo sprite
-
-SW[9]
-Habilita demonstracao de poligonos
-
-Esses controles servem apenas como interface de demonstracao da etapa FPGA e nao substituem a interface por software prevista para a evolucao do projeto.
-
-# 11. Equipe DO DESENVOLVIMENTO
+# 10. Equipe do Desenvolvimento
 
 ### Integrantes oficiais do grupo:
 
@@ -2062,7 +2022,7 @@ Esses controles servem apenas como interface de demonstracao da etapa FPGA e nao
 
 
 
-# 12. Referências
+# 11. Referências
 
 - **INTEL CORPORATION.** *Cyclone V Device Overview*. Santa Clara: Intel Corporation. Disponível em: <https://www.intel.com/content/www/us/en/products/details/fpga/cyclone/v.html>.
 - **INTEL CORPORATION.** *Cyclone V Hard Processor System Technical Reference Manual*. Santa Clara: Intel Corporation.
