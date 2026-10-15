@@ -1,0 +1,107 @@
+
+; ============================================
+; Scroll do background: esquerda, direita,
+; baixo e cima, continuamente.
+;
+; R3 = deslocamento X
+; R4 = deslocamento Y
+; R5 = contador de frames da etapa
+; R6 = fase atual (0 a 3)
+; R7 = eixo (0 = X, 1 = Y)
+;
+; Pressupoe registradores zerados no reset.
+; Registradores persistem entre frames.
+; ============================================
+
+inicio:
+    SUB   XZR, R6, #0
+    B.EQ  esquerda
+
+    SUB   XZR, R6, #1
+    B.EQ  direita
+
+    SUB   XZR, R6, #2
+    B.EQ  baixo
+
+    B     cima
+
+
+; --------------------------------------------
+; FASE 0: background para a esquerda
+; --------------------------------------------
+esquerda:
+    ADD   R3, R3, #1
+    PASS  R7, #0
+    SCROLL_BG R3, R7
+    ADD   R5, R5, #1
+    DRAW_BG
+
+    SUB   XZR, R5, #120
+    B.GE  troca_direita
+    HALT
+
+troca_direita:
+    PASS  R6, #1
+    PASS  R5, #0
+    HALT
+
+
+; --------------------------------------------
+; FASE 1: background para a direita
+; --------------------------------------------
+direita:
+    SUB   R3, R3, #1
+    PASS  R7, #0
+    SCROLL_BG R3, R7
+    ADD   R5, R5, #1
+    DRAW_BG
+
+    SUB   XZR, R5, #120
+    B.GE  troca_baixo
+    HALT
+
+troca_baixo:
+    PASS  R6, #2
+    PASS  R5, #0
+    HALT
+
+
+; --------------------------------------------
+; FASE 2: background para baixo
+; --------------------------------------------
+baixo:
+    ADD   R4, R4, #1
+    PASS  R7, #1
+    SCROLL_BG R4, R7
+    ADD   R5, R5, #1
+    DRAW_BG
+
+    SUB   XZR, R5, #120
+    B.GE  troca_cima
+    HALT
+
+troca_cima:
+    PASS  R6, #3
+    PASS  R5, #0
+    HALT
+
+
+; --------------------------------------------
+; FASE 3: background para cima
+; --------------------------------------------
+cima:
+    SUB   R4, R4, #1
+    PASS  R7, #1
+    SCROLL_BG R4, R7
+    ADD   R5, R5, #1
+    DRAW_BG
+
+    SUB   XZR, R5, #120
+    B.GE  reinicia_ciclo
+    HALT
+
+reinicia_ciclo:
+    PASS  R6, #0
+    PASS  R5, #0
+    HALT
+
