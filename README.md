@@ -19,23 +19,23 @@
   * [2.2 Requisitos Não Funcionais](#22-requisitos-não-funcionais)
   * [2.3 Requisitos de Memória e Organização Interna](#23-requisitos-de-memória-e-organização-interna)
 
-* [3. Fundamentação Teórica](#3-fundamentação-teórica)\
-  * [3.1 Arquitetura de Conjunto de Instruções (ISA)](#31-arquitetura-de-conjunto-de-instruções-isa)\
-  * [3.2 Arquitetura do Coprocessador Gráfico](#32-arquitetura-do-coprocessador-gráfico)\
-  * [3.3 Unidade de Busca de Instruções e Contador de Programa](#33-unidade-de-busca-de-instruções-e-contador-de-programa)\
-  * [3.4 Unidade de Controle e Decodificação](#34-unidade-de-controle-e-decodificação)\
-  * [3.5 Registrador de Instrução e Datapath](#35-registrador-de-instrução-e-datapath)\
-  * [3.6 Banco de Registradores](#36-banco-de-registradores)\
-  * [3.7 Unidade Lógica e Aritmética (ULA)](#37-unidade-lógica-e-aritmética-ula)\
-  * [3.8 Memórias de Instruções e de Dados Gráficos](#38-memórias-de-instruções-e-de-dados-gráficos)\
-  * [3.9 Representação de Cores por Índices e Paletas](#39-representação-de-cores-por-índices-e-paletas)\
-  * [3.10 Background Baseado em Tiles](#310-background-baseado-em-tiles)\
-  * [3.11 Sprites e Atributos Gráficos](#311-sprites-e-atributos-gráficos)\
-  * [3.12 Rasterização de Primitivas Geométricas](#312-rasterização-de-primitivas-geométricas)\
-  * [3.13 Compositor e Prioridade entre Camadas](#313-compositor-e-prioridade-entre-camadas)\
-  * [3.14 Framebuffer e Double Buffering](#314-framebuffer-e-double-buffering)\
-  * [3.15 Controlador VGA e Resolução de Vídeo](#315-controlador-vga-e-resolução-de-vídeo)\
-  * [3.16 FPGA e Descrição de Hardware em Verilog](#316-fpga-e-descrição-de-hardware-em-verilog)\
+* [3. Fundamentação Teórica](#3-fundamentação-teórica)
+  * [3.1 Arquitetura de Conjunto de Instruções (ISA)](#31-arquitetura-de-conjunto-de-instruções-isa)
+  * [3.2 Arquitetura do Coprocessador Gráfico](#32-arquitetura-do-coprocessador-gráfico)
+  * [3.3 Unidade de Busca de Instruções e Contador de Programa](#33-unidade-de-busca-de-instruções-e-contador-de-programa)
+  * [3.4 Unidade de Controle e Decodificação](#34-unidade-de-controle-e-decodificação)
+  * [3.5 Registrador de Instrução e Datapath](#35-registrador-de-instrução-e-datapath)
+  * [3.6 Banco de Registradores](#36-banco-de-registradores)
+  * [3.7 Unidade Lógica e Aritmética (ULA)](#37-unidade-lógica-e-aritmética-ula)
+  * [3.8 Memórias de Instruções e de Dados Gráficos](#38-memórias-de-instruções-e-de-dados-gráficos)
+  * [3.9 Representação de Cores por Índices e Paletas](#39-representação-de-cores-por-índices-e-paletas)
+  * [3.10 Background Baseado em Tiles](#310-background-baseado-em-tiles)
+  * [3.11 Sprites e Atributos Gráficos](#311-sprites-e-atributos-gráficos)
+  * [3.12 Rasterização de Primitivas Geométricas](#312-rasterização-de-primitivas-geométricas)
+  * [3.13 Compositor e Prioridade entre Camadas](#313-compositor-e-prioridade-entre-camadas)
+  * [3.14 Framebuffer e Double Buffering](#314-framebuffer-e-double-buffering)
+  * [3.15 Controlador VGA e Resolução de Vídeo](#315-controlador-vga-e-resolução-de-vídeo)
+  * [3.16 FPGA e Descrição de Hardware em Verilog](#316-fpga-e-descrição-de-hardware-em-verilog)
 
 * [4. Arquitetura do Sistema](#4-arquitetura-do-sistema)
 
@@ -66,11 +66,13 @@
     * [4.7.8 Mapas de Camadas — 2 × (76800 × 2 bits)](#478-mapas-de-camadas--2--76800--2-bits)
   * [4.8 Organização do Armazenamento](#48-organização-do-armazenamento)
 
-* [5. Especificação de Hardware e Software](#5-especificacao-de-hardware-e-software)
-
+* [5. Especificação de Hardware e Software](#5-especificação-de-hardware-e-software)
   * [5.1 Hardware](#51-hardware)
-  * [5.2 Software](#52-software)
-  * [5.3 Arquivos de Inicialização](#53-arquivos-de-inicialização)
+  * [5.2 Software e Ferramentas de Desenvolvimento](#52-software-e-ferramentas-de-desenvolvimento)
+    * [5.2.1 Montador e Gerador de Programas](#521-montador-e-gerador-de-programas)
+    * [5.2.2 Simulador HTML da ISA](#522-simulador-html-da-isa)
+    * [5.2.3 Ferramentas de Conversão de Imagens e Visualização de Memórias](#523-ferramentas-de-conversão-de-imagens-e-visualização-de-memórias)
+  * [5.3 Arquivos de Inicialização das Memórias](#53-arquivos-de-inicialização-das-memórias)
 
 
 * [6. Processo de Desenvolvimento](#6-processo-de-desenvolvimento)
@@ -1390,131 +1392,193 @@ As memórias possuem funções distintas dentro do sistema:
 Essa organização mantém separadas as informações de **programa**, **descrição da cena**, **dados gráficos**, **cores** e **imagem final**. O programa define o que é configurado e desenhado, os motores acessam apenas as memórias de que precisam, e o framebuffer funciona como ponto de convergência das camadas, após a aplicação da prioridade pela camada de composição.
 
 
-# 5. ESPECIFICACAO DE HARDWARE E SOFTWARE
+# 5. Especificação de Hardware e Software
 
-Esta secao apresenta os principais recursos de hardware, software e arquivos de inicializacao utilizados no desenvolvimento e na execucao do sistema grafico implementado em FPGA.
+Esta seção apresenta os recursos de hardware e software utilizados no desenvolvimento, na simulação e na execução do coprocessador gráfico em FPGA. Também são descritos os arquivos de inicialização das memórias, as ferramentas auxiliares desenvolvidas para a ISA e os recursos utilizados para testar os programas Assembly antes de executá-los no hardware.
 
 ## 5.1 Hardware
 
-A plataforma utilizada no projeto e a Terasic DE1-SoC, equipada com um dispositivo Intel/Altera Cyclone V SoC. A FPGA concentra a implementacao dos modulos responsaveis pelo processamento grafico, controle e armazenamento dos dados utilizados durante a geracao da imagem.
+A implementação utiliza como plataforma-alvo a placa **Terasic DE1-SoC**, equipada com um dispositivo Intel/Altera Cyclone V SoC. O projeto Quartus está configurado para o dispositivo `5CSEMA5F31C6`, e o módulo de topo do sistema é `coprocessador_top`.
 
-As principais especificacoes de hardware utilizadas sao:
+A FPGA executa o núcleo de processamento, a unidade de controle, os motores gráficos, a composição das camadas e os circuitos de armazenamento e exibição da imagem.
 
-- Plataforma: Terasic DE1-SoC
-- FPGA: Intel/Altera Cyclone V SoC
-- Dispositivo utilizado na sintese: `5CSEMA5F31C6`
-- Clock principal: 50 MHz
-- Clock VGA: aproximadamente 25 MHz
-- Saida de video: VGA
-- Resolucao fisica: 640 x 480 pixels
-- Resolucao logica: 320 x 240 pixels
-- Controles de demonstracao: `KEY`, `SW` e sinais da placa
+As principais especificações da plataforma são:
 
-A imagem e processada internamente na resolucao logica de 320 x 240 pixels. Para a exibicao em VGA, essa imagem e apresentada na resolucao fisica de 640 x 480 pixels, com cada pixel logico correspondendo a um bloco de 2 x 2 pixels fisicos.
+- **Placa-alvo:** Terasic DE1-SoC.
+- **Família da FPGA:** Intel/Altera Cyclone V.
+- **Dispositivo configurado no Quartus:** `5CSEMA5F31C6`.
+- **Módulo de topo:** `coprocessador_top`.
+- **Clock principal:** 50 MHz.
+- **Clock de pixel:** aproximadamente 25 MHz, gerado por PLL.
+- **Interface de vídeo:** VGA.
+- **Resolução física de saída:** 640 × 480 pixels.
+- **Resolução lógica de renderização:** 320 × 240 pixels.
+- **Controles físicos:** botões `KEY`, utilizados para reset e reinício, além de LEDs de estado.
 
-De forma simplificada, o fluxo de processamento implementado em hardware pode ser representado por:
+A resolução lógica reduz a quantidade de pixels processados e armazenados internamente. Na saída VGA, cada pixel lógico é ampliado para um bloco de 2 × 2 pixels físicos, permitindo a exibição da imagem em 640 × 480 pixels.
 
-```text
-PARAMETROS DA CENA
-        |
-        v
-+---------------------+
-| MOTORES GRAFICOS    |
-|                     |
-| Background          |
-| Poligonos           |
-| Sprites             |
-+----------+----------+
-           |
-           v
-+---------------------+
-| COMPOSITOR          |
-+----------+----------+
-           |
-           v
-+---------------------+
-| FRAMEBUFFER         |
-+----------+----------+
-           |
-           v
-+---------------------+
-| DOUBLE BUFFERING    |
-+----------+----------+
-           |
-           v
-+---------------------+
-| CONTROLADOR VGA     |
-+----------+----------+
-           |
-           v
-        MONITOR
-```
+A arquitetura utiliza dois bancos de framebuffer (*double buffering*). Enquanto um banco fornece os pixels para a saída VGA, o outro recebe as operações de desenho. Ao final do programa gráfico, a troca dos bancos é sincronizada com o intervalo de apagamento vertical (*vertical blanking*), evitando que a imagem seja atualizada de maneira arbitrária durante a exibição.
 
-## 5.2 Software
-
-O desenvolvimento do projeto utiliza ferramentas destinadas a compilacao, sintese e simulacao dos circuitos implementados em HDL.
-
-Os relatorios presentes no projeto indicam a utilizacao do:
-
-- Intel Quartus Prime Lite Edition 20.1.1
-
-O repositorio tambem contem arquivos e scripts relacionados ao fluxo de simulacao ModelSim/Questa, utilizados durante o desenvolvimento do sistema.
-
-Tambem estao presentes arquivos `.qip` relacionados a componentes e memorias gerados como IPs. Alguns desses arquivos apresentam metadados associados a diferentes versoes do Quartus. Dessa forma, ao reconstruir o projeto em outra instalacao ou versao da ferramenta, determinados IPs podem exigir regeneracao ou atualizacao.
-
-## 5.3 Arquivos de Inicializacao
-
-O projeto utiliza arquivos no formato `.mif` (Memory Initialization File) para inicializar as memorias que armazenam dados utilizados pelos recursos graficos.
-
-Entre os principais arquivos de inicializacao presentes no projeto estao:
-
-- `bg_tile_pattern_praia.mif`
-- `bg_tile_ram.mif`
-- `palette_default.mif`
-- `sprite_attribute_ram.mif`
-- `sprite_pattern_ram_pikachu_charmander.mif`
-
-Esses arquivos estao associados aos diferentes recursos utilizados pelo sistema:
-
-- `bg_tile_pattern_praia.mif`: padroes graficos dos tiles utilizados pelo background.
-- `bg_tile_ram.mif`: dados referentes a organizacao do mapa de tiles.
-- `palette_default.mif`: dados iniciais utilizados pela paleta de cores.
-- `sprite_attribute_ram.mif`: atributos iniciais dos sprites.
-- `sprite_pattern_ram_pikachu_charmander.mif`: padroes graficos utilizados pelos sprites.
-
-A organizacao das memorias acompanha a propria arquitetura grafica do projeto. O motor de background acessa as memorias de tile, padrao grafico e paleta para gerar os pixels do cenario, enquanto o motor de sprites utiliza as memorias de atributos e padroes dos sprites. Esses elementos sao posteriormente encaminhados ao compositor e ao framebuffer.
-
-Assim, os arquivos de inicializacao constituem os dados graficos utilizados pelas memorias do sistema, enquanto os modulos HDL implementam a logica responsavel pelo processamento desses dados e pela construcao da imagem.
-
-De forma simplificada:
+De forma simplificada, o fluxo de processamento pode ser representado por:
 
 ```text
 +-----------------------------+
-|       ARQUIVOS .MIF         |
-|                             |
-| Background | Paleta | Sprite|
-+-------------+---------------+
-              |
-              v
+| MEMÓRIA DE INSTRUÇÕES       |
+| Programa Assembly em .mif   |
++--------------+--------------+
+               |
+               v
 +-----------------------------+
-|          MEMORIAS           |
-|                             |
-| Tilemap | Patterns | Atrib. |
-+-------------+---------------+
-              |
-              v
+| NÚCLEO DO COPROCESSADOR     |
+| Busca, controle, ULA        |
+| Banco de registradores      |
++--------------+--------------+
+               |
+               v
 +-----------------------------+
-|       MOTORES GRAFICOS      |
-+-------------+---------------+
-              |
-              v
+| UNIDADES GRÁFICAS           |
+| Background | Rasterizadores |
+| Sprites                    |
++--------------+--------------+
+               |
+               v
 +-----------------------------+
-|          COMPOSITOR         |
-+-------------+---------------+
-              |
-              v
-          FRAMEBUFFER
+| COMPOSIÇÃO DAS CAMADAS      |
+| Controle de sobreposição    |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+| FRAMEBUFFER DUPLO           |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+| CONTROLADOR VGA + PLL       |
++--------------+--------------+
+               |
+               v
+          MONITOR VGA
 ```
+
+O núcleo utiliza o clock principal de 50 MHz, enquanto a geração dos sinais de vídeo e a leitura do framebuffer utilizam o clock de pixel gerado pelo PLL. A sincronização entre o processamento dos quadros e a exibição é realizada pelo próprio hardware.
+
+## 5.2 Software e Ferramentas de Desenvolvimento
+
+O projeto utiliza ferramentas de desenvolvimento, compilação, simulação e geração de arquivos de inicialização. Os principais recursos presentes no repositório são:
+
+- **Intel Quartus Prime Standard Lite Edition 25.1:** ambiente associado ao projeto `CoProcessador.qpf`, utilizado para configurar, sintetizar e preparar a implementação do hardware na FPGA.
+- **ModelSim/Questa:** ferramentas de simulação HDL para as quais o repositório contém testbenches e arquivos auxiliares de simulação.
+- **Verilog HDL:** linguagem utilizada na descrição do núcleo, dos motores gráficos, das memórias e dos circuitos de controle.
+- **Python:** utilizado em ferramentas auxiliares para montagem de programas, geração de Assembly e conversão de imagens em arquivos de inicialização.
+- **C:** utilizado no programa `compiladorISA.c`, que gera programas codificados para a ISA do coprocessador em formato `.mif`.
+- **HTML, CSS e JavaScript:** utilizados no simulador da ISA executado diretamente no navegador.
+
+### 5.2.1 Montador e Gerador de Programas
+
+O repositório contém ferramentas para produzir programas destinados à memória de instruções do coprocessador.
+
+O arquivo `aux_files/montador.py` recebe um programa Assembly e gera três arquivos:
+
+- `.mif`: conteúdo destinado à inicialização da memória de instruções no Quartus.
+- `.hex`: representação hexadecimal das instruções, utilizada em fluxos de simulação compatíveis com `$readmemh`.
+- `.lst`: listagem com endereços, instruções codificadas, campos binários e linhas de origem.
+
+O montador reconhece instruções da ISA, registradores, valores imediatos, rótulos e desvios condicionais e incondicionais. Isso permite escrever programas de demonstração em Assembly e convertê-los para a representação binária esperada pelo hardware.
+
+Também está presente o arquivo `aux_files/compiladorISA.c`, que implementa um gerador de programas em C e produz arquivos `.mif`. Entre os recursos previstos nesse gerador estão a composição de cenas com retângulos, triângulos, sprites e rolagem do background.
+
+O repositório contém ainda `aux_files/gerador_assembly.py`, utilizado para gerar programas Assembly de demonstração.
+
+É importante distinguir a geração do arquivo da sua utilização pelo hardware: depois de produzir um novo `.mif`, é necessário garantir que a memória de instruções do projeto Quartus esteja configurada para carregar esse arquivo durante a compilação.
+
+### 5.2.2 Simulador HTML da ISA
+
+O diretório `aux_files/` contém o simulador `simulador_isa (1).html`, desenvolvido com HTML, CSS e JavaScript para executar programas da ISA do coprocessador gráfico no navegador.
+
+O simulador permite montar e executar instruções Assembly, acompanhar os registradores e observar a imagem produzida em uma área de vídeo lógica de 320 × 240 pixels. Também contempla recursos como rótulos, desvios, desenho de primitivas, background baseado em tiles, sprites e composição por prioridade.
+
+Essa ferramenta oferece um ambiente auxiliar para estudar o comportamento dos programas e verificar a sequência de operações gráficas antes dos testes na FPGA. Entretanto, sua execução ocorre no navegador e não substitui a síntese, a simulação HDL ou a execução física do circuito.
+
+O repositório também contém `aux_files/Simulador do coprocessador gráfico (1).html`, outro arquivo HTML de simulação. Os arquivos HTML devem ser considerados ferramentas auxiliares distintas do hardware descrito em Verilog.
+
+### 5.2.3 Ferramentas de Conversão de Imagens e Visualização de Memórias
+
+O projeto contém scripts que facilitam a preparação dos dados gráficos utilizados pelas memórias da FPGA.
+
+Entre eles estão:
+
+- `aux_files/imagem_para_mif.py`: converte uma imagem em arquivos de inicialização para o tilemap, os padrões do background, a paleta e o programa associado à exibição do fundo.
+- `aux_files/gerar_background.py`: ferramenta auxiliar para geração de dados de background.
+- `aux_files/mif_visualizador.html`: visualizador de arquivos `.mif`, útil para inspecionar o conteúdo das memórias inicializadas.
+
+Esses recursos permitem preparar imagens e programas sem precisar editar manualmente cada endereço das memórias. Os arquivos gerados devem respeitar as dimensões, a organização dos dados e a representação de cores esperadas pelos módulos HDL correspondentes.
+
+## 5.3 Arquivos de Inicialização das Memórias
+
+O projeto utiliza arquivos no formato `.mif` (*Memory Initialization File*) para fornecer os dados iniciais das memórias de instruções e dos recursos gráficos.
+
+Os arquivos presentes em `memory_files/initialization_files/` incluem:
+
+- `apresentacao_programa.mif`
+- `apresentacao_background_tilemap.mif`
+- `apresentacao_background_padrao.mif`
+- `apresentacao_paleta.mif`
+- `apresentacao_sprite_pattern.mif`
+- `scroll_background.mif`
+
+Os módulos de memória gerados para o projeto referenciam os arquivos `apresentacao_*.mif` correspondentes às instruções, ao tilemap, aos padrões do background, à paleta e aos padrões de sprites. O diretório também contém `scroll_background.mif`, associado a um cenário de demonstração.
+
+A função dos principais arquivos é:
+
+| Arquivo | Finalidade |
+|---|---|
+| `apresentacao_programa.mif` | Inicialização da memória de instruções com o programa gráfico de demonstração. |
+| `apresentacao_background_tilemap.mif` | Inicialização do mapa que organiza os tiles do background. |
+| `apresentacao_background_padrao.mif` | Inicialização dos padrões gráficos utilizados pelos tiles do background. |
+| `apresentacao_paleta.mif` | Inicialização dos valores de cor utilizados pelo sistema gráfico. |
+| `apresentacao_sprite_pattern.mif` | Inicialização dos padrões gráficos dos sprites. |
+| `scroll_background.mif` | Arquivo de dados incluído no projeto para a demonstração de rolagem do background. |
+
+A organização das memórias acompanha a arquitetura gráfica. O motor de background consulta o mapa de tiles e seus padrões gráficos; o motor de sprites utiliza os padrões dos sprites; e a paleta fornece os valores de cor usados na composição dos pixels.
+
+Os dados produzidos pelos motores gráficos são encaminhados à composição das camadas e ao framebuffer, de onde são lidos pelo controlador VGA para formar a imagem exibida.
+
+O processo pode ser resumido da seguinte maneira:
+
+```text
++--------------------------------+
+| ARQUIVOS DE INICIALIZAÇÃO .MIF  |
+|                                |
+| Programa | Tilemap | Padrões   |
+| Paleta   | Sprite              |
++----------------+---------------+
+                 |
+                 v
++--------------------------------+
+| MEMÓRIAS DO COPROCESSADOR      |
+|                                |
+| Instruções | Background        |
+| Paleta     | Padrões de sprites|
++----------------+---------------+
+                 |
+                 v
++--------------------------------+
+| MOTORES GRÁFICOS                |
+| Background | Rasterizadores    |
+| Sprites                        |
++----------------+---------------+
+                 |
+                 v
++--------------------------------+
+| COMPOSIÇÃO E FRAMEBUFFER DUPLO |
++----------------+---------------+
+                 |
+                 v
+           CONTROLADOR VGA
+```
+
+Dessa forma, os arquivos `.mif` fornecem os dados utilizados na inicialização das memórias, enquanto os módulos Verilog implementam a lógica de busca, processamento, renderização, composição e exibição. As ferramentas auxiliares permitem gerar ou inspecionar esses dados, facilitando a criação de novas demonstrações e a validação da ISA.
 
 
 # 6. Processo de Desenvolvimento
