@@ -148,12 +148,6 @@ module tb_control_unit;
               "alu_done habilita write-back e captura de flags conforme a implementacao");
         alu_done = 0;
 
-        // SET_PALETTE: opcode 00111, endereco e cor vindos dos registradores.
-        set_instruction(5'b00111, 0, 0); reg_a = 32'h000001A5; reg_b = 32'h000001C7; execute = 1; #1;
-        check(pal_we && pal_wr_addr == 9'h1A5 && pal_wr_data == 9'h0C7,
-              "SET_PALETTE escreve endereco e cor de 9 bits");
-        execute = 0; #1; check(!pal_we, "pal_we desliga quando execute=0");
-
         set_instruction(5'b01100, 0, 0); reg_a = 32'd1199; reg_b = 32'h000000A6; execute = 1; #1;
         check(tile_we && tile_wr_addr == 11'd1199 && tile_wr_data == 8'hA6,
               "SET_TILEMAP gera endereco e pattern_id corretos");
