@@ -1,0 +1,120 @@
+; DEMO 5 - Flags, logica de bits e paleta animada (AND, LSR, LSL, FLAGS, STATUS, NOP, WAIT_VBLANK, comando invalido)
+SUB   XZR, R20, #0
+B.NE  pronto
+PASS R1,#1
+PASS R2,#73
+SET_PALETTE R1,R2         ; 1 fundo
+PASS R1,#2
+PASS R2,#56
+SET_PALETTE R1,R2         ; 2 bit 1 / verde
+PASS R1,#3
+PASS R2,#448
+SET_PALETTE R1,R2         ; 3 flag ativa / vermelho
+PASS R1,#5
+PASS R2,#146
+SET_PALETTE R1,R2         ; 5 bit 0 / cinza
+PASS R20,#1
+pronto:
+NOP
+ADD R10,STATUS,#0         ; le o registrador STATUS (executando = 1)
+ADD R21,R21,#1
+AND R21,R21,#255          ; contador de 8 bits, dando a volta em 255
+LSR R7,R21,#2
+; ---- paleta animada: indices 16-23 giram a cada quadro (R = k, G = 3k & 7, B = 7 - k)
+PASS R1,#0
+ciclo:
+ADD R2,R1,R7
+AND R2,R2,#7
+LSL R3,R2,#6
+LSL R4,R2,#1
+ADD R4,R4,R2
+AND R4,R4,#7
+LSL R4,R4,#3
+ADD R3,R3,R4
+PASS R5,#7
+SUB R5,R5,R2
+ADD R3,R3,R5
+ADD R6,R1,#16
+SET_PALETTE R6,R3
+ADD R1,R1,#1
+SUB XZR,R1,#8
+B.NE ciclo
+; ---- fundo e 8 barras com as cores girando
+PASS V0X,#0
+PASS V0Y,#0
+PASS V1X,#319
+PASS V1Y,#239
+PASS COLOR,#1
+DRAW_RECT
+PASS R1,#0
+PASS V0Y,#0
+PASS V1Y,#79
+barras:
+LSL R3,R1,#5
+LSL R4,R1,#3
+ADD R3,R3,R4
+ADD V0X,R3,#0
+ADD V1X,R3,#39
+ADD COLOR,R1,#16
+DRAW_RECT
+ADD R1,R1,#1
+SUB XZR,R1,#8
+B.NE barras
+; ---- contador em binario: bit b do contador (bit 7 a esquerda)
+PASS R1,#0
+bits:
+LSR R2,R21,R1
+AND R2,R2,#1
+PASS COLOR,#5
+SUB XZR,R2,#0
+B.EQ bp
+PASS COLOR,#2
+bp:
+PASS R3,#7
+SUB R3,R3,R1
+LSL R4,R3,#5
+LSL R3,R3,#2
+ADD R3,R3,R4
+ADD R3,R3,#16             ; x = 16 + 36 * (7 - b)
+ADD V0X,R3,#0
+ADD V1X,R3,#29
+PASS V0Y,#100
+PASS V1Y,#129
+DRAW_RECT
+ADD R1,R1,#1
+SUB XZR,R1,#8
+B.NE bits
+; ---- flags de (contador - 128): mostradas da esquerda para a direita como C, V, N, Z
+SUB XZR,R21,#128
+ADD R9,FLAGS,#0           ; FLAGS = {C, V, N, Z}, lido logo apos o SUB
+PASS R1,#0
+fl:
+LSR R2,R9,R1
+AND R2,R2,#1
+PASS COLOR,#5
+SUB XZR,R2,#0
+B.EQ fp
+PASS COLOR,#3
+fp:
+PASS R3,#3
+SUB R3,R3,R1
+LSL R4,R3,#6
+LSL R3,R3,#2
+ADD R3,R4,R3
+ADD R3,R3,#60             ; x = 60 + 68 * (3 - b)
+ADD V0X,R3,#0
+ADD V1X,R3,#49
+PASS V0Y,#160
+PASS V1Y,#199
+DRAW_RECT
+ADD R1,R1,#1
+SUB XZR,R1,#4
+B.NE fl
+; ---- a cada 256 quadros um retangulo fora da tela: o rasterizador rejeita e sinaliza erro (LEDR[2])
+SUB XZR,R21,#255
+B.NE sem_erro
+PASS V1X,#400
+DRAW_RECT
+sem_erro:
+WAIT_VBLANK               ; no hardware aguarda o VBlank (o simulador nao modela a espera)
+HALT

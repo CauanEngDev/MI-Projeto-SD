@@ -1,0 +1,135 @@
+; DEMO 4 - Paisagem com poligonos: degrade de ceu por paleta programada, triangulos, retangulos e lacos
+SUB   XZR, R20, #0
+B.NE  pronto
+; degrade de ceu: indices 16-31, do azul ao branco (R = G = i/2, B = 7)
+PASS R1,#0
+deg:
+LSR R2,R1,#1
+LSL R3,R2,#6
+LSL R4,R2,#3
+ADD R3,R3,R4
+ADD R3,R3,#7
+ADD R5,R1,#16
+SET_PALETTE R5,R3
+ADD R1,R1,#1
+SUB XZR,R1,#16
+B.NE deg
+PASS R1,#1
+PASS R2,#504
+SET_PALETTE R1,R2         ; 1 sol
+PASS R1,#2
+PASS R2,#82
+SET_PALETTE R1,R2         ; 2 montanha proxima
+PASS R1,#3
+PASS R2,#148
+SET_PALETTE R1,R2         ; 3 montanha distante
+PASS R1,#4
+PASS R2,#48
+SET_PALETTE R1,R2         ; 4 chao
+PASS R1,#5
+PASS R2,#24
+SET_PALETTE R1,R2         ; 5 copa das arvores
+PASS R1,#6
+PASS R2,#209
+SET_PALETTE R1,R2         ; 6 tronco
+PASS R1,#7
+PASS R2,#511
+SET_PALETTE R1,R2         ; 7 nuvem
+PASS R20,#1
+pronto:
+; ---- animacao: sol, e duas nuvens com velocidades diferentes (wraparound)
+ADD R21,R21,#1
+SUB XZR,R21,#296
+B.LT a1
+PASS R21,#0
+a1:
+ADD R22,R22,#1
+SUB XZR,R22,#280
+B.LT a2
+PASS R22,#0
+a2:
+ADD R23,R23,#2
+SUB XZR,R23,#270
+B.LT a3
+PASS R23,#0
+a3:
+; ---- ceu: 15 faixas de 16 px
+PASS R1,#0
+ceu:
+LSL R2,R1,#4
+ADD V0Y,R2,#0
+ADD V1Y,R2,#15
+PASS V0X,#0
+PASS V1X,#319
+ADD COLOR,R1,#16
+DRAW_RECT
+ADD R1,R1,#1
+SUB XZR,R1,#15
+B.NE ceu
+; sol
+ADD V0X,R21,#0
+ADD V1X,R21,#23
+PASS V0Y,#30
+PASS V1Y,#53
+PASS COLOR,#1
+DRAW_RECT
+; nuvens
+ADD V0X,R22,#0
+ADD V1X,R22,#39
+PASS V0Y,#20
+PASS V1Y,#31
+PASS COLOR,#7
+DRAW_RECT
+
+; montanhas (triangulos)
+PASS V0X,#40
+PASS V0Y,#170
+PASS V1X,#120
+PASS V1Y,#90
+PASS V2X,#200
+PASS V2Y,#170
+PASS COLOR,#3
+DRAW_TRI
+PASS V0X,#160
+PASS V1X,#240
+PASS V1Y,#80
+PASS V2X,#319
+DRAW_TRI
+PASS V0X,#0
+PASS V1X,#70
+PASS V1Y,#110
+PASS V2X,#140
+PASS COLOR,#2
+DRAW_TRI
+; chao
+PASS V0X,#0
+PASS V0Y,#170
+PASS V1X,#319
+PASS V1Y,#239
+PASS COLOR,#4
+DRAW_RECT
+; 7 arvores (copa triangular + tronco) em x = 8 + 40 * i
+PASS R1,#0
+arv:
+LSL R3,R1,#5
+LSL R4,R1,#3
+ADD R3,R3,R4
+ADD R3,R3,#8
+ADD V0X,R3,#16
+PASS V0Y,#150
+ADD V1X,R3,#0
+PASS V1Y,#185
+ADD V2X,R3,#32
+PASS V2Y,#185
+PASS COLOR,#5
+DRAW_TRI
+ADD V0X,R3,#13
+PASS V0Y,#185
+ADD V1X,R3,#19
+PASS V1Y,#200
+PASS COLOR,#6
+DRAW_RECT
+ADD R1,R1,#1
+SUB XZR,R1,#7
+B.NE arv
+HALT

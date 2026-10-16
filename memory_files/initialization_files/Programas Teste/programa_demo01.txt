@@ -1,0 +1,190 @@
+; DEMO 1 - Pong autonomo: retangulos, desvios condicionais, colisao e placar (estado persiste entre quadros)
+SUB   XZR, R20, #0
+B.NE  pronto
+PASS R1,#156
+PASS R2,#116
+PASS R3,#3
+PASS R4,#2
+PASS R5,#100
+PASS R6,#100
+; paleta: 1 preto, 2 branco, 3 cinza, 4 amarelo, 5 verde, 6 vermelho
+PASS R10,#1
+PASS R11,#0
+SET_PALETTE R10,R11
+PASS R10,#2
+PASS R11,#511
+SET_PALETTE R10,R11
+PASS R10,#3
+PASS R11,#292
+SET_PALETTE R10,R11
+PASS R10,#4
+PASS R11,#504
+SET_PALETTE R10,R11
+PASS R10,#5
+PASS R11,#56
+SET_PALETTE R10,R11
+PASS R10,#6
+PASS R11,#448
+SET_PALETTE R10,R11
+PASS R20,#1
+pronto:
+; ---- bola: anda e quica no teto e no chao
+ADD R1,R1,R3
+ADD R2,R2,R4
+SUB XZR,R2,#0
+B.GE pc1
+PASS R2,#0
+SUB R4,XZR,R4
+pc1:
+SUB XZR,R2,#232
+B.LE pc2
+PASS R2,#232
+SUB R4,XZR,R4
+pc2:
+; ---- lado esquerdo (x <= 18): rebate se a bola esta na raquete; senao segue e marca ponto
+SUB XZR,R1,#18
+B.GT ladoD
+ADD R7,R2,#8
+SUB XZR,R7,R5
+B.LT golE
+ADD R7,R5,#40
+SUB XZR,R2,R7
+B.GT golE
+PASS R1,#19
+SUB R3,XZR,R3
+B ladoD
+golE:
+SUB XZR,R1,#0
+B.GE ladoD
+ADD R9,R9,#1              ; ponto da direita
+B saque
+; ---- lado direito (x >= 294)
+ladoD:
+SUB XZR,R1,#294
+B.LT seguir
+ADD R7,R2,#8
+SUB XZR,R7,R6
+B.LT golD
+ADD R7,R6,#40
+SUB XZR,R2,R7
+B.GT golD
+PASS R1,#293
+SUB R3,XZR,R3
+B seguir
+golD:
+SUB XZR,R1,#312
+B.LT seguir
+ADD R8,R8,#1              ; ponto da esquerda
+B saque
+seguir:
+B raquetes
+saque:
+PASS R1,#156
+PASS R2,#116
+SUB R3,XZR,R3
+SUB XZR,R8,#10
+B.LT s1
+PASS R8,#0                ; placar volta a zero ao chegar em 10
+s1:
+SUB XZR,R9,#10
+B.LT raquetes
+PASS R9,#0
+raquetes:
+; esquerda: segue a bola com velocidade maxima 3 (pode errar); direita: perfeita
+SUB R7,R2,#16
+SUB R10,R7,R5
+SUB XZR,R10,#3
+B.LE n1
+ADD R5,R5,#3
+B m1
+n1:
+ADD R11,R10,#3
+SUB XZR,R11,#0
+B.GE n2
+SUB R5,R5,#3
+B m1
+n2:
+ADD R5,R5,R10
+m1:
+SUB XZR,R5,#0
+B.GE k1
+PASS R5,#0
+k1:
+SUB XZR,R5,#200
+B.LE k2
+PASS R5,#200
+k2:
+SUB R6,R2,#16
+SUB XZR,R6,#0
+B.GE k3
+PASS R6,#0
+k3:
+SUB XZR,R6,#200
+B.LE k4
+PASS R6,#200
+k4:
+; ---- desenho: limpa, rede, raquetes, bola e placar
+PASS V0X,#0
+PASS V0Y,#0
+PASS V1X,#319
+PASS V1Y,#239
+PASS COLOR,#1
+DRAW_RECT
+PASS V0X,#158
+PASS V1X,#161
+PASS V0Y,#4
+PASS V1Y,#15
+PASS COLOR,#3
+PASS R12,#12
+rede:
+DRAW_RECT
+ADD V0Y,V0Y,#20
+ADD V1Y,V1Y,#20
+SUB R12,R12,#1
+B.NE rede
+PASS COLOR,#2
+PASS V0X,#10
+PASS V1X,#17
+ADD V0Y,R5,#0
+ADD V1Y,R5,#39
+DRAW_RECT
+PASS V0X,#302
+PASS V1X,#309
+ADD V0Y,R6,#0
+ADD V1Y,R6,#39
+DRAW_RECT
+PASS COLOR,#4
+ADD V0X,R1,#0
+ADD V1X,R1,#7
+ADD V0Y,R2,#0
+ADD V1Y,R2,#7
+DRAW_RECT
+PASS COLOR,#5             ; placar esquerdo: um quadrado por ponto
+PASS V0X,#100
+PASS V1X,#105
+PASS V0Y,#8
+PASS V1Y,#13
+ADD R12,R8,#0
+pe:
+SUB XZR,R12,#0
+B.EQ pd0
+DRAW_RECT
+ADD V0X,V0X,#8
+ADD V1X,V1X,#8
+SUB R12,R12,#1
+B pe
+pd0:
+PASS COLOR,#6             ; placar direito
+PASS V0X,#200
+PASS V1X,#205
+ADD R12,R9,#0
+pd:
+SUB XZR,R12,#0
+B.EQ fim
+DRAW_RECT
+ADD V0X,V0X,#8
+ADD V1X,V1X,#8
+SUB R12,R12,#1
+B pd
+fim:
+HALT
