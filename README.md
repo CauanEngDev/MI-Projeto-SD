@@ -16,49 +16,84 @@
 * [2. Levantamento de Requisitos](#2-levantamento-de-requisitos)
 
   * [2.1 Requisitos Funcionais](#21-requisitos-funcionais)
-  * [2.2 Requisitos Não Funcionais](#22-requisitos-nao-funcionais)
-  * [2.3 Requisitos de Memória](#23-requisitos-de-memória)
+  * [2.2 Requisitos Não Funcionais](#22-requisitos-não-funcionais)
+  * [2.3 Requisitos de Memória e Organização Interna](#23-requisitos-de-memória-e-organização-interna)
 
 * [3. Fundamentação Teórica](#3-fundamentação-teórica)
-
-  * [3.1 Representação Gráfica Indexada](#31-representação-gráfica-indexada)
-  * [3.2 Background Baseado em Tiles](#32-background-baseado-em-tiles)
-  * [3.3 Scroll e Wraparound](#33-scroll-e-wraparound)
-  * [3.4 Sprites](#34-sprites)
-  * [3.5 Espelhamento](#35-espelhamento)
-  * [3.6 Rasterização](#36-rasterização)
-  * [3.7 Double Buffering](#37-double-buffering)
-  * [3.8 VGA](#38-vga)
+  * [3.1 Arquitetura de Conjunto de Instruções (ISA)](#31-arquitetura-de-conjunto-de-instruções-isa)
+  * [3.2 Arquitetura do Coprocessador Gráfico](#32-arquitetura-do-coprocessador-gráfico)
+  * [3.3 Unidade de Busca de Instruções e Contador de Programa](#33-unidade-de-busca-de-instruções-e-contador-de-programa)
+  * [3.4 Unidade de Controle e Decodificação](#34-unidade-de-controle-e-decodificação)
+  * [3.5 Registrador de Instrução e Datapath](#35-registrador-de-instrução-e-datapath)
+  * [3.6 Banco de Registradores](#36-banco-de-registradores)
+  * [3.7 Unidade Lógica e Aritmética (ULA)](#37-unidade-lógica-e-aritmética-ula)
+  * [3.8 Memórias de Instruções e de Dados Gráficos](#38-memórias-de-instruções-e-de-dados-gráficos)
+  * [3.9 Representação de Cores por Índices e Paletas](#39-representação-de-cores-por-índices-e-paletas)
+  * [3.10 Background Baseado em Tiles](#310-background-baseado-em-tiles)
+  * [3.11 Sprites e Atributos Gráficos](#311-sprites-e-atributos-gráficos)
+  * [3.12 Rasterização de Primitivas Geométricas](#312-rasterização-de-primitivas-geométricas)
+  * [3.13 Compositor e Prioridade entre Camadas](#313-compositor-e-prioridade-entre-camadas)
+  * [3.14 Framebuffer e Double Buffering](#314-framebuffer-e-double-buffering)
+  * [3.15 Controlador VGA e Resolução de Vídeo](#315-controlador-vga-e-resolução-de-vídeo)
+  * [3.16 FPGA e Descrição de Hardware em Verilog](#316-fpga-e-descrição-de-hardware-em-verilog)
 
 * [4. Arquitetura do Sistema](#4-arquitetura-do-sistema)
 
-  * [4.1 Fluxo de Composição](#41-fluxo-de-composição)
-  * [4.2 Principais Módulos](#42-principais-módulos)
-  * [4.3 Memórias do Sistema](#43-memórias-do-sistema)
+  * [4.1 Visão Geral da Arquitetura](#41-visão-geral-da-arquitetura)
+  * [4.2 Conjunto de Instruções (ISA)](#42-conjunto-de-instruções-isa)
+    * [4.2.1 Formatos de Instrução](#421-formatos-de-instrução)
+    * [4.2.2 Instruções](#422-instruções)
+    * [4.2.3 Registradores](#423-registradores)
+    * [4.2.4 Flags e Desvios Condicionais](#424-flags-e-desvios-condicionais)
+  * [4.3 Caminho de Controle](#43-caminho-de-controle)
+    * [4.3.1 Unidade de Busca de Instruções](#431-unidade-de-busca-de-instruções)
+    * [4.3.2 Banco de Registradores](#432-banco-de-registradores)
+    * [4.3.3 Unidade Lógica e Aritmética](#433-unidade-lógica-e-aritmética)
+    * [4.3.4 Unidade de Controle](#434-unidade-de-controle)
+  * [4.4 Fluxo de Composição e Prioridade entre Camadas](#44-fluxo-de-composição-e-prioridade-entre-camadas)
+    * [4.4.1 Seleção do Motor (`engine_mux`)](#441-seleção-do-motor-engine_mux)
+    * [4.4.2 Camada de Composição (`camada_composicao`)](#442-camada-de-composição-camada_composicao)
+  * [4.5 Ciclo de Quadro e Orçamento de Tempo](#45-ciclo-de-quadro-e-orçamento-de-tempo)
+  * [4.6 Principais Módulos](#46-principais-módulos)
+  * [4.7 Memórias do Sistema](#47-memórias-do-sistema)
+    * [4.7.1 `bg_tile_ram` — 1200 × 8 bits](#471-bg_tile_ram--1200--8-bits)
+    * [4.7.2 `bg_tile_pattern_ram` — 16384 × 8 bits](#472-bg_tile_pattern_ram--16384--8-bits)
+    * [4.7.3 Atributos dos Sprites — 32 entradas](#473-atributos-dos-sprites--32-entradas)
+    * [4.7.4 `sprite_pattern_ram` — 16384 × 8 bits](#474-sprite_pattern_ram--16384--8-bits)
+    * [4.7.5 `palette_ram` — 512 × 9 bits](#475-palette_ram--512--9-bits)
+    * [4.7.6 `framebuffer_ram` — 2 bancos de 76800 × 9 bits](#476-framebuffer_ram--2-bancos-de-76800--9-bits)
+    * [4.7.7 `instruction_memory` — 16384 × 32 bits](#477-instruction_memory--16384--32-bits)
+    * [4.7.8 Mapas de Camadas — 2 × (76800 × 2 bits)](#478-mapas-de-camadas--2--76800--2-bits)
+  * [4.8 Organização do Armazenamento](#48-organização-do-armazenamento)
 
-    * [4.3.1 `bg_tile_ram` — 1200 × 8 bits](#431-bg_tile_ram--1200--8-bits)
-    * [4.3.2 `bg_tile_pattern_ram` — 16384 × 8 bits](#432-bg_tile_pattern_ram--16384--8-bits)
-    * [4.3.3 `sprite_attribute_ram` — 32 × 32 bits](#433-sprite_attribute_ram--32--32-bits)
-    * [4.3.4 `sprite_pattern_ram` — 16384 × 8 bits](#434-sprite_pattern_ram--16384--8-bits)
-    * [4.3.5 `palette_ram` — 512 × 9 bits](#435-palette_ram--512--9-bits)
-    * [4.3.6 `framebuffer_ram` — 2 bancos de 76800 × 9 bits](#436-framebuffer_ram--2-bancos-de-76800--9-bits)
-  * [4.4 Organização do Armazenamento](#44-organização-do-armazenamento)
-
-* [5. Especificação de Hardware e Software](#5-especificacao-de-hardware-e-software)
-
+* [5. Especificação de Hardware e Software](#5-especificação-de-hardware-e-software)
   * [5.1 Hardware](#51-hardware)
-  * [5.2 Software](#52-software)
-  * [5.3 Arquivos de Inicialização](#53-arquivos-de-inicialização)
+  * [5.2 Software e Ferramentas de Desenvolvimento](#52-software-e-ferramentas-de-desenvolvimento)
+    * [5.2.1 Montador e Gerador de Programas](#521-montador-e-gerador-de-programas)
+    * [5.2.2 Simulador HTML da ISA](#522-simulador-html-da-isa)
+    * [5.2.3 Ferramentas de Conversão de Imagens e Visualização de Memórias](#523-ferramentas-de-conversão-de-imagens-e-visualização-de-memórias)
+  * [5.3 Arquivos de Inicialização das Memórias](#53-arquivos-de-inicialização-das-memórias)
+
 
 * [6. Processo de Desenvolvimento](#6-processo-de-desenvolvimento)
 
-  * [6.1 Sistema VGA](#61-sistema-vga)
-  * [6.2 Framebuffer](#62-framebuffer)
-  * [6.3 Background](#63-background)
-  * [6.4 Sprites](#64-sprites)
-  * [6.5 Rasterização de Polígonos](#65-rasterização-de-polígonos)
-  * [6.6 Compositor](#66-compositor)
-  * [6.7 Integração na DE1-SoC](#67-integração-na-de1-soc)
+  * [6.1 Sistema VGA e Escalonamento Espacial](#61-sistema-vga-e-escalonamento-espacial)
+  * [6.2 Framebuffer e Sincronismo de Exibição](#62-framebuffer-e-sincronismo-de-exibição)
+  * [6.3 Engine de Background (Tilemap e Scrolling)](#63-engine-de-background-tilemap-e-scrolling)
+  * [6.4 Engine de Sprites e Matriz de Atributos (OAM)](#64-engine-de-sprites-e-matriz-de-atributos-oam)
+  * [6.5 Rasterizador de Polígonos](#65-rasterizador-de-polígonos)
+  * [6.6 Compositor de Vídeo e Paleta de Cores](#66-compositor-de-vídeo-e-paleta-de-cores)
+  * [6.7 Integração no Top-Level e Validação Física](#67-integração-no-top-level-e-validação-física)
+  * [6.8 Definição da ISA e do Modelo de Execução](#68-definição-da-isa-e-do-modelo-de-execução)
+  * [6.9 Banco de Registradores e ULA](#69-banco-de-registradores-e-ula)
+  * [6.10 Unidade de Busca de Instruções e Unidade de Controle](#610-unidade-de-busca-de-instruções-e-unidade-de-controle)
+  * [6.11 Integração no `coprocessador_top`](#611-integração-no-coprocessador_top)
+  * [6.12 Prioridade entre Camadas (Camada de Composição)](#612-prioridade-entre-camadas-camada-de-composição)
+  * [6.13 Desvios Condicionais e Flags](#613-desvios-condicionais-e-flags)
+  * [6.14 Ferramentas de Apoio](#614-ferramentas-de-apoio)
+  * [6.15 Programas de Demonstração](#615-programas-de-demonstração)
+  * [6.16 Verificação e Medições da Segunda Etapa](#616-verificação-e-medições-da-segunda-etapa)
+
 
 * [7. Instalação e Configuração](#7-instalação-e-configuração)
 
@@ -68,21 +103,24 @@
   * [7.4 Configuração Básica](#74-configuração-básica)
   * [7.5 Programação](#75-programação)
 
-* [8. Testes e Erros](#8-testes-e-erros)
-  * [8.0.1 Simulação](#801-simulacao)
-  * [8.1 Testes do Rasterizador de Quadrados](#81-testes-do-rasterizador-de-quadrados)
-  * [8.2 Testes do Motor de Background](#82-testes-do-motor-de-background)
-  * [8.3 Teste de Transparência das Sprites](#83-teste-de-transparência-das-sprites)
-  * [8.4 Teste de Espelhamento](#84-teste-de-espelhamento)
-  * [8.5 Teste de Sobreposição](#85-teste-de-sobreposição)
-  * [8.6 Teste de Prioridade das Sprites](#86-teste-de-prioridade-das-sprites)
-  * [8.7 Teste de Troca de Buffers](#87-teste-de-troca-de-buffers)
-  * [8.8 Testes de Integração](#88-testes-de-integração)
-  * [8.9 Erros, Limitações e Decisões de Projeto](#89-erros-limitações-e-decisões-de-projeto)
 
-    * [8.9.1 Módulos Auxiliares para Demonstração](#891-módulos-auxiliares-para-demonstração)
-    * [8.9.2 Problema Identificado na Demonstração](#892-problema-identificado-na-demonstração)
-    * [8.9.3 Comandos Inválidos](#893-comandos-inválidos)
+* [8. Testes e Erros](#8-testes-e-erros)
+  * [8.1 Testes por Simulação em Verilog](#81-testes-por-simulação-em-verilog)
+  * [8.2 Simulador HTML da ISA](#82-simulador-html-da-isa)
+  * [8.3 Testes com Programas Assembly](#83-testes-com-programas-assembly)
+  * [8.4 Montagem de Instruções e Geração de Arquivos `.mif`](#84-montagem-de-instruções-e-geração-de-arquivos-mif)
+  * [8.5 Testes do Rasterizador de Quadrados](#85-testes-do-rasterizador-de-quadrados)
+  * [8.6 Testes do Rasterizador de Triângulos](#86-testes-do-rasterizador-de-triângulos)
+  * [8.7 Testes do Motor de Background](#87-testes-do-motor-de-background)
+  * [8.8 Testes do Motor de Sprites](#88-testes-do-motor-de-sprites)
+    * [8.8.1 Transparência](#881-transparência)
+    * [8.8.2 Espelhamento](#882-espelhamento)
+    * [8.8.3 Prioridade entre Sprites](#883-prioridade-entre-sprites)
+  * [8.9 Testes do Framebuffer e da Composição Gráfica](#89-testes-do-framebuffer-e-da-composição-gráfica)
+  * [8.10 Testes de Integração e Desvios](#810-testes-de-integração-e-desvios)
+  * [8.11 Testes na FPGA DE1-SoC](#811-testes-na-fpga-de1-soc)
+  * [8.12 Erros, Limitações e Decisões de Projeto](#812-erros-limitações-e-decisões-de-projeto)
+
 
 * [9. Análise do Resultado](#9-análise-do-resultado)
 
@@ -94,11 +132,9 @@
   * [9.6 Melhorias Possíveis](#96-melhorias-possíveis)
   * [9.7 Funcionalidades Não Atendidas](#97-funcionalidades-não-atendidas)
 
-* [10. Controles da Demonstração na FPGA](#10-controles-da-demonstração-na-fpga)
+* [10. Equipe do Desenvolvimento](#10-equipe-do-desenvolvimento)
 
-* [11. Equipe do Desenvolvimento](#11-equipe-do-desenvolvimento)
-
-* [12. Referências](#12-referências)
+* [11. Referências](#11-referências)
 
 Projeto desenvolvido para o Problema #1 - 2026.2 / Sistema Digital, com o objetivo de implementar, em FPGA, um nucleo de coprocessamento grafico inspirado na arquitetura de consoles de 16 bits. A solucao implementa geracao de background por tiles, sprites com atributos e prioridade, rasterizacao de poligonos, framebuffer com double buffering e saida VGA.
 
@@ -309,9 +345,10 @@ As proximas secoes apresentam cada uma dessas partes em maior profundidade, deta
 
 
 
+
 ## 2. Levantamento de Requisitos
 
-A partir da análise do enunciado do Problema #1 e das especificações para a plataforma Intel/Altera **DE1-SoC**, os requisitos do sistema foram estruturados entre **Requisitos Funcionais (RF)**, **Requisitos Não Funcionais (RNF)** e um **Mapeamento Detalhado da Organização de Memória**.
+A partir da análise do enunciado do Problema #2 de Sistemas Digitais (2026.2) e da implementação presente no repositório, os requisitos foram organizados em **Requisitos Funcionais (RF)**, **Requisitos Não Funcionais (RNF)** e **Requisitos de Memória e Organização Interna**. A classificação considera os requisitos explícitos do problema e distingue as funcionalidades identificáveis no código daquelas cuja validação depende de resultados de simulação, síntese ou demonstração em hardware.
 
 ---
 
@@ -319,992 +356,1234 @@ A partir da análise do enunciado do Problema #1 e das especificações para a p
 
 | ID | Requisito | Detalhamento Técnico | Status |
 | :--- | :--- | :--- | :--- |
-| **RF01** | **Resolução Lógica** | Processamento interno da cena em $320 \times 240$ pixels. | **IMPLEMENTADO** |
-| **RF02** | **Saída de Vídeo VGA** | Sinalização física padrão VGA $640 \times 480 @ 60\text{Hz}$ ($25.175\text{ MHz}$ pixel clock). | **IMPLEMENTADO** |
-| **RF03** | **Pixel Scaling ($2 \times 2$)** | Duplicação do tamanho do pixel lógico no motor VGA (mapeamento $1\text{ pixel lógico} \to 4\text{ pixels físicos}$). | **IMPLEMENTADO** |
-| **RF04** | **Tilemap de Background** | Grade de $40 \times 30$ tiles cobrindo a resolução de $320 \times 240$ | **IMPLEMENTADO** |
-| **RF05** | **Tiles de $8 \times 8$ Pixels** | Dimensão fixa dos blocos gráficos da camada de background. | **IMPLEMENTADO** |
-| **RF06** | **Scrolling Horizontal e Vertical** | Deslocamento contínuo em X e Y com lógica de *wraparound* (repetição das bordas da matriz). | **IMPLEMENTADO** |
-| **RF07** | **Banco de Padrões de Background** | Suporte de memória interna para armazenar até 256 tiles gráficos únicos ($8 \times 8$). | **IMPLEMENTADO** |
-| **RF08** | **Engine de Sprites** | Unidade dedicada para renderização de no mínimo 32 sprites independentes. | **IMPLEMENTADO** |
-| **RF09** | **Dimensão dos Sprites ($16 \times 16$)** | Sprites compostos por arranjos de $2 \times 2$ tiles de $8 \times 8$ pixels. | **IMPLEMENTADO** |
-| **RF10** | **Atributos de Sprites** | Posição X ($9\text{ bits}$), Y ($8\text{ bits}$), Enable ($1\text{ bit}$), Flip H/V ($2\text{ bits}$), Prioridade e Seleção de Paleta. | **IMPLEMENTADO** |
-| **RF11** | **Transparência por Cor Nula** | Índice de cor `0x00` tratado como transparente na sobreposição de camadas (Sprites e Polígonos). | **IMPLEMENTADO** |
-| **RF12** | **Rasterização de Retângulos** | Unidade aritmética para preenchimento de retângulos parametrizados por $(X_0, Y_0, \text{Largura}, \text{Altura}, \text{Cor})$. | **IMPLEMENTADO** |
-| **RF13** | **Rasterização de Triângulos** | Algoritmo de renderização baseado em lógica inteira (varredura por *scanline*). | **IMPLEMENTADO** |
-| **RF14** | **Paleta de Cores Programável** | Look-Up Table (LUT) de 256 entradas convertendo índices de 8 bits em saídas RGB (3 bits por canal / $9\text{ bits}$ total). | **IMPLEMENTADO** |
-| **RF15** | **Double Buffering** | Implementação de dois bancos de memória (*Front* e *Back Buffer*) para renderização sem *screen tearing*. | **IMPLEMENTADO** |
-| **RF16** | **Troca de Buffer em VBlank** | *Swap* dos ponteiros de exibição travado estritamente durante o intervalo de sincronismo vertical (VBlank). | **IMPLEMENTADO** |
-| **RF17** | **Testes de Módulos e Integração** | Testbenches unitários para os motores gráficos/rasterizadores e testbench top-level cobrindo cenários de borda. | **IMPLEMENTADO** |
-| **RF18** | **Driver Linux (Assembly ARM)** | Driver por acesso de memória mapeada (MMIO). | **NÃO IMPLEMENTADO** *(Etapa posterior)* |
-| **RF19** | **Aplicação/Jogo Final em C** | Lógica de jogo integrando os controles e acelerômetro. | **NÃO IMPLEMENTADO** *(Etapa posterior)* |
+| **RF01** | **ISA de 32 bits** | Conjunto de instruções próprio, com instruções de largura fixa de 32 bits e opcode de 5 bits. | **IMPLEMENTADO NO RTL** |
+| **RF02** | **Unidade de Busca de Instruções** | Busca ativa de instruções em memória interna, com atualização do contador de programa (PC) e suporte a desvios. | **IMPLEMENTADO NO RTL** |
+| **RF03** | **Registrador de Instrução (IR)** | Armazenamento e disponibilização da instrução para decodificação e execução. | **VALIDADO** — correspondência existente com o requisito de IR no datapath integrado. |
+| **RF04** | **Unidade de Controle** | Decodificação dos opcodes e geração dos sinais de controle para a ULA, o banco de registradores, as memórias e os motores gráficos. | **IMPLEMENTADO NO RTL** |
+| **RF05** | **Datapath** | Integração do banco de registradores, ULA, unidade de busca, controle e unidades funcionais. | **IMPLEMENTADO NO RTL** |
+| **RF06** | **Banco de Registradores** | Armazenamento de operandos gerais, flags e registradores dedicados às coordenadas dos vértices e à cor do rasterizador. | **IMPLEMENTADO NO RTL** |
+| **RF07** | **Registradores de Estado** | Disponibilização de informações de estado do coprocessador e das flags utilizadas nas operações e nos desvios condicionais. | **IMPLEMENTADO NO RTL** |
+| **RF08** | **Unidade Lógica e Aritmética (ULA)** | Execução das operações `ADD`, `SUB`, `AND`, `LSL`, `LSR` e `PASS`, com geração das flags utilizadas pelos desvios. | **IMPLEMENTADO NO RTL** |
+| **RF09** | **Programa Gráfico em Assembly da ISA Própria** | Programa de demonstração codificado para a ISA criada pela equipe e armazenado na memória interna de instruções. | **SUPORTE PRESENTE** — implementado também por um simulador em html. |
+| **RF10** | **Definição da Sintaxe da ISA** | Documentação dos formatos de instrução, operandos, campos de codificação, opcodes e regras de execução. | **DOCUMENTAÇÃO PRESENTE** — conferir se a versão final está incluída e atualizada no repositório. |
+| **RF11** | **Motor de Background** | Geração do plano de fundo a partir de um mapa de tiles e de uma memória de padrões gráficos. | **IMPLEMENTADO NO RTL** |
+| **RF12** | **Motor de Sprites** | Renderização de até 32 sprites, com posição, habilitação, padrão, seleção de paleta, prioridade e espelhamento horizontal e vertical. | **IMPLEMENTADO NO RTL** — comportamentos por simulação e hardware validados. |
+| **RF13** | **Rasterizador de Polígonos** | Rasterização de retângulos preenchidos e triângulos, acionada por instruções da ISA. | **IMPLEMENTADO NO RTL** |
+| **RF14** | **Compositor Gráfico** | Composição das camadas com prioridade entre background, rasterizadores e sprites. | **IMPLEMENTADO NO RTL** |
+| **RF15** | **Controlador VGA** | Geração dos sinais de vídeo para saída VGA de 640 × 480 pixels, a partir da imagem lógica de 320 × 240 pixels. | **IMPLEMENTADO NO RTL** |
+| **RF16** | **Sincronização com VGA** | Utilização do `vblank` para sincronização do quadro e troca dos bancos do framebuffer. | **IMPLEMENTADO NO RTL** |
+| **RF17** | **Comunicação entre Unidades Funcionais** | Uso de sinais de controle, incluindo `busy`, `done` e sinais de início de operação, conforme a unidade acionada. | **IMPLEMENTADO NO RTL** — a validação dos protocolos deve ser documentada pelos testes. |
+| **RF18** | **Memória Interna de Instruções** | Armazenamento do programa gráfico em memória de 16.384 palavras de 32 bits, configurada para inicialização por arquivo de memória. | **IMPLEMENTADO NO RTL** |
+| **RF19** | **Testbenches dos Módulos Principais** | O enunciado exige testes para cada módulo principal. O repositório contém testbenches para diversos módulos e comportamentos específicos. | **PARCIALMENTE DOCUMENTADO** |
+| **RF20** | **Testbench de Integração** | O enunciado exige um testbench de integração do coprocessador. Existem testes de sistema associados a cenários específicos, mas é necessário confirmar e documentar a cobertura integral exigida. | **A VALIDAR** |
+| **RF21** | **Driver Linux em Assembly ARM** | Na alternativa de busca passiva, o enunciado prevê comunicação com o coprocessador por fila de comandos via MMIO e um programa Assembly ARM. | **NÃO IMPLEMENTADO NESTA ARQUITETURA** — o projeto adota busca ativa, alternativa permitida pelo enunciado. |
+| **RF22** | **Aplicação de Jogo em C** | Aplicação prevista como etapa posterior, destinada a utilizar o coprocessador gráfico. | **ETAPA POSTERIOR** — não constitui requisito de implementação imediata do caminho de busca ativa escolhido. |
+
+> **Nota sobre os status:** “Implementado no RTL” identifica funcionalidades observáveis na implementação; não significa que tenham sido aprovadas em todos os testes ou demonstradas com sucesso na placa. Os itens que dependem de evidências de execução permanecem indicados como validação pendente.
 
 ---
 
 ## 2.2 Requisitos Não Funcionais
 
-1. **Plataforma e Hardware Alvo:**
-  - FPGA Altera/Intel **Cyclone V SE (5CSEMA5F31C6)** contida na placa **DE1-SoC**.
-2. **Frequências de Clock e Domínios de Sincronismo:**
-  - **System Clock ($50\text{ MHz}$):** Utilizado pelo núcleo de processamento do co-processador, rasterizador de polígonos e interface de comandos.
-  - **VGA Pixel Clock ($25.175\text{ MHz}$):** Gerado via **PLL (Phase-Locked Loop)** interno da FPGA para sincronização rigorosa do gerador de sinais VGA ($640 \times 480 @ 60\text{Hz}$).
-3. **Linguagem de Descrição de Hardware:**
-  - Todo o coprocessador sintetizável é codificado estritamente em **Verilog HDL (IEEE 1364-2001)**.
-4. **Interface de Controle (Protocolo de Comandos):**
-  - Receptor de instruções com palavras de **32 bits**, estruturado para permitir integração direta a um barramento de periféricos no modelo MMIO.
-5. **Estabilidade Visual e Ausência de Glitches:**
-  - O sinal VGA opera sem perda de sincronismo (*glitch* no *H-Sync*/*V-Sync*) durante operações de escrita simultânea do rasterizador nas memórias internas.
-6. **Otimização de Recursos Internos (M10K Blocks):**
-  - Utilização otimizada dos blocos de RAM embutida (Block RAM / M10K) da Cyclone V para garantir que o *Double Buffering* e os bancos de padrões caibam dentro dos limites físicos do chip.
+1. **Plataforma e hardware-alvo**
+   - Placa **DE1-SoC**, equipada com FPGA Intel Cyclone V, dispositivo `5CSEMA5F31C6`.
+   - Projeto desenvolvido em Verilog e organizado para compilação no Quartus.
+
+2. **Frequências de clock e temporização**
+   - **Clock de sistema: 50 MHz**, utilizado pela lógica do coprocessador.
+   - **Clock de pixel: 25 MHz**, configurado pelo PLL para o subsistema VGA.
+   - A frequência máxima alcançada, a margem de temporização e o atendimento às restrições de *timing* devem ser confirmados pelo relatório de compilação e análise temporal do Quartus.
+
+3. **Resolução e apresentação de vídeo**
+   - Resolução lógica de **320 × 240 pixels**.
+   - Saída VGA de **640 × 480 pixels**, com escala de 2 × 2 pixels físicos para cada pixel lógico.
+   - A taxa efetiva de atualização e a estabilidade da saída devem ser verificadas por medição ou demonstração; não são inferidas apenas da resolução e dos clocks configurados.
+
+4. **Organização da arquitetura**
+   - Integração de busca de instruções, unidade de controle, datapath, banco de registradores, ULA, registradores de estado e unidades funcionais gráficas.
+   - O compositor, o controle de quadro e o controlador VGA devem operar continuamente, independentemente da execução de instruções específicas, conforme estabelecido no enunciado.
+
+5. **Sincronização e integridade do quadro**
+   - Utilização de sincronização com `vblank` para a troca dos bancos do framebuffer.
+   - A ausência de *screen tearing*, *glitches* ou outros artefatos não deve ser declarada sem testes específicos que comprovem esses comportamentos.
+
+6. **Linguagem e ferramentas**
+   - Implementação do hardware em Verilog HDL.
+   - Projeto e arquivos de configuração destinados ao Quartus e à FPGA da placa DE1-SoC.
+   - Os resultados finais devem identificar a versão das ferramentas efetivamente utilizada nos testes.
+
+7. **Reprodutibilidade e documentação**
+   - O repositório deve conter código RTL, projeto Quartus, documentação da ISA, programa gráfico, testbenches e scripts necessários à reprodução dos testes.
+   - O README deve apresentar os resultados efetivamente obtidos, as limitações identificadas e as funcionalidades que não atenderem aos requisitos.
+
+8. **Análise de recursos e desempenho**
+   - O enunciado exige relatório de síntese, utilização de recursos, frequência máxima e análise de *timing*.
+   - A ocupação de blocos M10K, a frequência máxima e os gargalos devem ser informados com base nos relatórios gerados pelas ferramentas, e não apenas por estimativas teóricas.
 
 ---
 
 ## 2.3 Requisitos de Memória e Organização Interna
 
-A arquitetura utiliza memórias estáticas organizadas internamente na FPGA para atender às exigências do pipeline gráfico em tempo real a $60\text{ fps}$.
+A arquitetura utiliza memórias internas para armazenar o programa gráfico, o mapa de tiles, os padrões gráficos, a paleta e os pixels do framebuffer. As capacidades abaixo são calculadas a partir das dimensões configuradas nos arquivos de memória do projeto. Elas representam capacidades nominais, não resultados de ocupação obtidos após a síntese.
 
-### Detalhamento dos Blocos de Memória
+### Memória de Instruções
 
-* **Tilemap do Background:**
-  * **Dimensões:** Grade de $40 \times 30$ posições ($1.200$ palavras).
-  * **Largura da Palavra:** $8\text{ bits}$ (endereça até 256 padrões de tiles gráficos).
-  * **Capacidade Total:** $1.200\text{ Bytes} \approx 1,17\text{ KiB}$.
+- **Profundidade:** 16.384 palavras.
+- **Largura da palavra:** 32 bits.
+- **Capacidade nominal:** 524.288 bits, equivalentes a **64 KiB**.
+- **Finalidade:** armazenar as instruções executadas pela unidade de busca ativa.
+- **Inicialização:** por arquivo de memória, como `.mif`, conforme a configuração da memória.
 
-* **Memória de Padrões do Background (Pattern RAM):**
-  * **Capacidade:** 256 tiles únicos de $8 \times 8$ pixels ($16.384$ pixels armazenados).
-  * **Profundidade de Cor:** $8\text{ bits/pixel}$ (índice da paleta).
-  * **Capacidade Total:** $16.384\text{ Bytes} = 16\text{ KiB}$.
+### Mapa de Tiles do Background
 
-* **Tabela de Atributos de Sprites (OAM - Object Attribute Memory):**
-  * **Quantidade de Sprites:** 32 objetos.
-  * **Tamanho por Registro:** $32\text{ bits}$.
-  * **Capacidade Total:** $32 \times 32\text{ bits} = 128\text{ Bytes}$.
-  * **Mapeamento de Bitfields ($32\text{ bits}$):**
-    * `[8:0]` — Posição X ($9\text{ bits}$, intervalo $0$ a $319$).
-    * `[16:9]` — Posição Y ($8\text{ bits}$, intervalo $0$ a $239$).
-    * `[24:17]` — Índice do Padrão/Tile Inicial ($8\text{ bits}$, intervalo $0$ a $255$).
-    * `[25]` — Bit de Habilitação (*Sprite Enable*).
-    * `[26]` — Flip Horizontal (*H-Flip*).
-    * `[27]` — Flip Vertical (*V-Flip*).
-    * `[29:28]` — Seleção de Prioridade de Camada ($2\text{ bits}$).
-    * `[31:30]` — Seleção de Sub-paleta / Reservado.
+- **Dimensões:** 40 × 30 posições, totalizando 1.200 entradas.
+- **Largura da entrada:** 8 bits.
+- **Capacidade nominal:** 9.600 bits, equivalentes a **1.200 bytes (aproximadamente 1,17 KiB)**.
+- **Finalidade:** associar cada posição do mapa a um padrão gráfico de tile.
 
-* **Memória de Padrões de Sprites (Sprite Pattern RAM):**
-  * **Capacidade:** Suporte a 64 sprites únicos de $16 \times 16$ pixels ($16.384$ pixels armazenados).
-  * **Profundidade de Cor:** $8\text{ bits/pixel}$.
-  * **Capacidade Total:** $16.384\text{ Bytes} = 16\text{ KiB}$.
+### Memória de Padrões do Background
 
-* **Paleta de Cores (Color LUT):**
-  * **Entradas:** 256 posições de cor.
-  * **Largura do Pixel:** $9\text{ bits}$ ($3\text{ bits Red}$, $3\text{ bits Green}$, $3\text{ bits Blue}$) adaptados ao DAC da placa DE1-SoC.
-  * **Capacidade Total:** $256 \times 9\text{ bits} = 2.304\text{ bits} = 288\text{ Bytes}$.
+- **Profundidade configurada:** 16.384 palavras.
+- **Largura da palavra:** 8 bits.
+- **Capacidade nominal:** 131.072 bits, equivalentes a **16 KiB**.
+- **Finalidade:** armazenar índices de cor dos pixels utilizados pelos padrões de tiles.
+- **Dimensão do tile:** 8 × 8 pixels. A quantidade de padrões representáveis depende da organização e do endereçamento utilizados pelo motor.
 
-* **Framebuffer Integrado (Double Buffering):**
-  * **Resolução Lógica:** $320 \times 240\text{ pixels}$ ($76.800\text{ pixels/frame}$).
-  * **Tamanho do Pixel no Banco:** $8\text{ bits}$ (Índice de Cor) $+ 1\text{ bit}$ (Controle/Prioridade) = $9\text{ bits}$.
-  * **Capacidade por Banco:** $76.800 \times 9\text{ bits} = 691.200\text{ bits} \approx 84,37\text{ KiB}$ por banco.
-  * **Capacidade Total ($2 \times\text{Bancos - Front/Back}$):** $153.600\text{ palavras} = 1.382.400\text{ bits} \approx 168,75\text{ KiB}$.
+### Memória de Padrões de Sprites
 
----
+- **Profundidade configurada:** 16.384 palavras.
+- **Largura da palavra:** 8 bits.
+- **Capacidade nominal:** 131.072 bits, equivalentes a **16 KiB**.
+- **Finalidade:** armazenar os índices de cor dos pixels dos padrões de sprites.
+- **Observação:** a capacidade da memória não determina, por si só, a dimensão de cada sprite; o tamanho e o endereçamento efetivos dependem da implementação do motor.
 
-### Consumo Teórico Estimado de RAM Interna
+### Atributos de Sprites
 
-$$\text{Total RAM} = \text{Tilemap} + \text{Patterns (BG + Sprite)} + \text{OAM} + \text{Paleta} + \text{Framebuffer (2x)}$$
+- **Quantidade suportada pelo motor:** até 32 sprites.
+- **Campos de atributos:** habilitação, prioridade, espelhamento horizontal e vertical, seleção de paleta e índice do padrão gráfico.
+- **Posição:** coordenadas X e Y armazenadas com larguras de 9 e 8 bits, respectivamente.
+- **Armazenamento ativo:** os atributos são mantidos em estruturas internas do motor de sprites. Embora exista um arquivo de RAM de atributos no projeto Quartus, a implementação atual do motor não utiliza essa RAM como armazenamento ativo dos atributos.
 
-$$\text{Total RAM} \approx 1,17\text{ KiB} + 32\text{ KiB} + 0,125\text{ KiB} + 0,28\text{ KiB} + 168,75\text{ KiB} \approx \mathbf{202,32\text{ KiB}}$$
+### Paleta de Cores
 
-> **Nota:** A FPGA Cyclone V (5CSEMA5F31C6) possui aproximadamente **$4.450\text{ KiB}$** de memória M10K disponível. A arquitetura projetada consome menos de **$5\%$** do total de memória RAM interna, permitindo alocação eficiente de recursos e sintetizabilidade sem gargalos de hardware.
+- **Profundidade configurada:** 512 entradas.
+- **Largura da saída:** 9 bits por entrada, correspondentes à representação RGB `RRRGGGBBB`.
+- **Capacidade nominal:** 4.608 bits, equivalentes a **576 bytes**.
+- **Finalidade:** converter índices de cor em valores RGB utilizados pelo subsistema gráfico.
 
+### Framebuffer com Double Buffering
 
+- **Resolução lógica:** 320 × 240 pixels.
+- **Quantidade de pixels por banco:** 76.800.
+- **Largura configurada do pixel:** 9 bits.
+- **Capacidade nominal por banco:** 691.200 bits, equivalentes a **84,375 KiB**.
+- **Quantidade de bancos:** dois, para permitir a renderização em um banco enquanto o outro é apresentado.
+- **Capacidade nominal dos dois bancos:** 1.382.400 bits, equivalentes a **168,75 KiB**.
 
-# 3. FUNDAMENTACAO TEORICA
+A troca dos bancos está associada ao sincronismo de quadro. A capacidade nominal calculada não inclui automaticamente todas as estruturas auxiliares, como mapas de prioridade por pixel, nem representa o total final de blocos M10K consumidos após síntese.
 
-A fundamentacao teorica deste projeto apresenta os principais conceitos de computacao grafica utilizados na construcao do sistema de video implementado em FPGA.
+### Considerações sobre o consumo de memória
 
-A arquitetura combina diferentes tecnicas de representacao, armazenamento e processamento de imagens, permitindo que elementos graficos sejam gerados diretamente em hardware e posteriormente combinados em um quadro destinado a exibicao em um monitor VGA.
+A soma das capacidades nominais das memórias listadas acima é uma estimativa parcial da arquitetura. Ela não deve ser apresentada como o consumo total da FPGA, pois pode excluir estruturas adicionais, como os mapas de camadas utilizados pela composição, e não considera o mapeamento final de cada memória nos recursos físicos do dispositivo.
 
-Os principais conceitos abordados sao a representacao grafica indexada, o uso de tiles para construcao do background, scroll e wraparound, sprites, espelhamento, rasterizacao de primitivas geometricas, double buffering e a geracao da saida VGA.
-
-A utilizacao desses conceitos permite organizar o processamento grafico em modulos especializados, reduzindo a dependencia do processador para a geracao individual dos pixels e explorando caracteristicas proprias da implementacao em FPGA, como processamento dedicado, paralelismo e acesso estruturado a memorias.
+O consumo real de memória, a quantidade de blocos M10K utilizados, a frequência máxima e os resultados de *timing* devem ser obtidos dos relatórios de síntese e implementação do Quartus, conforme exigido pelo Problema #2.
 
 
-## 3.1 Representacao Grafica Indexada
 
-A representacao grafica indexada e uma tecnica na qual os pixels de uma imagem nao armazenam diretamente todos os componentes de sua cor. Em vez disso, cada pixel armazena um indice que referencia uma entrada de uma paleta de cores.
 
-No projeto, os padroes utilizados por tiles e sprites sao armazenados utilizando indices de 8 bits. Dessa forma, cada pixel do padrao representa uma posicao dentro da paleta, e nao diretamente os valores de vermelho, verde e azul.
+# 3. FUNDAMENTAÇÃO TEÓRICA
 
-O processo pode ser representado de forma simplificada por:
+A fundamentação teórica deste projeto aborda os conceitos de arquitetura de computadores, sistemas digitais e computação gráfica utilizados no desenvolvimento de um coprocessador gráfico programável em FPGA. Diferentemente de um sistema em que os módulos gráficos precisam ser acionados individualmente por sinais externos, um coprocessador programável permite descrever operações por meio de instruções de uma arquitetura de conjunto de instruções (*Instruction Set Architecture* — ISA).
 
-    INDICE DO PIXEL
+O projeto tem como objetivo integrar os mecanismos de geração gráfica desenvolvidos anteriormente a uma arquitetura capaz de buscar e executar instruções, manipular registradores e acionar unidades funcionais especializadas. Essa organização aproxima o coprocessador dos princípios empregados na construção de processadores convencionais, adaptando-os às necessidades de geração e composição de imagens.
+
+A implementação utiliza Verilog para descrever os circuitos digitais e uma FPGA para executar a lógica projetada. O sistema reúne uma unidade de busca de instruções, uma unidade de controle, um banco de registradores, uma Unidade Lógica e Aritmética (ULA), mecanismos de controle de fluxo e unidades funcionais gráficas, incluindo os motores de background, sprites e rasterização. Os resultados dessas operações são encaminhados ao sistema de composição e ao controlador VGA.
+
+Além da implementação em hardware, o projeto conta com uma especificação própria da ISA, programas Assembly, ferramentas de montagem e geração de arquivos de inicialização de memória e um simulador HTML utilizado para acompanhar a execução das instruções e seus efeitos gráficos.
+
+Os conceitos apresentados a seguir fundamentam as decisões de organização do sistema e explicam a relação entre o programa executado, o processamento digital e a imagem produzida.
+
+## 3.1 Arquitetura de Conjunto de Instruções (ISA)
+
+A arquitetura de conjunto de instruções, conhecida pela sigla ISA (*Instruction Set Architecture*), define a interface entre o software e o hardware de um processador. Ela especifica as operações disponíveis, os formatos das instruções, os registradores acessíveis, os operandos utilizados e as regras que determinam o comportamento de cada operação.
+
+Uma ISA estabelece, portanto, o contrato funcional que deve ser respeitado tanto pelos programas quanto pela implementação em hardware. Um programa escrito para uma determinada arquitetura precisa utilizar instruções compatíveis com os formatos e as operações definidos por ela (PATTERSON; HENNESSY, 2016).
+
+No projeto, foi definida uma ISA própria para o coprocessador gráfico, com instruções de largura fixa de 32 bits e campo de código de operação (*opcode*) de 5 bits. Esse campo permite representar até \(2^5 = 32\) códigos distintos, embora nem todas as combinações precisem corresponder a instruções implementadas.
+
+A arquitetura adota um modelo de utilização de registradores para operações aritméticas e lógicas, enquanto as instruções específicas acionam funcionalidades gráficas. Assim, o programa pode preparar valores em registradores e utilizá-los em operações da ULA ou em comandos relacionados à geração de imagens.
+
+Entre as instruções definidas na especificação do projeto estão:
+
+- **Operações da ULA:** instruções como `ADD`, `SUB` e `PASS`, utilizadas para realizar operações aritméticas, lógicas ou transferir valores;
+- **Configuração gráfica:** instruções como `SET_PALETTE`, `SET_SPR_POS` e `SET_SPR_ATTR`;
+- **Desenho de primitivas:** instruções como `DRAW_RECT` e `DRAW_TRI`;
+- **Manipulação de recursos gráficos:** instruções como `SET_TILEMAP`, `WRITE_SPRITE_DATA` e `WRITE_TILE_DATA`;
+- **Controle da execução:** instruções como `WAIT_VBLANK` e `HALT`;
+- **Controle de fluxo:** instruções de desvio, incluindo `B` e `B_COND`.
+
+Essas instruções permitem que um programa descreva uma sequência de operações gráficas sem precisar controlar diretamente, em cada etapa, todos os sinais internos dos motores.
+
+O fluxo conceitual de execução pode ser representado por:
+
+    PROGRAMA ASSEMBLY
            |
            v
-    +----------------+
-    |     PALETA     |
-    +----------------+
+    CODIFICAÇÃO DAS INSTRUÇÕES
            |
            v
-      COR RGB DE 9 BITS
+    MEMÓRIA DE INSTRUÇÕES
+           |
+           v
+    BUSCA E DECODIFICAÇÃO
+           |
+           v
+    EXECUÇÃO NO COPROCESSADOR
+           |
+           v
+    RESULTADO GRÁFICO
 
-A cor utilizada pelo sistema possui 9 bits, organizados no formato:
+A definição da ISA é importante porque organiza a comunicação entre o programa e o hardware, tornando possível testar as instruções individualmente e verificar como elas se combinam para produzir operações gráficas mais complexas.
 
-RRR GGG BBB
+## 3.2 Arquitetura do Coprocessador Gráfico
 
-Sao utilizados 3 bits para cada componente de cor, permitindo representar oito niveis de intensidade para vermelho, verde e azul. Dessa combinacao resultam ate 512 possibilidades de cor.
+Um coprocessador é uma unidade de processamento especializada em determinadas classes de operações. Em vez de executar todas as tarefas de um processador de propósito geral, ele concentra recursos de hardware nas funções para as quais foi projetado.
 
-A principal vantagem dessa abordagem esta na separacao entre o padrao grafico e a sua representacao de cor. Em vez de armazenar uma palavra completa de cor para cada pixel, a memoria de padroes armazena apenas o indice correspondente.
+No presente projeto, essa especialização está relacionada à geração e à composição de imagens. A arquitetura reúne unidades de processamento convencionais, responsáveis pela execução das instruções, e unidades funcionais gráficas, responsáveis por produzir os elementos visuais.
 
-Isso reduz a quantidade de memoria necessaria para armazenar os recursos graficos e tambem permite que diferentes elementos compartilhem os mesmos padroes.
+A organização pode ser resumida da seguinte forma:
 
-Outra vantagem e a possibilidade de modificar a aparencia de um recurso por meio da alteracao da paleta, sem que seja necessario modificar todos os pixels armazenados na memoria de padroes.
+    +-----------------------------+
+    |     MEMÓRIA DE INSTRUÇÕES   |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   UNIDADE DE BUSCA          |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   UNIDADE DE CONTROLE       |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   BANCO DE REGISTRADORES    |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   ULA E DATAPATH            |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   UNIDADES GRÁFICAS         |
+    |   Background, Sprites,      |
+    |   Rasterização              |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   COMPOSIÇÃO E FRAMEBUFFER  |
+    +-----------------------------+
+                  |
+                  v
+    +-----------------------------+
+    |   CONTROLADOR VGA           |
+    +-----------------------------+
 
-No contexto deste projeto, essa organizacao e utilizada tanto pelo motor de background quanto pelo motor de sprites, estabelecendo uma interface comum entre os padroes graficos armazenados e as cores efetivamente utilizadas na imagem final.
+O diagrama apresenta a organização conceitual do sistema. Na implementação, os caminhos de dados e os sinais de controle conectam os módulos de acordo com as interfaces definidas no código Verilog.
 
+A principal característica dessa arquitetura é que as operações gráficas passam a ser comandadas por instruções da ISA. O programa configura parâmetros, prepara os dados necessários e solicita operações às unidades funcionais, enquanto o hardware realiza o processamento correspondente.
 
-## 3.2 Background Baseado em Tiles
+Essa organização permite separar a interpretação do programa da execução das operações gráficas, facilitando a evolução da arquitetura e a validação de seus componentes.
 
-O background baseado em tiles e uma tecnica de construcao de imagens na qual um cenario e formado pela repeticao e combinacao de pequenos blocos graficos.
+## 3.3 Unidade de Busca de Instruções e Contador de Programa
 
-Em vez de armazenar cada pixel de um cenario completo de forma independente, o sistema armazena um conjunto de padroes de tiles e utiliza uma estrutura de referencias, denominada tilemap, para determinar qual padrao deve aparecer em cada posicao.
+A unidade de busca de instruções é responsável por obter as instruções que serão executadas pelo coprocessador. Para isso, ela utiliza uma memória de instruções e um contador de programa (*Program Counter* — PC), que identifica a posição da próxima instrução a ser buscada.
 
-No projeto, cada tile possui dimensao:
+Na implementação do projeto, a busca é ativa: o próprio coprocessador obtém as instruções de uma memória interna, inicializada por um arquivo de configuração. Essa decisão permite executar programas sem depender de um processador externo para enviar cada comando individualmente.
 
-8 x 8 pixels
+A memória de instruções possui 16384 palavras de 32 bits. Considerando a largura das instruções, sua capacidade nominal é:
 
-Considerando a resolucao logica utilizada pelo sistema:
+\[
+16384 \times 32 = 524288 \text{ bits}
+\]
 
-320 x 240 pixels
+Isso corresponde a 65536 bytes, ou 64 KiB.
 
-a tela pode ser dividida em:
-
-320 / 8 = 40 tiles na horizontal
-
-240 / 8 = 30 tiles na vertical
-
-Portanto, uma tela logica completa e composta por:
-
-40 x 30 = 1200 posicoes de tiles.
-
-O tilemap armazena uma referencia para o padrao grafico que deve ser utilizado em cada uma dessas posicoes. Os padroes dos tiles, por sua vez, ficam armazenados em uma memoria especifica.
-
-A determinacao de um pixel do background pode ser entendida como uma decomposicao da coordenada da tela.
-
-Primeiramente, a coordenada do pixel e combinada com os valores de scroll. A coordenada resultante identifica a posicao correspondente no cenario.
-
-Em seguida, essa coordenada e dividida conceitualmente em duas partes:
-
-- Coordenada do tile: identifica qual entrada do tilemap deve ser acessada;
-- Coordenada local: identifica qual pixel deve ser lido dentro do tile.
-
-Como cada tile possui 8 x 8 pixels, existem 64 posicoes possiveis dentro de cada padrao.
+O contador de programa utilizado na arquitetura possui 16 bits e trabalha com endereçamento em bytes. Como as instruções possuem 32 bits, cada instrução ocupa quatro bytes. Na execução sequencial, o endereço do PC avança em quatro unidades, salvo quando uma instrução de controle de fluxo determina outro destino.
 
 O processo pode ser representado por:
+
+    +-------------------+
+    | CONTADOR DE       |
+    | PROGRAMA (PC)     |
+    +-------------------+
+              |
+              v
+    +-------------------+
+    | MEMÓRIA DE        |
+    | INSTRUÇÕES        |
+    +-------------------+
+              |
+              v
+       INSTRUÇÃO LIDA
+              |
+              v
+       EXECUÇÃO DA ISA
+              |
+              v
+      ATUALIZAÇÃO DO PC
+
+Quando ocorre um desvio, o próximo endereço deixa de corresponder necessariamente à instrução seguinte. No caso de um desvio incondicional, o fluxo é direcionado ao destino especificado; em um desvio condicional, essa alteração depende da condição avaliada pela arquitetura.
+
+A unidade de busca é, portanto, fundamental para transformar um conjunto de instruções armazenado em memória em uma sequência ordenada de operações executadas pelo hardware.
+
+## 3.4 Unidade de Controle e Decodificação
+
+A unidade de controle coordena a execução das instruções. Sua função consiste em interpretar o código de operação e os demais campos relevantes da instrução, determinando quais operações devem ocorrer e quais sinais precisam ser ativados.
+
+Em uma arquitetura digital, a unidade de controle deve considerar não apenas o tipo da instrução, mas também o estado atual do sistema. Operações que envolvem unidades gráficas podem exigir vários ciclos de clock, enquanto outras podem ser concluídas em menos tempo.
+
+Por esse motivo, a execução de uma instrução não se resume necessariamente a um único ciclo. A unidade de controle pode precisar aguardar a conclusão de uma operação, observar sinais de estado e somente então permitir o avanço para a próxima instrução.
+
+No projeto, a ISA inclui instruções de controle como `WAIT_VBLANK` e `HALT`, além de instruções que acionam recursos gráficos. Essas operações possuem finalidades diferentes: enquanto uma instrução pode configurar dados, outra pode solicitar uma operação gráfica, aguardar uma condição de sincronização ou encerrar a execução do programa.
+
+O funcionamento geral da decodificação pode ser representado por:
+
+    INSTRUÇÃO DE 32 BITS
+             |
+             v
+    +----------------------+
+    | EXTRAÇÃO DOS CAMPOS  |
+    +----------------------+
+             |
+             v
+    +----------------------+
+    | DECODIFICAÇÃO DO     |
+    | OPCODE E OPERANDOS   |
+    +----------------------+
+             |
+             v
+    +----------------------+
+    | GERAÇÃO DOS SINAIS   |
+    | DE CONTROLE          |
+    +----------------------+
+             |
+             v
+    EXECUÇÃO DA OPERAÇÃO
+
+A unidade de controle também precisa considerar o término das operações e as condições de sincronização. Esse gerenciamento é importante porque os motores gráficos não necessariamente concluem suas tarefas no mesmo número de ciclos.
+
+Conceitos como `busy`, `done` e `valid` são úteis nesse contexto. De maneira geral, `busy` indica que uma unidade está ocupada, `done` sinaliza a conclusão de uma operação e `valid` pode indicar que uma informação ou solicitação é válida. A utilização exata desses sinais depende da interface implementada em cada módulo.
+
+## 3.5 Registrador de Instrução e Datapath
+
+O registrador de instrução (*Instruction Register* — IR) é um elemento utilizado em arquiteturas de processadores para manter a instrução atualmente selecionada para execução. Sua função conceitual é separar a obtenção da instrução de seu processamento, mantendo os bits da instrução disponíveis para a decodificação e o controle.
+
+O datapath, por sua vez, corresponde ao conjunto de componentes e caminhos pelos quais os dados são armazenados, selecionados, transformados e encaminhados durante a execução das instruções. Ele pode incluir registradores, ULA, multiplexadores, extensores de operandos e conexões entre unidades funcionais.
+
+Esses conceitos são complementares: a unidade de controle determina o que deve ser feito, enquanto o datapath fornece os recursos utilizados para realizar as operações.
+
+No coprocessador gráfico, o datapath precisa permitir a manipulação dos operandos da ISA e a preparação dos parâmetros utilizados pelas unidades gráficas. Por exemplo, coordenadas e valores de cor podem ser calculados ou transferidos por instruções da ULA antes de serem utilizados pelo rasterizador.
+
+É importante distinguir o papel arquitetural do IR da existência de um módulo independente com esse nome. A presença de uma instrução buscada e decodificada não comprova, isoladamente, que todos os requisitos de armazenamento explícito da instrução estejam implementados em um registrador dedicado. Essa distinção deve ser considerada ao descrever a implementação concreta do projeto.
+
+## 3.6 Banco de Registradores
+
+Um banco de registradores é um conjunto de posições de armazenamento de pequena capacidade utilizadas para manter operandos e resultados temporários durante a execução das instruções. Em comparação com memórias maiores, os registradores permitem acesso rápido aos dados necessários às operações do processador.
+
+No projeto, a especificação da ISA descreve um espaço de registradores numerados, com registradores gerais e posições reservadas para funções específicas. Os registradores gerais são utilizados como operandos da ULA, enquanto alguns registradores possuem associação direta com os recursos gráficos.
+
+Entre os registradores especiais descritos na especificação estão:
+
+- `XZR`: registrador de valor zero;
+- `STATUS`: conjunto de indicadores de estado, incluindo informações relacionadas à execução e à sincronização;
+- `FLAGS`: registrador de indicadores aritméticos e lógicos;
+- `V0X`, `V0Y`, `V1X`, `V1Y`, `V2X` e `V2Y`: registradores associados às coordenadas dos vértices utilizados pelo rasterizador;
+- `COLOR`: registrador associado à informação de cor utilizada pelo rasterizador.
+
+Os registradores dedicados ao rasterizador permitem que os parâmetros geométricos sejam preparados por instruções da ULA e disponibilizados à unidade gráfica por conexões internas.
+
+Essa organização reduz a necessidade de criar uma instrução diferente para cada possível combinação de coordenadas e cores. Em vez disso, o programa pode utilizar instruções de manipulação de registradores para preparar os valores e, posteriormente, solicitar a operação gráfica correspondente.
+
+A especificação do projeto descreve um banco com duas portas de leitura combinacional e uma porta de escrita síncrona. Isso permite disponibilizar dois operandos para uma operação, enquanto os resultados podem ser armazenados em uma posição de destino.
+
+O banco de registradores, portanto, funciona como um ponto central de armazenamento e comunicação entre as instruções executadas pela ULA e os parâmetros consumidos pelas unidades funcionais gráficas.
+
+## 3.7 Unidade Lógica e Aritmética (ULA)
+
+A Unidade Lógica e Aritmética (ULA) é o componente responsável por realizar operações aritméticas e lógicas sobre os operandos fornecidos pela arquitetura. Entre as operações tradicionalmente realizadas por uma ULA estão adição, subtração, operações booleanas e comparações.
+
+No projeto, a ULA é utilizada para executar operações previstas na ISA e para manipular valores armazenados no banco de registradores. Esses valores podem representar operandos gerais ou parâmetros utilizados pelas unidades gráficas.
+
+Por exemplo, antes de desenhar um retângulo ou triângulo, o programa pode preparar coordenadas e informações de cor nos registradores correspondentes. A ULA permite calcular ou transferir esses valores por meio das instruções disponíveis.
+
+O fluxo básico de uma operação pode ser representado por:
+
+    REGISTRADOR A ----+
+                     |
+                     v
+                  +------+
+    REGISTRADOR B -> ULA |
+                  +------+
+                     |
+                     v
+               RESULTADO
+                     |
+                     v
+             BANCO DE REGISTRADORES
+
+A ULA também pode produzir indicadores de estado, como zero, negativo, carry e overflow, conforme a operação executada. Esses indicadores são úteis para avaliar condições e controlar desvios condicionais.
+
+No projeto, a especificação descreve um registrador `FLAGS` associado a esses indicadores. A instrução `B_COND` utiliza o mecanismo de avaliação de condições para determinar se o fluxo do programa deve ser alterado.
+
+A ULA contribui, assim, para a execução das operações fundamentais da ISA e para o controle do fluxo de instruções.
+
+## 3.8 Memórias de Instruções e de Dados Gráficos
+
+As memórias são componentes fundamentais do coprocessador porque armazenam tanto o programa que será executado quanto os dados necessários à geração das imagens.
+
+A memória de instruções contém palavras de 32 bits que representam as operações codificadas pela ISA. Já as memórias gráficas armazenam informações como índices de cor, padrões de tiles, mapa do background, padrões de sprites e pixels do framebuffer.
+
+No projeto, a memória de instruções é inicializada por um arquivo `.mif` (*Memory Initialization File*). Esse formato permite especificar valores que serão utilizados para inicializar uma memória durante a compilação do projeto no Quartus.
+
+O fluxo de preparação do programa é:
+
+    PROGRAMA ASSEMBLY
+           |
+           v
+    MONTAGEM / CODIFICAÇÃO
+           |
+           v
+    ARQUIVO .MIF
+           |
+           v
+    MEMÓRIA DE INSTRUÇÕES
+           |
+           v
+    EXECUÇÃO NA FPGA
+
+O repositório inclui ferramentas auxiliares relacionadas à montagem e à geração desses arquivos. Dessa forma, as instruções podem ser preparadas a partir de uma descrição de programa e convertidas para o formato esperado pela memória de instruções, evitando a necessidade de inserir manualmente cada palavra binária.
+
+Os arquivos `.mif` também podem ser utilizados para inicializar memórias que contêm recursos gráficos. Nesses casos, o conteúdo precisa respeitar a largura, a profundidade e a organização esperadas pelo módulo correspondente.
+
+Essa separação entre programa e recursos gráficos facilita a preparação de diferentes demonstrações e permite modificar o comportamento do coprocessador sem alterar a estrutura física de todos os módulos.
+
+É importante observar que a capacidade nominal de uma memória não corresponde necessariamente à quantidade de recursos físicos efetivamente utilizada após a síntese. A ocupação real depende da inferência das memórias, das otimizações do compilador e da configuração final do projeto no Quartus.
+
+## 3.9 Representação de Cores por Índices e Paletas
+
+Uma técnica utilizada em sistemas gráficos é a representação indexada de cores. Nesse modelo, cada pixel não armazena diretamente todos os componentes RGB da cor; em vez disso, armazena um índice que referencia uma entrada de uma paleta.
+
+No projeto, os padrões gráficos de tiles e sprites utilizam índices de 8 bits. Esses índices são utilizados para consultar a paleta, que fornece a representação da cor utilizada na imagem.
+
+A cor de saída possui 9 bits, organizados no formato `RRRGGGBBB`, com três bits para cada componente de cor. Assim, cada componente pode assumir oito níveis de intensidade, permitindo representar até \(8^3 = 512\) combinações de cores.
+
+O processo de conversão pode ser representado por:
+
+    ÍNDICE DO PIXEL
+           |
+           v
+    +------------------+
+    | PALETA DE CORES  |
+    +------------------+
+           |
+           v
+       COR DE 9 BITS
+       RRR GGG BBB
+           |
+           v
+       FRAMEBUFFER
+
+A representação indexada separa a informação do padrão gráfico da cor efetivamente apresentada. Isso permite que diferentes pixels compartilhem entradas da paleta e que a cor associada a um índice seja alterada sem modificar todos os padrões que utilizam esse índice.
+
+No projeto, a paleta é utilizada pelos motores gráficos para converter os índices dos pixels em valores de cor apropriados ao framebuffer. Essa organização também facilita a geração e a conversão de recursos gráficos por meio das ferramentas auxiliares do repositório.
+
+## 3.10 Background Baseado em Tiles
+
+Tiles são pequenos blocos gráficos utilizados para construir cenários a partir da repetição e combinação de padrões. Em vez de armazenar individualmente todos os pixels de um cenário completo, o sistema mantém os padrões dos tiles em uma memória e utiliza um mapa para indicar qual padrão deve ocupar cada posição.
+
+No projeto, cada tile possui dimensões de 8 × 8 pixels. A resolução lógica utilizada pelos motores gráficos é de 320 × 240 pixels. Portanto, o background pode ser organizado em:
+
+\[
+\frac{320}{8}=40 \text{ tiles por linha}
+\]
+
+\[
+\frac{240}{8}=30 \text{ linhas de tiles}
+\]
+
+O mapa do background possui, assim, 40 × 30, ou 1200 posições de tiles para preencher a área lógica da tela.
+
+A determinação de um pixel do background envolve a identificação do tile correspondente e da posição local do pixel dentro desse tile. O índice do tile permite consultar o padrão gráfico apropriado, enquanto as coordenadas locais determinam qual pixel deve ser lido.
+
+O fluxo pode ser representado por:
 
     COORDENADA DO PIXEL
             |
             v
-    +-------------------+
-    |  SCROLL / OFFSET  |
-    +-------------------+
+       TILEMAP
             |
             v
-    COORDENADA DO CENARIO
-            |
-            +----------------+
-            |                |
-            v                v
-       TILEMAP          COORDENADA
-                        LOCAL DO TILE
-            |                |
-            v                v
-       PADRAO DO TILE ---> PIXEL
-                             |
-                             v
-                            COR
-
-A principal vantagem dessa tecnica e a reutilizacao dos padroes. Um mesmo tile pode aparecer diversas vezes no cenario sem que seja necessario armazenar varias copias de seus pixels.
-
-Essa organizacao reduz o consumo de memoria e permite representar cenarios maiores e mais variados a partir de uma quantidade relativamente pequena de padroes graficos.
-
-
-## 3.3 Scroll e Wraparound
-
-O scroll e uma tecnica utilizada para produzir o deslocamento visual de um cenario. Em uma arquitetura baseada em tiles, esse deslocamento pode ser realizado alterando as coordenadas utilizadas para consultar o cenario, sem que seja necessario mover fisicamente os dados armazenados no tilemap.
-
-No projeto, sao utilizados deslocamentos nos eixos horizontal e vertical, permitindo modificar a regiao do cenario que esta sendo apresentada na tela.
-
-De forma conceitual:
-
-    COORDENADA DA TELA
-            +
-    OFFSET DE SCROLL
+      ÍNDICE DO TILE
             |
             v
-    COORDENADA DO CENARIO
+     PADRÃO DO TILE
             |
             v
-    CONSULTA AO TILEMAP
+      ÍNDICE DE COR
+            |
+            v
+          PALETA
+            |
+            v
+       COR DO PIXEL
 
-Assim, quando o valor de scroll e alterado, uma mesma posicao da tela pode passar a representar outra regiao do cenario.
+A principal vantagem dessa técnica é a reutilização dos padrões. Um mesmo tile pode aparecer em diferentes posições do cenário sem que seja necessário armazenar cópias independentes de todos os seus pixels.
 
-Essa estrategia evita a necessidade de deslocar fisicamente os dados armazenados na memoria. O tilemap e os padroes graficos permanecem em suas respectivas memorias, enquanto a coordenada utilizada durante a consulta e modificada de acordo com o deslocamento desejado.
+Essa organização reduz a quantidade de dados necessária para representar cenários e permite que o motor de background gere a imagem consultando o mapa e os padrões armazenados nas respectivas memórias.
 
-O wraparound complementa esse mecanismo ao permitir que o deslocamento seja tratado de forma ciclica. Quando uma coordenada utilizada para acessar o cenario ultrapassa os limites definidos, ela pode retornar ao inicio da regiao correspondente.
+## 3.11 Sprites e Atributos Gráficos
 
-Esse comportamento pode ser representado de forma simplificada por:
+Sprites são elementos gráficos que podem ser posicionados independentemente do background. Eles são frequentemente utilizados para representar personagens, objetos e outros componentes móveis de uma cena.
 
-    +-----------------------------+
-    |          CENARIO            |
-    |                             |
-    |  INICIO ------------ FIM    |
-    |    ^                 |      |
-    |    |_________________|      |
-    |         WRAPAROUND          |
-    +-----------------------------+
+Diferentemente do background, que é organizado por meio de um tilemap, o motor de sprites utiliza informações de posição, padrão gráfico, paleta e outros atributos para determinar como cada elemento deve ser apresentado.
 
-Dessa maneira, o final do cenario pode ser conectado ao seu inicio, permitindo que o deslocamento continue sem a necessidade de interromper o movimento ou reconstruir o tilemap.
+No projeto, o motor de sprites processa os atributos e os padrões gráficos necessários à renderização. A especificação da ISA contempla instruções para configurar a posição e os atributos de sprites, além de instruções para escrever seus dados gráficos.
 
-A combinacao entre scroll e wraparound permite produzir movimento continuo do background, mantendo os dados graficos armazenados de forma organizada e evitando operacoes desnecessarias de movimentacao da imagem.
+A palavra de atributos definida na especificação possui 32 bits e contempla campos relacionados a habilitação, prioridade, espelhamento horizontal e vertical, seleção de paleta e identificação do padrão gráfico. A organização exata desses campos deve seguir a codificação utilizada pelo projeto.
 
+Durante a renderização, o motor utiliza as informações de configuração para determinar a posição ocupada pelo sprite e consultar seus pixels. Os índices de cor são convertidos pela paleta e os pixels resultantes são encaminhados ao processo de composição.
 
-## 3.4 Sprites
+A utilização de atributos permite modificar a posição e a aparência de um sprite sem precisar reconstruir todo o seu padrão gráfico. Isso favorece a reutilização dos recursos armazenados e simplifica a programação das cenas.
 
-Sprites sao elementos graficos independentes do background, utilizados para representar objetos que possuem posicao e atributos proprios dentro da cena.
+## 3.12 Rasterização de Primitivas Geométricas
 
-Enquanto o background e organizado a partir de uma estrutura de tiles, os sprites sao armazenados e processados individualmente pelo motor de sprites. Cada sprite possui uma entrada de atributos armazenada em uma memoria dedicada.
+Rasterização é o processo de converter uma descrição geométrica em uma representação discreta formada por pixels. Uma primitiva, como um retângulo ou triângulo, pode ser descrita por coordenadas e vértices; entretanto, a imagem final é armazenada em uma grade de posições discretas.
 
-No projeto, cada entrada da memoria de atributos possui:
+No projeto, existem unidades de rasterização destinadas ao desenho de retângulos e triângulos. Esses módulos recebem os parâmetros das primitivas e determinam quais pixels devem ser produzidos para representar as regiões geométricas.
 
-32 bits
+No caso de um retângulo preenchido, as coordenadas fornecidas permitem determinar os limites horizontais e verticais da região. O rasterizador percorre os pixels correspondentes e gera as escritas necessárias no framebuffer.
 
-A memoria de atributos utiliza um endereco de 5 bits, permitindo armazenar:
+Para um triângulo, a descrição é feita por três vértices. A partir deles, o rasterizador determina a região interna da primitiva e os pixels que pertencem ao seu preenchimento.
 
-2^5 = 32 entradas de sprites.
+O fluxo geral pode ser representado por:
 
-A interface utilizada pelo sistema pode ser representada por:
-
-    +--------------------------+
-    | MEMORIA DE ATRIBUTOS     |
-    |                          |
-    | 32 entradas              |
-    | 32 bits por entrada     |
-    +--------------------------+
-                |
-                v
-         ATRIBUTOS DO SPRITE
-                |
-                v
-          MOTOR DE SPRITES
-
-A palavra de atributos de 32 bits e utilizada para armazenar as informacoes necessarias para configurar cada sprite. Essas informacoes sao produzidas pelos modulos de controle de sprites e posteriormente armazenadas na memoria de atributos.
-
-O sistema possui, por exemplo, modulos responsaveis pelo controle de movimento e espelhamento de um sprite e pela criacao de novos sprites. Esses modulos geram os dados de atributos que sao escritos na memoria dedicada. :contentReference[oaicite:0]{index=0}
-
-Durante a renderizacao, o motor de sprites realiza a leitura dessas entradas por meio do endereco do atributo e utiliza os dados obtidos juntamente com a memoria de padroes e a paleta de cores para determinar os pixels que devem ser escritos no framebuffer. A interface do motor recebe a palavra de atributos de 32 bits, o padrao grafico e os dados da paleta. :contentReference[oaicite:1]{index=1} :contentReference[oaicite:2]{index=2}
-
-Os padroes graficos dos sprites sao armazenados separadamente da memoria de atributos. Cada dado lido da memoria de padroes possui 8 bits, correspondendo ao indice de cor utilizado pelo pixel do padrao.
-
-Essa separacao entre atributos, padroes graficos e paleta permite organizar o processamento dos sprites em diferentes memorias e modulos especializados:
-
-    ATRIBUTOS
-        |
-        v
-    +--------------------+
-    | MEMORIA DE         |
-    | ATRIBUTOS          |
-    +--------------------+
-        |
-        v
-    MOTOR DE SPRITES
-        |
-        +--------------------+
-        |                    |
-        v                    v
-    PADRAO GRAFICO        PALETA
-        |                    |
-        +---------+----------+
-                  |
-                  v
-             PIXEL RGB
-                  |
-                  v
-             FRAMEBUFFER
-
-Dessa forma, o sprite pode ser entendido como a combinacao entre seus atributos de configuracao, seu padrao grafico e as cores definidas pela paleta. O motor de sprites utiliza essas informacoes para determinar como o objeto deve ser representado na imagem final.
-
-
-## 3.5 Espelhamento
-
-O espelhamento e uma tecnica utilizada para alterar a orientacao de um recurso grafico sem a necessidade de armazenar uma segunda versao do mesmo padrao.
-
-No projeto sao utilizados dois tipos de espelhamento:
-
-- Flip horizontal;
-- Flip vertical.
-
-O principio consiste em alterar a ordem das coordenadas locais utilizadas para acessar os pixels do padrao grafico.
-
-Para um sprite de 16 x 16 pixels, no espelhamento horizontal a coordenada horizontal e acessada em ordem inversa. De forma conceitual:
-
-COORDENADA ORIGINAL:
-
-    0, 1, 2, 3, ..., 13, 14, 15
-
-COORDENADA ESPELHADA:
-
-    15, 14, 13, ..., 2, 1, 0
-
-De maneira equivalente, o espelhamento vertical inverte a ordem das coordenadas no eixo vertical.
-
-O processo pode ser representado por:
-
-               SPRITE
-                  |
-          +-------+-------+
-          |               |
-          v               v
-     FLIP HORIZONTAL   FLIP VERTICAL
-          |               |
-          v               v
-     INVERTE X         INVERTE Y
-          |               |
-          +-------+-------+
-                  |
-                  v
-          PADRAO GRAFICO
-                  |
-                  v
-                PIXEL
-
-Assim, o mesmo padrao armazenado na memoria pode ser apresentado em diferentes orientacoes.
-
-Essa tecnica e importante principalmente pela reutilizacao dos recursos graficos. Em vez de armazenar diferentes imagens para cada orientacao de um objeto, o sistema pode utilizar o mesmo padrao e modificar a forma como seus pixels sao acessados.
-
-No projeto, o controle dessas orientacoes esta associado ao processamento dos atributos dos sprites, permitindo que um mesmo recurso grafico possa ser apresentado com diferentes orientacoes durante a renderizacao.
-
-Dessa forma, o espelhamento contribui para a economia de memoria e aumenta a reutilizacao dos padroes graficos armazenados.
-
-
-## 3.6 Rasterizacao
-
-Rasterizacao e o processo de transformar uma descricao geometrica em uma representacao discreta formada por pixels.
-
-Uma primitiva geometrica pode ser descrita por coordenadas, vertices e relacoes entre pontos. Entretanto, a imagem armazenada no framebuffer e composta por uma quantidade finita de pixels.
-
-A rasterizacao realiza justamente essa conversao entre a representacao geometrica e a representacao discreta da imagem.
-
-No projeto sao implementadas duas primitivas geometricas:
-
-- Retangulos preenchidos;
-- Triangulos preenchidos.
-
-Para os retangulos, o rasterizador utiliza as coordenadas fornecidas para determinar a regiao ocupada pela primitiva. A partir dos limites horizontais e verticais, os pixels pertencentes a essa regiao sao percorridos e enviados para o framebuffer.
-
-O processo pode ser representado por:
-    
-    COORDENADAS DA PRIMITIVA
-              |
-              v
+    COORDENADAS E PARÂMETROS
+               |
+               v
     +----------------------+
-    | DETERMINACAO DOS     |
-    | LIMITES DA REGIAO    |
-    +----------------------+
-              |
-              v
-    +----------------------+
-    | PERCURSO DOS PIXELS  |
-    +----------------------+
-              |
-              v
-          FRAMEBUFFER
-
-No caso dos triangulos, a rasterizacao utiliza os tres vertices fornecidos para determinar a regiao ocupada pela primitiva.
-
-O preenchimento pode ser realizado linha por linha, determinando para cada coordenada vertical o intervalo horizontal correspondente ao interior do triangulo.
-
-De forma simplificada:
-
-         /\
-        /  \
-       /    \
-      /------\
-     /        \
-    /----------\
-
-Cada linha possui um intervalo de pixels que pertence ao interior da primitiva. Esses pixels sao posteriormente utilizados para construir a imagem no framebuffer.
-
-A implementacao em hardware utiliza operacoes aritmeticas adequadas a logica digital, incluindo representacoes inteiras e de ponto fixo. Essa abordagem permite realizar os calculos necessarios sem depender de operacoes de ponto flutuante.
-
-Algumas operacoes aritmeticas utilizadas durante o processo podem ser realizadas por circuitos dedicados e distribuidas em diferentes ciclos de clock. Essa estrategia permite controlar o processamento por meio de maquinas de estados e adequar a rasterizacao ao funcionamento sequencial da FPGA.
-
-De forma geral, o processo de rasterizacao pode ser resumido por:
-
-    DESCRICAO GEOMETRICA
-              |
-              v
-    +----------------------+
-    | RASTERIZADOR         |
+    |     RASTERIZADOR     |
     |                      |
-    | Retangulos           |
-    | Triangulos           |
+    | Retângulos           |
+    | Triângulos           |
     +----------------------+
-              |
-              v
+               |
+               v
         PIXELS GERADOS
-              |
-              v
-          COMPOSITOR
-              |
-              v
-          FRAMEBUFFER
+               |
+               v
+          COMPOSIÇÃO
+               |
+               v
+           FRAMEBUFFER
 
-A rasterizacao constitui, portanto, uma das principais etapas responsaveis por transformar informacoes geometricas em pixels que posteriormente participarao da composicao da imagem final.
+A rasterização transforma os comandos geométricos da ISA em dados gráficos concretos. Dessa forma, o programa pode solicitar o desenho de uma primitiva por meio de uma instrução, enquanto o circuito especializado executa os cálculos necessários para produzir seus pixels.
 
+A divisão entre a descrição geométrica e a geração de pixels permite que o programa opere em um nível mais abstrato, sem precisar especificar individualmente cada pixel que compõe uma figura.
 
-## 3.7 Double Buffering
+## 3.13 Compositor e Prioridade entre Camadas
 
-O double buffering e uma tecnica utilizada para separar o buffer que esta sendo exibido daquele que esta sendo utilizado para construir o proximo quadro.
+O compositor é responsável por organizar a contribuição dos diferentes motores gráficos para a formação da imagem final. Como background, primitivas geométricas e sprites podem ocupar regiões coincidentes, o sistema precisa definir como essas informações serão combinadas.
 
-Quando um unico framebuffer e utilizado simultaneamente para leitura pelo controlador VGA e escrita pelos motores graficos, o conteudo da imagem pode ser modificado enquanto ainda esta sendo transmitido para o monitor.
+Uma estratégia consiste em processar as camadas em uma ordem determinada e encaminhar as escritas ao framebuffer por meio de uma interface compartilhada. A arbitragem seleciona a origem dos dados que serão escritos e evita que múltiplos motores controlem simultaneamente a mesma porta de escrita.
 
-Isso pode fazer com que diferentes partes da tela correspondam a estados diferentes da cena, produzindo artefatos visuais.
+No projeto, o compositor integra os elementos gráficos produzidos pelos motores de background, rasterização e sprites. Os testes de composição presentes no repositório incluem cenários de sobreposição e verificação da ordem de desenho.
 
-Para evitar esse problema, o sistema utiliza dois buffers:
+O fluxo conceitual pode ser representado por:
 
-    +------------------+
-    |    BUFFER A      |
-    |                  |
-    |    EXIBICAO      |
-    +------------------+
-
-    +------------------+
-    |    BUFFER B      |
-    |                  |
-    |   RENDERIZACAO   |
-    +------------------+
-
-Enquanto o controlador VGA realiza a leitura do Buffer A, os motores graficos podem construir o proximo quadro no Buffer B.
-
-Quando o novo quadro esta pronto, os papeis dos buffers sao invertidos:
-
-    BUFFER A -> RENDERIZACAO
-    BUFFER B -> EXIBICAO
-
-A troca dos buffers e sincronizada com o sinal de video e ocorre durante o periodo de vertical blanking, conhecido como VBlank.
-
-O VBlank corresponde ao intervalo entre o final de um quadro e o inicio da apresentacao do proximo quadro. Realizar a troca nesse momento evita, ou reduz significativamente, a possibilidade de alterar o buffer utilizado para exibicao no meio da varredura da imagem.
-
-Dessa forma, o double buffering cria uma separacao entre a etapa de renderizacao e a etapa de exibicao.
-
-O mecanismo pode ser resumido como:
-
-     RENDERIZACAO
+    BACKGROUND
          |
          v
-    BUFFER DE ESCRITA
-         |
-         | quadro pronto
-         v
-       VBLANK
+    PRIMITIVAS GEOMÉTRICAS
          |
          v
-    TROCA DOS BUFFERS
+       SPRITES
          |
          v
-    BUFFER DE EXIBICAO
+      COMPOSIÇÃO
          |
          v
-        VGA
+      FRAMEBUFFER
 
+A ordem apresentada representa a sequência conceitual de composição utilizada no projeto, e não implica que todos os motores estejam necessariamente executando operações em paralelo. A implementação depende do controle e do sequenciamento adotados nos módulos.
 
-## 3.8 VGA
+A prioridade entre sprites constitui outro aspecto importante. Quando diferentes sprites ocupam a mesma região, o sistema precisa determinar qual contribuição deve prevalecer. O motor de sprites contempla atributos de prioridade, e o repositório possui testbenches destinados à verificação desse comportamento.
 
-VGA (Video Graphics Array) e uma interface tradicional de video utilizada para transmitir uma imagem para um monitor por meio de sinais de sincronizacao e dados de cor.
+O compositor e o mecanismo de prioridade contribuem, portanto, para transformar os pixels produzidos pelas unidades funcionais em uma imagem coerente.
 
-No projeto, o controlador VGA representa a etapa final do processamento grafico. Ele realiza a leitura dos dados armazenados no framebuffer e gera os sinais necessarios para a apresentacao da imagem.
+## 3.14 Framebuffer e Double Buffering
 
-O clock principal utilizado pela plataforma e:
+O framebuffer é uma região de memória que armazena os pixels utilizados para representar a imagem. Em vez de gerar diretamente todos os sinais de cor do monitor a partir dos cálculos dos motores gráficos, o sistema escreve os pixels em memória e permite que o controlador de vídeo os leia durante a varredura da tela.
 
-50 MHz
+No projeto, o framebuffer armazena valores de cor de 9 bits por pixel lógico. Considerando a resolução lógica de 320 × 240 pixels, cada buffer possui 76800 posições.
 
-A partir desse sinal, um PLL gera um clock de aproximadamente:
+A capacidade nominal de um buffer é:
 
-25 MHz
+\[
+320 \times 240 \times 9 = 691200 \text{ bits}
+\]
 
-utilizado pelo controlador VGA para realizar a varredura da imagem.
+Isso corresponde a 86400 bytes, ou aproximadamente 84,4 KiB.
 
-A saida fisica utilizada pelo projeto possui resolucao:
+O projeto utiliza dois buffers, permitindo separar a construção de um quadro da leitura utilizada para exibição. Essa técnica é conhecida como *double buffering*.
 
-640 x 480 pixels
+Enquanto um buffer é utilizado para fornecer pixels ao controlador VGA, o outro pode receber os dados do quadro seguinte. Quando o sistema realiza a troca de buffers, o papel de cada memória é invertido.
 
-Entretanto, a representacao interna da imagem utiliza uma resolucao logica de:
+A troca pode ser sincronizada com o período de apagamento vertical (*Vertical Blanking Interval* — VBlank), evitando a mudança do buffer de exibição no meio da varredura do quadro.
 
-320 x 240 pixels
+O mecanismo pode ser representado por:
 
-Para compatibilizar essas duas resolucoes, cada pixel logico e representado por uma area de 2 x 2 pixels fisicos.
+    +-------------------+      +-------------------+
+    | BUFFER DE LEITURA |      | BUFFER DE ESCRITA |
+    |                   |      |                   |
+    | Controlador VGA   |      | Motores gráficos  |
+    +-------------------+      +-------------------+
+               \                    /
+                \                  /
+                 v                v
+                    TROCA NO VBLANK
+                            |
+                            v
+                     NOVOS PAPÉIS
 
-A relacao pode ser representada por:
+O double buffering reduz a possibilidade de a imagem exibida misturar partes de quadros diferentes. Entretanto, o resultado depende da correta sincronização da troca e da conclusão das operações de renderização.
 
-    PIXEL LOGICO
-    
-    +-----+-----+
-    |     |     |
-    |  P  |  P  |
-    +-----+-----+
-    |     |     |
-    |  P  |  P  |
-    +-----+-----+
+## 3.15 Controlador VGA e Resolução de Vídeo
 
-Cada pixel logico, portanto, corresponde a quatro pixels fisicos na saida VGA.
+O controlador VGA é responsável por gerar os sinais de sincronização e os dados de cor utilizados para apresentar a imagem em um monitor compatível.
 
-Considerando uma coordenada logica (x, y), a regiao correspondente na tela fisica possui aproximadamente o dobro das dimensoes:
+No projeto, o controlador de vídeo realiza a leitura dos pixels do framebuffer e produz a saída VGA. A implementação utiliza um clock principal de 50 MHz e um PLL para gerar um clock de pixel de aproximadamente 25 MHz.
 
-(x, y) -> (2x, 2y)
+A resolução física configurada é de 640 × 480 pixels, enquanto os motores gráficos trabalham com uma resolução lógica de 320 × 240 pixels. Essa diferença é tratada por meio de uma representação em que cada pixel lógico corresponde a uma região de 2 × 2 pixels físicos.
 
-Essa estrategia permite que os motores graficos trabalhem com uma quantidade menor de pixels, reduzindo a quantidade de memoria necessaria para o framebuffer e simplificando o processamento interno.
+A relação entre as coordenadas pode ser descrita por:
 
-O controlador VGA realiza a varredura sequencial da imagem fisica e utiliza as coordenadas produzidas pelo contador de video para determinar qual regiao do framebuffer deve ser apresentada.
+\[
+x_{\text{físico}}=2x_{\text{lógico}}
+\]
 
-Assim, a etapa final do fluxo grafico pode ser resumida como:
+\[
+y_{\text{físico}}=2y_{\text{lógico}}
+\]
 
-    FRAMEBUFFER
-         |
-         v
-    COORDENADA FISICA VGA
-         |
-         v
-    MAPEAMENTO 640 x 480
-         |
-         v
-    MAPEAMENTO 320 x 240
-         |
-         v
-    DADOS DE COR
-         |
-         v
-    MONITOR VGA
+Assim, cada pixel lógico é apresentado como quatro pixels físicos adjacentes. Essa estratégia reduz a quantidade de pixels que precisam ser armazenados e processados internamente.
 
-A saida VGA estabelece, portanto, a interface entre a imagem produzida pelos motores graficos e o dispositivo fisico de exibicao.
+O fluxo da imagem até a saída pode ser representado por:
 
+    MOTORES GRÁFICOS
+           |
+           v
+       COMPOSITOR
+           |
+           v
+       FRAMEBUFFER
+           |
+           v
+    CONTROLADOR VGA
+           |
+           v
+      SAÍDA DE VÍDEO
+           |
+           v
+         MONITOR
+
+O controlador VGA constitui a interface final entre o processamento gráfico interno e a exibição física da imagem. Sua operação precisa estar sincronizada com os endereços de leitura do framebuffer e com os sinais de temporização do vídeo.
+
+## 3.16 FPGA e Descrição de Hardware em Verilog
+
+Uma FPGA (*Field-Programmable Gate Array*) é um dispositivo lógico programável que permite implementar circuitos digitais por meio de uma configuração definida pelo projetista. Ao contrário de um programa executado sequencialmente por uma CPU de propósito geral, uma descrição de hardware define estruturas lógicas que podem operar de forma concorrente.
+
+No projeto, o Verilog é utilizado para descrever os módulos do coprocessador, incluindo a unidade de busca, a ULA, o banco de registradores, os motores gráficos, o compositor e os circuitos relacionados à saída VGA.
+
+A organização modular permite desenvolver e verificar componentes de maneira independente antes de integrá-los ao sistema completo. Também possibilita descrever registradores, máquinas de estados, operações combinacionais e interfaces entre módulos.
+
+A síntese converte a descrição de hardware em uma implementação adequada aos recursos disponíveis na FPGA. No fluxo do Quartus, o projeto é analisado, sintetizado, ajustado ao dispositivo selecionado e preparado para programação da placa.
+
+A validação do sistema exige mais do que a compilação: testbenches permitem verificar o comportamento lógico em simulação, enquanto os testes na placa permitem observar a interação dos módulos no hardware real. A análise de utilização de recursos, temporização e frequência máxima também é necessária para avaliar as características físicas da implementação.
+
+Essa abordagem permite integrar lógica de controle e unidades gráficas especializadas em um único dispositivo, tornando possível executar programas que comandam diretamente a geração de imagens.
+
+## Referências
+
+PATTERSON, David A.; HENNESSY, John L. *Computer Organization and Design ARM Edition: The Hardware Software Interface*. 2. ed. Cambridge: Morgan Kaufmann, 2016.
+
+IEEE. *IEEE Standard for Verilog Hardware Description Language*. IEEE Std 1364-2005. New York: Institute of Electrical and Electronics Engineers, 2006.
+
+INTEL. *Cyclone V Device Handbook*. Santa Clara: Intel Corporation. Disponível em: https://www.intel.com/content/www/us/en/products/details/fpga/cyclone/v/docs.html. Acesso em: 15 out. 2026.
 
 
 # 4. Arquitetura do Sistema
 
-A arquitetura do sistema gráfico foi organizada de forma modular, separando as etapas de armazenamento de dados, geração dos elementos gráficos, composição das camadas e apresentação do resultado por meio da interface VGA. O módulo `top_video.v` atua como elemento central de integração do subsistema de vídeo, conectando as memórias utilizadas pelos motores de renderização, o rasterizador, o compositor, o framebuffer e o controlador VGA. A comunicação com o restante do sistema ocorre por meio de interfaces destinadas à escrita de dados de background, padrões de sprites, atributos de sprites, paleta de cores, parâmetros de scroll e comandos de rasterização. Dessa forma, o `top_video` concentra a infraestrutura necessária para que os diferentes elementos gráficos possam ser processados e armazenados antes de serem apresentados no monitor.
+A arquitetura do coprocessador foi organizada em dois caminhos complementares: o **caminho de controle**, responsável por executar um programa armazenado em memória e comandar os recursos gráficos, e o **caminho gráfico**, formado pelos motores de renderização, pela composição das camadas, pelo framebuffer e pelo controlador VGA. Na primeira etapa do projeto, a sequência de desenho era fixa e determinada pelo módulo `compositor.v`, e a demonstração dependia de módulos auxiliares (`test_driver` e `sprite_mover_flip`). Nesta etapa, essa responsabilidade passou a ser de uma **unidade de controle por instruções**: um programa em linguagem de montagem, armazenado na memória de instruções, define o que é configurado e o que é desenhado em cada quadro.
 
-Internamente, o sistema trabalha com uma resolução lógica de 320×240 pixels, enquanto a saída VGA utiliza resolução de 640×480 pixels. Essa diferença é tratada pelo controlador VGA, que fornece as coordenadas do pixel físico e permite que o framebuffer seja acessado utilizando as coordenadas lógicas obtidas por meio dos deslocamentos de um bit das coordenadas VGA. Assim, `fb_rd_x` é obtido a partir de `next_x[9:1]` e `fb_rd_y` a partir de `next_y[9:1]`, fazendo com que cada pixel lógico corresponda a uma região de 2×2 pixels na saída VGA.
+O módulo `coprocessador_top.v` atua como elemento central de integração. Ele conecta a unidade de busca, o banco de registradores, a ULA, a unidade de controle, as memórias gráficas, os três motores de renderização, a seleção do motor ativo, a camada de composição, o framebuffer com double buffering e o controlador VGA. As interfaces externas se resumem ao clock de 50 MHz, aos botões (`KEY`), aos LEDs (`LEDR`) e à saída VGA, não havendo mais portas de escrita nas memórias gráficas: toda configuração passa a ser feita por instruções.
 
-A geração do clock utilizado pelo subsistema VGA também está integrada ao `top_video`. O clock principal de 50 MHz é fornecido ao PLL `pll01`, que gera o clock de pixel de 25 MHz utilizado pelo controlador VGA. O sinal `pll_locked` é utilizado para garantir que o controlador VGA somente opere normalmente após o PLL estar estabilizado.
+Internamente, o sistema continua trabalhando com a resolução lógica de 320×240 pixels e com a saída VGA de 640×480, na qual cada pixel lógico corresponde a um bloco de 2×2 pixels físicos. O clock de 50 MHz é fornecido ao PLL `pll01`, que gera o clock de pixel de 25 MHz do controlador VGA, e o sinal `pll_locked` garante que a saída de vídeo somente opere normalmente após a estabilização do PLL.
 
-A organização da arquitetura pode ser representada pelo seguinte fluxo:
+> **Observação:** nesta etapa, o módulo `coprocessador_top` substitui o conjunto `top_video`, `test_driver` e `sprite_mover_flip`. Para sintetizar esta versão, ele deve ser definido como *top-level entity* do projeto Quartus, uma vez que o `DE1_SOC_golden_top` da primeira etapa ainda instancia o `top_video`.
 
-```text
-                                  frame_start
-                                       |
-                                       v
-                              +----------------+
-                              |   COMPOSITOR   |
-                              |                |
-                              | FSM de         |
-                              | composição     |
-                              +-------+--------+
-                                      |
-                       controla      |      controla
-                      start/done     |      arbitragem
-                                      |
-                +---------------------+---------------------+
-                |                     |                     |
-                v                     v                     v
-         +-------------+       +-------------+       +-------------+
-         |  Background |       |Rasterizador |       |   Sprites   |
-         |    Motor    |       |             |       |    Motor    |
-         +------+------+       +------+------+       +------+------+
-                |                     |                     |
-                +---------------------+---------------------+
-                                      |
-                               requisições de
-                             palette / framebuffer
-                                      |
-                                      v
-                              +---------------+
-                              |   COMPOSITOR  |
-                              |   Arbitragem   |
-                              +-------+-------+
-                                      |
-                                      v
-                              +---------------+
-                              |   Framebuffer |
-                              | Double Buffer |
-                              +-------+-------+
-                                      |
-                                      v
-                                 VGA Driver
-                                      |
-                                      v
-                                     VGA
-```
+## 4.1 Visão Geral da Arquitetura
 
-O processo de composição é controlado pelo módulo `compositor.v`, que determina a ordem de execução dos três motores gráficos. Ao receber `frame_start`, o compositor inicia inicialmente o motor de background. Após a conclusão dessa etapa, inicia o processamento da camada de polígonos e, posteriormente, o motor de sprites. Dessa maneira, os elementos são incorporados ao framebuffer de forma sequencial, estabelecendo uma ordem de sobreposição determinística. No `top_video`, essa sequência é explicitamente conectada aos sinais `bg_start`, `poly_start` e `spr_start`, enquanto os sinais de conclusão dos respectivos motores são utilizados pelo compositor para determinar as transições entre as etapas.
-
-A arquitetura utiliza ainda recursos de memória compartilhados entre os diferentes motores. A palette RAM possui uma única interface física de leitura conectada ao compositor. Cada motor fornece seu próprio endereço de leitura, e o compositor seleciona o endereço correspondente ao motor que está em execução. Como os motores são ativados sequencialmente, não há necessidade de realizar arbitração complexa entre requisições simultâneas. O mesmo princípio é aplicado à porta de escrita do framebuffer, permitindo que background, polígonos e sprites utilizem uma única interface física de escrita.
-
-Essa organização reduz a quantidade de interfaces físicas necessárias e mantém a responsabilidade de gerenciamento dos recursos compartilhados concentrada em um único módulo. O compositor, portanto, exerce duas funções complementares: controlar a sequência de composição e realizar a seleção das requisições de memória provenientes dos motores ativos.
-
-## 4.1 Fluxo de Composição
-
-A construção de cada frame ocorre em etapas sequenciais controladas por uma máquina de estados finitos implementada no `compositor.v`. O módulo possui os estados `S_IDLE`, `S_BG`, `S_POLY`, `S_SPR` e `S_DONE`, correspondentes, respectivamente, à espera de uma solicitação de composição, processamento do background, processamento dos polígonos, processamento dos sprites e finalização do frame. O sinal `busy` permanece ativo enquanto o compositor não está no estado `S_IDLE`, permitindo que o restante do sistema identifique quando uma composição está em andamento.
-
-Quando `start` é acionado no estado `S_IDLE`, o compositor gera um pulso em `bg_start` e passa para o estado `S_BG`. O motor de background passa então a gerar as escritas correspondentes ao plano de fundo. A conclusão dessa etapa é indicada por `bg_done`. Quando esse sinal é detectado, o compositor gera `poly_start` e passa para `S_POLY`, iniciando o processamento da camada de polígonos.
-
-A etapa de polígonos possui uma característica específica: sua conclusão é indicada pelo sinal `poly_layer_done`, e não simplesmente pelo sinal geral `rast_done`. Isso permite que o controle da composição utilize uma indicação específica de término da camada de polígonos. Após essa indicação, o compositor gera `spr_start` e passa para o estado `S_SPR`, permitindo que os sprites sejam desenhados sobre o conteúdo previamente produzido pelas etapas anteriores. O processamento de sprites termina quando `spr_done` é acionado. Em seguida, o compositor entra em `S_DONE`, produzindo `done` e retornando posteriormente ao estado de espera.
-
-A ordem de composição estabelecida é, portanto:
+O fluxo completo do sistema pode ser representado da seguinte forma:
 
 ```text
-Background
-     ↓
-Polígonos
-     ↓
-Sprites
+                    memória de instruções (.mif)
+                               |
+                               v
+                  +-------------------------+
+                  |  UNIDADE DE BUSCA       |<---- vblank (reinício do quadro)
+                  |  PC, stall, HALT, desvios|<---- flags {C, V, N, Z}
+                  +------------+------------+
+                               | instrução
+                               v
+                  +-------------------------+
+                  |  UNIDADE DE CONTROLE    |
+                  |  decodificação          |
+                  +--+-------+-------+------+
+                     |       |       |
+        ULA / flags  |       |       | escritas nas memórias gráficas
+           +---------+       |       | (paleta, tilemap, padrões,
+           v                 v       |  atributos de sprites, scroll)
+  +----------------+  +--------------+--+
+  |  BANCO DE      |  |  start / done    |
+  |  REGISTRADORES |  |  engine_sel      |
+  |  + ULA         |  +--+------+------+-+
+  +--------+-------+     |      |      |
+           | V0X..COLOR  v      v      v
+           |         +------+ +-----+ +-------+
+           +-------> | BG   | |RASTE| |SPRITES|
+                     |MOTOR | |RIZ. | | MOTOR |
+                     +--+---+ +--+--+ +---+---+
+                        +--------+--------+
+                                 | requisições de paleta / escrita
+                                 v
+                      +---------------------+
+                      |     ENGINE_MUX      |  seleciona o motor ativo
+                      +----------+----------+
+                                 v
+                      +---------------------+
+                      | CAMADA DE COMPOSIÇÃO|  garante fundo < polígonos < sprites
+                      +----------+----------+
+                                 v
+                      +---------------------+
+                      |    FRAMEBUFFER      |  2 bancos (double buffering)
+                      +----------+----------+
+                                 v
+                            VGA DRIVER --> MONITOR
 ```
 
-Essa ordem possui uma consequência importante sobre a construção da imagem. Como cada etapa escreve sobre o framebuffer utilizado para a renderização, os elementos processados posteriormente podem substituir pixels previamente escritos. O background constitui a base da imagem, os polígonos são adicionados posteriormente e os sprites são processados por último. No caso dos sprites, pixels transparentes não geram escritas no framebuffer, permitindo preservar o conteúdo produzido pelas camadas anteriores.
+O controle do sistema segue o modelo de **execução comandada por programa**. A unidade de busca lê uma instrução por vez da memória de instruções e a entrega à unidade de controle. Instruções simples, como as aritméticas e as de configuração de memórias, executam em poucos ciclos. Instruções de desenho (`DRAW_BG`, `DRAW_RECT`, `DRAW_TRI` e `DRAW_SPRITES`) disparam o motor correspondente e **mantêm o contador de programa parado** até que o motor sinalize o término. Dessa forma, os motores nunca disputam o framebuffer nem a paleta, e a ordem em que os elementos são desenhados é a ordem das instruções do programa.
 
-O compositor também garante que as requisições de memória sejam associadas à etapa correta da composição. Para a palette RAM, o endereço de leitura é selecionado de acordo com o motor que está ocupado. Para o framebuffer, os sinais `fb_we`, `fb_wr_x`, `fb_wr_y` e `fb_wr_data` são selecionados da mesma maneira. Como a sequência de composição impede que os motores sejam executados simultaneamente dentro do fluxo normal, essa estrutura funciona como uma arbitração simples baseada no estado atual da composição.
+O fim do programa de cada quadro é marcado pela instrução `HALT`. Quando ela é executada, a unidade de busca aguarda a próxima borda de subida do sinal de apagamento vertical (VBlank), troca os bancos do framebuffer e reinicia o programa no endereço 0. Os registradores não são zerados nessa reinicialização, o que permite que o programa mantenha estado entre quadros, como a posição e a velocidade de um objeto em movimento.
 
-O resultado dessa estratégia é uma arquitetura em que os motores de renderização não precisam disputar diretamente os recursos compartilhados. Cada motor possui suas próprias interfaces lógicas para palette e framebuffer, enquanto o compositor converte essas interfaces em uma única interface física para cada recurso. Essa separação simplifica a implementação e torna explícita a ordem de composição.
+## 4.2 Conjunto de Instruções (ISA)
 
-Depois que o compositor termina, o frame ainda não é imediatamente apresentado pelo VGA. O `top_video` mantém uma separação entre o término da renderização e o momento de troca dos buffers. O sinal `compositor_done` é utilizado para indicar que o frame foi completamente produzido, enquanto o sinal `vblank_event`, derivado do `vblank_tick` gerado pelo controlador VGA, indica um período seguro para modificar o banco que está sendo exibido.
+O coprocessador executa instruções de **32 bits**. O conjunto foi projetado para ser pequeno e dividido em três grupos: instruções aritméticas e lógicas, instruções de configuração das memórias gráficas e instruções de desenho e controle de fluxo. A numeração dos registradores e a codificação dos desvios seguem a convenção do ARMv8/LEGv8.
 
-Essa separação permite que a renderização seja concluída antes do período de atualização da imagem. Quando o compositor termina, o `top_video` registra essa condição por meio de `frame_render_done`. Quando posteriormente ocorre um evento de VBlank com `frame_render_done` ativo, os bancos de leitura e escrita são trocados. O banco que estava sendo utilizado para renderização passa a ser exibido, enquanto o banco anteriormente exibido passa a receber o próximo frame. Depois da troca, `frame_done` é acionado para indicar que um novo frame foi efetivamente apresentado.
+### 4.2.1 Formatos de Instrução
 
-Esse mecanismo caracteriza a utilização de **double buffering**. Inicialmente, `rd_buf_sel` é configurado para o banco 0 e `wr_buf_sel` para o banco 1. Assim, o VGA pode continuar lendo um frame enquanto o outro banco é atualizado pelos motores de renderização. A troca somente ocorre durante o VBlank, reduzindo o risco de que o VGA leia simultaneamente uma imagem que ainda esteja sendo modificada.
+Existem quatro formatos de instrução:
 
-## 4.2 Principais Módulos
+| Formato | Uso | Campos |
+| :--- | :--- | :--- |
+| **A** | ULA (`ADD`, `SUB`, `AND`, `LSL`, `LSR`, `PASS`) | `[31:27]` opcode · `[26]` I · `[25:21]` Rd[4:0] · `[20:15]` Rn · `[14]` Rd[5] · `[11:0]` imm12 ou Rm |
+| **G** | Configuração de memórias (`SET_*`, `WRITE_*`, `SCROLL_BG`) | `[31:27]` opcode · `[26:21]` Ra · `[20:15]` Rb |
+| **N** | Sem operandos (`DRAW_*`, `NOP`, `WAIT_VBLANK`, `HALT`) | `[31:27]` opcode |
+| **D** | Desvios (`B`, `B_COND`) | `[31:27]` opcode · `[26:23]` cond · `[13:0]` deslocamento |
 
-O módulo `DE1_SOC_golden_top.v` constitui o nível superior da aplicação na placa DE1-SoC, realizando a conexão entre os recursos externos da placa e o subsistema de vídeo. A partir desse nível são fornecidos sinais de clock, reset e controles utilizados pela demonstração, além das interfaces necessárias para comandar os elementos gráficos. O `top_video.v` é instanciado nesse nível e concentra a implementação específica do sistema gráfico.
+No formato A, o bit `I` seleciona o segundo operando: quando vale 1, ele é um imediato de 12 bits sem sinal (`imm12`); quando vale 0, é o conteúdo do registrador Rm. O destino Rd possui 6 bits, divididos entre `[25:21]` e `[14]`, para permitir o acesso aos registradores dedicados do rasterizador.
 
-O `top_video.v` é responsável pela integração dos principais componentes da arquitetura. Além das interfaces de saída VGA, ele possui entradas para escrita nas memórias de background, sprites e palette, parâmetros de scroll e comandos destinados ao rasterizador. Também recebe `frame_start` para iniciar uma nova composição e fornece sinais relacionados ao estado do rasterizador e à fase de processamento dos polígonos.
+### 4.2.2 Instruções
 
-O `motor_background.v` é responsável pela geração da camada de fundo. Ele utiliza a memória de tilemap, a memória de padrões dos tiles e a palette para determinar a cor de cada pixel do background. O `top_video` conecta o motor às memórias `bg_tile_ram` e `bg_tile_pattern_ram`, além de disponibilizar os sinais de controle de scroll horizontal e vertical.
+| Opcode | Mnemônico | Formato | Função |
+| :---: | :--- | :---: | :--- |
+| `00000` | `NOP` | N | Não faz nada |
+| `00001` | `ADD` | A | `Rd = Rn + Rm` (ou `imm12`) |
+| `00010` | `SUB` | A | `Rd = Rn − Rm` (ou `imm12`) |
+| `00011` | `AND` | A | `Rd = Rn & Rm` (ou `imm12`) |
+| `00100` | `LSL` | A | `Rd = Rn << Rm[4:0]` (ou `imm12`) |
+| `00101` | `LSR` | A | `Rd = Rn >> Rm[4:0]` (ou `imm12`) |
+| `00110` | `PASS` | A | `Rd = Rm` (ou `imm12`) |
+| `00111` | `SET_PALETTE` | G | `paleta[Ra[8:0]] = Rb[8:0]` |
+| `01000` | `DRAW_RECT` | N | Desenha um retângulo preenchido |
+| `01001` | `DRAW_TRI` | N | Desenha um triângulo preenchido |
+| `01010` | `SET_SPRITE_POS` | G | Posição do sprite `Ra[4:0]` recebe `Rb[16:0]` = `{y, x}` |
+| `01011` | `SET_SPRITE_ATTR` | G | Atributos do sprite `Ra[4:0]` recebem `Rb[14:0]` |
+| `01100` | `SET_TILEMAP` | G | `tilemap[Ra] = Rb[7:0]` |
+| `01101` | `SCROLL_BG` | G | Deslocamento `Ra[8:0]` no eixo indicado por `Rb[0]` (0: X, 1: Y) |
+| `01110` | `WRITE_SPRITE_DATA` | G | `padrões_sprite[Ra[13:0]] = Rb[7:0]` |
+| `01111` | `WRITE_TILE_DATA` | G | `padrões_tile[Ra[13:0]] = Rb[7:0]` |
+| `10000` | `DRAW_BG` | N | Desenha o background |
+| `10001` | `DRAW_SPRITES` | N | Desenha todos os sprites habilitados |
+| `10010` | `WAIT_VBLANK` | N | Aguarda a próxima borda de subida do VBlank |
+| `10011` | `HALT` | N | Fim do programa do quadro |
+| `10100` | `B` | D | Desvio incondicional |
+| `10101` | `B_COND` | D | Desvio condicional |
 
-A organização do background é baseada na separação entre os dados que identificam os tiles e os dados que representam seus padrões gráficos. A `bg_tile_ram` armazena os identificadores dos tiles utilizados pelo mapa, enquanto a `bg_tile_pattern_ram` fornece os dados dos pixels associados aos padrões. O motor utiliza essas informações para produzir os pixels da camada de fundo e enviá-los para o framebuffer.
+Os opcodes `10110` a `11111` são reservados. Se executados, são tratados como `NOP` e sinalizados pela unidade de busca como instrução inválida.
 
-O sistema de background também possui mecanismos de controle de scroll. O `top_video` fornece ao motor sinais para escrita explícita dos parâmetros de scroll e sinais associados ao modo de scroll automático, incluindo eixo, direção e passo.
-
-O subsistema de sprites é dividido entre armazenamento dos atributos, armazenamento dos padrões e processamento propriamente dito. A `sprite_attribute_ram` armazena os atributos dos sprites, enquanto a `sprite_pattern_ram` armazena seus padrões gráficos. O `motor_sprite.v` utiliza essas informações para produzir os pixels dos sprites, realizando as consultas necessárias à palette e gerando as escritas no framebuffer.
-
-Essa divisão permite separar os dados estáticos ou configuráveis dos sprites do mecanismo responsável pela renderização. Os atributos podem ser fornecidos externamente ao subsistema por meio das interfaces de escrita presentes no `top_video`, enquanto o motor realiza as leituras durante a composição.
-
-O `rasterizador_top.v` funciona como interface superior do rasterizador. O `top_video` fornece ao módulo os comandos para iniciar a rasterização de quadrados ou triângulos, as coordenadas dos vértices, o índice de cor e a seleção da palette. O rasterizador fornece, por sua vez, sinais de `busy`, `done` e `invalid_cmd`, além das interfaces de leitura da palette e escrita no framebuffer.
-
-O rasterizador é responsável pela geração dos pixels dos elementos geométricos. Para retângulos preenchidos, o processamento consiste em determinar os limites das coordenadas e gerar os pixels pertencentes à área definida. Para triângulos preenchidos, o algoritmo utiliza a abordagem de varredura por linhas, determinando os limites horizontais de cada linha do triângulo e produzindo os pixels correspondentes. A interface superior permite que ambos os tipos de primitivas compartilhem a infraestrutura de palette e framebuffer utilizada pelos demais motores.
-
-A `palette_ram` constitui a memória compartilhada responsável por armazenar as cores utilizadas durante a composição. O `top_video` fornece a interface de escrita para atualização da palette e conecta sua porta de leitura ao compositor. Durante a execução de um motor, seu endereço de palette é encaminhado pelo compositor para a memória, e o dado retornado é disponibilizado ao motor correspondente.
-
-O `framebuffer.v` constitui o estágio de armazenamento dos pixels produzidos durante a composição. O módulo recebe uma única interface de escrita proveniente do compositor, juntamente com o banco selecionado por `wr_buf_sel`, e possui uma interface de leitura associada ao domínio de clock do VGA. Dessa maneira, o framebuffer atua como uma fronteira entre a etapa de renderização e a etapa de apresentação.
-
-A seleção dos bancos é controlada diretamente pelo `top_video`. O sinal `rd_buf_sel` identifica o banco atualmente utilizado pelo VGA, enquanto `wr_buf_sel` identifica o banco que recebe as escritas durante a renderização. Após a conclusão de um frame e a ocorrência do VBlank, esses sinais são trocados, fazendo com que o frame recém-renderizado passe a ser apresentado.
-
-O `vga_driver.v` é responsável pela geração dos sinais de temporização da interface VGA e pelo fornecimento das coordenadas do pixel que está sendo apresentado. O módulo recebe `fb_color_out` como entrada de cor e gera os sinais `hsync`, `vsync`, `red`, `green`, `blue`, `sync`, `clk` e `blank`. Também produz o sinal `vblank_tick`, utilizado pelo `top_video` para sincronizar a troca dos bancos do framebuffer com o período de apagamento vertical.
-
-Por fim, o `fb_addr_gen.v` é responsável pela transformação das coordenadas bidimensionais do framebuffer em um endereço linear de memória. Considerando a resolução lógica de 320×240 pixels, o endereço é obtido pela relação `address = y × 320 + x`. Essa transformação permite que os pixels sejam armazenados de forma sequencial na memória, mantendo uma representação linear da imagem bidimensional.
-
-A arquitetura resultante separa claramente as responsabilidades entre **geração dos elementos gráficos, armazenamento, composição e apresentação**. Os motores produzem os pixels de suas respectivas camadas, o compositor controla a ordem de execução e arbitra os recursos compartilhados, o framebuffer mantém os frames em buffers separados e o controlador VGA realiza a apresentação do conteúdo armazenado. Essa organização permite que novos motores ou primitivas gráficas sejam incorporados posteriormente sem modificar diretamente a lógica responsável pela saída VGA, mantendo a estrutura modular do subsistema gráfico.
-
-### 4.3 Memórias do Sistema
-
-O projeto utiliza **seis memórias principais**, todas implementadas como RAMs de porta dupla simples (*simple dual-port RAM*), geradas por meio do **IP Catalog do Quartus** utilizando a megafunction `altsyncram`. Nesse modo de operação, a **porta A é utilizada exclusivamente para escrita**, enquanto a **porta B é utilizada exclusivamente para leitura**.
-
-Cinco das memórias utilizam um único domínio de clock, compartilhado pela CPU e pelos motores gráficos. A exceção é o **framebuffer**, que utiliza dois domínios de clock, pois sua escrita ocorre no clock de sistema de 50 MHz, enquanto sua leitura ocorre no domínio do *pixel clock* de 25 MHz utilizado pelo controlador VGA.
-
-A organização das memórias é apresentada a seguir.
-
-#### 4.3.1 `bg_tile_ram` — 1200 × 8 bits
-
-A memória `bg_tile_ram` armazena o **tilemap do background**. A tela lógica possui resolução de 320×240 pixels e é dividida em tiles de 8×8 pixels, resultando em uma organização de 40×30 tiles, ou seja, **1200 posições de memória**.
-
-Cada posição armazena um `pattern_id` de 8 bits, permitindo selecionar um dos **256 padrões gráficos disponíveis**. Essa memória não armazena diretamente a cor dos pixels, mas apenas indica qual padrão deve ser utilizado em cada posição do tilemap.
-
-Como o tilemap possui exatamente 40×30 tiles, correspondendo à área total da tela lógica, o deslocamento (*scroll*) do background é realizado por **enrolamento (*wraparound*)**. Dessa forma, quando uma região deixa a tela por uma das bordas, ela pode reaparecer pela borda oposta.
-
-#### 4.3.2 `bg_tile_pattern_ram` — 16384 × 8 bits
-
-A `bg_tile_pattern_ram` armazena os **padrões gráficos utilizados pelo background**. Sua capacidade de 16384 posições corresponde a:
-
-**256 padrões × 64 pixels por padrão = 16384 posições.**
-
-Cada padrão possui dimensões de 8×8 pixels. Para cada pixel é armazenado um **índice de cor de 8 bits**, em vez da cor RGB diretamente.
-
-Assim, existe uma separação entre a seleção do padrão e a definição da cor:
-
-* `bg_tile_ram` determina **qual padrão** deve ser utilizado;
-* `bg_tile_pattern_ram` determina **qual índice de cor** cada pixel desse padrão possui;
-* `palette_ram` converte o índice de cor na representação RGB utilizada pelo framebuffer.
-
-#### 4.3.3 `sprite_attribute_ram` — 32 × 32 bits
-
-A `sprite_attribute_ram` armazena os atributos dos **32 sprites disponíveis** no sistema. Cada sprite possui uma entrada de 32 bits contendo todas as informações necessárias para sua composição.
-
-| Campo           | Bits | Função                              |
-| --------------- | ---: | ----------------------------------- |
-| `enable`        |    1 | Habilita ou desabilita o sprite     |
-| `priority`      |    5 | Define a prioridade de sobreposição |
-| `flip_v`        |    1 | Espelhamento vertical               |
-| `flip_h`        |    1 | Espelhamento horizontal             |
-| `palette_sel`   |    1 | Seleciona uma das duas paletas      |
-| `pattern_index` |    6 | Seleciona o padrão 16×16            |
-| `pos_y`         |    8 | Posição vertical                    |
-| `pos_x`         |    9 | Posição horizontal                  |
-
-A memória funciona, portanto, como uma tabela de atributos, permitindo que o motor de sprites obtenha as informações necessárias para determinar **onde**, **como** e **com qual padrão** cada sprite deve ser desenhado.
-
-#### 4.3.4 `sprite_pattern_ram` — 16384 × 8 bits
-
-A `sprite_pattern_ram` armazena os padrões gráficos utilizados pelos sprites. Assim como no background, os padrões são organizados em tiles de **8×8 pixels**.
-
-Sua capacidade permite armazenar **256 tiles**, totalizando:
-
-**256 tiles × 64 pixels = 16384 posições.**
-
-Esses tiles são utilizados para formar os padrões de sprites de 16×16 pixels. Dessa forma, cada sprite pode ser composto por quatro tiles de 8×8 pixels.
-
-Cada posição armazena um índice de cor de 8 bits. Nesse caso, o **índice 0 é reservado para transparência**. Quando o motor de sprites encontra esse índice, o pixel não é escrito no framebuffer, permitindo que o conteúdo das camadas inferiores permaneça visível.
-
-#### 4.3.5 `palette_ram` — 512 × 9 bits
-
-A `palette_ram` armazena as cores utilizadas pelo sistema gráfico. Ela possui **512 entradas de 9 bits**, organizadas como duas paletas independentes de 256 cores.
-
-O endereço da memória é formado pela concatenação de `palette_sel` com `color_index`:
+O atributo de um sprite, escrito por `SET_SPRITE_ATTR`, possui 15 bits:
 
 ```text
-{palette_sel, color_index}
+ 14      13:9         8        7       6       5:0
++------+-----------+--------+--------+-------+---------+
+|enable|prioridade |flip_v  | flip_h |paleta | padrão  |
++------+-----------+--------+--------+-------+---------+
 ```
 
-Dessa forma, o bit `palette_sel` seleciona uma das duas paletas, enquanto os oito bits restantes selecionam uma das 256 cores daquela paleta.
+### 4.2.3 Registradores
 
-Cada entrada armazena diretamente a cor no formato RGB de 9 bits:
+| Registrador | Função |
+| :--- | :--- |
+| `R0` a `R30` | Propósito geral |
+| `R31` (`XZR`) | Lê sempre 0; escritas são descartadas |
+| `R33` (`STATUS`) | Somente leitura: `{29'b0, vblank, waiting, running}` |
+| `R36` (`FLAGS`) | Somente leitura: `{28'b0, C, V, N, Z}` |
+| `R37` a `R43` | `V0X`, `V0Y`, `V1X`, `V1Y`, `V2X`, `V2Y` e `COLOR`: parâmetros do rasterizador |
+
+Os registradores `V0X` a `COLOR` alimentam diretamente o rasterizador. Antes de uma instrução `DRAW_RECT` ou `DRAW_TRI`, o programa escreve os vértices e a cor nesses registradores por meio de instruções comuns da ULA. O registrador `COLOR` possui 9 bits: os 8 bits menos significativos são o índice na paleta e o bit 8 seleciona o banco da paleta.
+
+O uso de `XZR` como destino permite realizar **comparações** sem alterar nenhum registrador. A instrução `SUB XZR, R1, #304`, por exemplo, calcula `R1 − 304`, descarta o resultado e atualiza apenas as flags.
+
+### 4.2.4 Flags e Desvios Condicionais
+
+Toda instrução da ULA atualiza as quatro flags do registrador `FLAGS`: **N** (resultado negativo), **Z** (resultado nulo), **C** (carry de `ADD` ou ausência de empréstimo em `SUB`) e **V** (overflow com sinal). As demais instruções não alteram as flags, e as operações `AND`, `LSL`, `LSR` e `PASS` zeram C e V.
+
+O desvio `B_COND` avalia uma condição sobre essas flags e, se ela for verdadeira, altera o contador de programa. Os códigos de condição seguem o LEGv8:
+
+| `cond` | Nome | Desvia se | Após `SUB a, b` |
+| :---: | :---: | :--- | :--- |
+| `0000` | `EQ` | Z = 1 | a = b |
+| `0001` | `NE` | Z = 0 | a ≠ b |
+| `0010` | `HS` | C = 1 | a ≥ b (sem sinal) |
+| `0011` | `LO` | C = 0 | a < b (sem sinal) |
+| `0100` | `MI` | N = 1 | resultado negativo |
+| `0101` | `PL` | N = 0 | resultado não negativo |
+| `0110` | `VS` | V = 1 | overflow |
+| `0111` | `VC` | V = 0 | sem overflow |
+| `1000` | `HI` | C = 1 e Z = 0 | a > b (sem sinal) |
+| `1001` | `LS` | C = 0 ou Z = 1 | a ≤ b (sem sinal) |
+| `1010` | `GE` | N = V | a ≥ b (com sinal) |
+| `1011` | `LT` | N ≠ V | a < b (com sinal) |
+| `1100` | `GT` | Z = 0 e N = V | a > b (com sinal) |
+| `1101` | `LE` | Z = 1 ou N ≠ V | a ≤ b (com sinal) |
+| `1110` | `AL` | sempre | — |
+| `1111` | reservado | nunca | sinaliza instrução inválida |
+
+O alvo do desvio é calculado em **palavras**, relativo ao próprio endereço do desvio: `alvo = endereço_do_desvio + 4 × deslocamento`. O campo de deslocamento possui 14 bits e a soma é feita módulo o tamanho da memória de instruções (16384 palavras), de modo que qualquer endereço é alcançável e deslocamentos negativos usam complemento de dois.
+
+## 4.3 Caminho de Controle
+
+### 4.3.1 Unidade de Busca de Instruções
+
+O módulo `unidade_de_busca_de_instrucoes.v` mantém o contador de programa (PC) de 16 bits, que endereça a memória de instruções em bytes e avança de 4 em 4. A memória de instruções fica instanciada dentro da própria unidade de busca. Como a memória possui entrada de endereço e saída registradas, a instrução correta só aparece 2 ciclos após uma mudança do PC, e a unidade insere uma bolha de um ciclo a cada avanço. Por esse motivo, cada instrução simples consome **2 ciclos de clock**.
+
+Para cada instrução, a unidade gera um pulso `execute` de um ciclo, que aciona a unidade de controle. O avanço do PC depende da categoria da instrução:
+
+* **Instruções de um ciclo** (aritméticas, de configuração, `NOP` e desvios): o PC avança imediatamente após o pulso.
+* **Instruções de desenho:** o PC permanece parado até o sinal `engine_done` do motor ativo.
+* **`WAIT_VBLANK`:** o PC permanece parado até a próxima borda de subida do VBlank.
+* **`HALT`:** o programa termina. A unidade ativa `prog_done` e aguarda o VBlank.
+
+Quando `prog_done` está ativo e ocorre o VBlank, a unidade gera o pulso `frame_swap`, que troca os bancos do framebuffer, e reinicia o PC em 0. Esse reinício automático é o que produz o laço de quadros contínuos. O reinício também ocorre após o reset, sem intervenção do usuário, e o botão `KEY[1]` permite reiniciar o programa manualmente.
+
+Os desvios são executados no mesmo ciclo `execute`, com a mesma temporização das demais instruções: a única diferença é que o próximo valor do PC é o alvo do desvio em vez de `PC + 4`. A condição é avaliada pelo módulo combinacional `avalia_condicao.v`, a partir das flags `{C, V, N, Z}` fornecidas pelo banco de registradores. Um desvio tomado na última palavra da memória continua o programa no alvo, e somente o fim da memória sem desvio encerra o programa.
+
+### 4.3.2 Banco de Registradores
+
+O `banco_registradores.v` implementa os registradores descritos na seção 4.2.3, com duas portas de leitura e uma de escrita. Os índices possuem 6 bits. Além dos registradores de propósito geral, o banco mantém as flags, capturadas no término de cada instrução da ULA, e os sete registradores dedicados ao rasterizador, cujas saídas são ligadas diretamente às entradas de vértices e cor do `rasterizador_top`.
+
+### 4.3.3 Unidade Lógica e Aritmética
+
+A `alu.v` executa as operações `ADD`, `SUB`, `AND`, `LSL`, `LSR` e `PASS` sobre operandos de 32 bits. Além do resultado, ela produz as flags N, Z, C e V. A soma e a subtração são calculadas com 33 bits para que o carry e o overflow possam ser obtidos. Na subtração, a ULA calcula `Rn + ~Rm + 1`, de forma que o carry indica ausência de empréstimo, como no ARMv8. Quando a ULA não está habilitada, todas as flags valem 0.
+
+### 4.3.4 Unidade de Controle
+
+A `unidade_de_controle.v` decodifica o opcode da instrução corrente e, ao receber o pulso `execute`, gera os sinais correspondentes:
+
+* para as instruções da ULA, habilita a operação, seleciona o segundo operando (registrador ou imediato), controla a escrita em Rd e a captura das flags;
+* para as instruções `SET_*`, `WRITE_*` e `SCROLL_BG`, gera as escritas nas memórias gráficas, nos atributos dos sprites e nos registradores de scroll, a partir dos conteúdos de Ra e Rb;
+* para as instruções de desenho, gera o pulso `start` do motor correspondente, mantém o sinal `engine_sel` com o motor selecionado e aguarda o `done` desse motor;
+* para `DRAW_RECT` e `DRAW_TRI`, quando o rasterizador rejeita o comando por coordenadas fora da tela (`invalid_cmd`), conclui a instrução sem desenhar e sinaliza o erro.
+
+Opcodes reservados e condições reservadas de `B_COND` são sinalizados como instrução inválida. Essa sinalização é mostrada em `LEDR[2]`, com trava.
+
+## 4.4 Fluxo de Composição e Prioridade entre Camadas
+
+Na primeira etapa, a ordem **fundo → polígonos → sprites** era garantida pelo `compositor.v`, que executava os três motores em sequência fixa. No modelo por instruções, a ordem de desenho passa a ser definida pelo programa, e um `DRAW_BG` ou um `DRAW_RECT` executado depois de um `DRAW_SPRITES` sobrescreveria os sprites no framebuffer. Para manter a hierarquia de camadas independentemente da ordem das instruções, a arquitetura utiliza dois módulos: o `engine_mux`, que seleciona o motor ativo, e a `camada_composicao`, que aplica a prioridade pixel a pixel.
+
+### 4.4.1 Seleção do Motor (`engine_mux`)
+
+O `engine_mux` substitui a função de arbitragem do compositor sequencial. A partir do sinal `engine_sel`, gerado pela unidade de controle, ele conecta ao recurso físico único da paleta e à porta de escrita do framebuffer os sinais do motor que está em execução. Como as instruções de desenho são bloqueantes, apenas um motor está ativo por vez, e a seleção funciona como uma arbitragem simples baseada no estado da instrução corrente.
+
+### 4.4.2 Camada de Composição (`camada_composicao`)
+
+A `camada_composicao` fica entre o `engine_mux` e o framebuffer e impõe a hierarquia de camadas:
+
+| Camada | Elemento | `engine_sel` |
+| :---: | :--- | :---: |
+| 0 (atrás) | Background | 1 |
+| 1 | Polígonos (retângulos e triângulos) | 3 |
+| 2 (frente) | Sprites | 2 |
+
+Para cada pixel do banco de escrita, um **mapa de camadas** de 2 bits armazena a camada mais alta que já escreveu naquele pixel durante o quadro atual. Uma escrita só chega ao framebuffer se a sua camada for maior ou igual à registrada no pixel, e, quando passa, atualiza o mapa:
+
+$$\text{camada da escrita} \geq \text{camada registrada no pixel}$$
+
+Disso resultam as seguintes propriedades:
+
+* uma escrita de camada inferior sobre um pixel de camada superior é descartada, de modo que um fundo desenhado depois de um sprite não o cobre;
+* escritas da mesma camada se sobrepõem, preservando a ordem de execução entre polígonos: o último `DRAW_RECT` fica por cima dos anteriores;
+* pixels transparentes dos sprites (índice 0) não geram escrita e, portanto, não marcam o mapa nem escondem as camadas inferiores;
+* a ordem das instruções de desenho deixa de importar entre camadas diferentes.
+
+A camada é implementada como um pipeline de dois estágios, com a camada da escrita registrada junto com o endereço, de modo que ela não depende do `engine_sel` nos estágios seguintes. Escritas em ciclos consecutivos no mesmo pixel são tratadas por encaminhamento (*forwarding*) das escritas ainda em voo, o que elimina o risco de leitura de uma marca desatualizada.
+
+Há um mapa de camadas para cada banco do framebuffer. A limpeza é feita sem custo para o programa: o mapa do banco que está sendo **exibido** não é usado pelos motores, e por isso é zerado por uma varredura de 76800 ciclos (cerca de 1,5 ms) logo após cada troca de bancos. Quando esse banco volta a ser o de escrita, seu mapa já está limpo. Após o reset ou após o reinício manual do programa, os dois mapas são zerados e a unidade de busca é mantida em reset durante essa varredura. O `LEDR[4]` acende, com trava, quando algum pixel é descartado por prioridade, o que indica que o programa desenhou fora da ordem das camadas.
+
+Uma consequência dessa regra é que um retângulo de tela cheia, usado para limpar o quadro, cobre o fundo e os polígonos anteriores, mas não apaga sprites já desenhados no mesmo quadro.
+
+## 4.5 Ciclo de Quadro e Orçamento de Tempo
+
+Um quadro a 60 Hz dura **840 000 ciclos** de 50 MHz. Como o programa de cada quadro é executado em sequência, o tempo total de um quadro é a soma dos custos das instruções. Se o programa terminar antes do VBlank, o quadro aguarda a troca de bancos e a taxa se mantém em 60 quadros por segundo. Se o programa ultrapassar a duração de um quadro, o resultado é exibido no VBlank seguinte e a taxa cai para 30, 20 quadros por segundo e assim por diante. Os custos a seguir foram medidos em simulação do RTL:
+
+| Operação | Custo em ciclos |
+| :--- | :--- |
+| Instrução simples (aritmética, `SET_*`, desvio) | 2 |
+| Retângulo | 1 por pixel + 5 de overhead |
+| Triângulo | 1 por pixel + 70 a 300 de overhead (divisão das arestas) |
+| `DRAW_BG` | ≈ 543 000 (cerca de 65% do quadro) |
+| `DRAW_SPRITES` | ≈ 79 000 (varredura da tela inteira, independente do número de sprites) |
+
+Com o fundo e os sprites desenhados a cada quadro, sobram aproximadamente 219 000 ciclos para polígonos, o que corresponde a cerca de 1 900 retângulos de 10×10 pixels ou 135 retângulos de 40×40 pixels. Em cenas com fundo estático, substituir o `DRAW_BG` por um retângulo de tela cheia reduz o custo de limpeza para cerca de 77 000 ciclos.
+
+## 4.6 Principais Módulos
+
+| Módulo | Função |
+| :--- | :--- |
+| `coprocessador_top.v` | Integração do sistema: controle, motores, composição, framebuffer e VGA |
+| `unidade_de_busca_de_instrucoes.v` | PC, memória de instruções, stall, `HALT`, reinício por VBlank e desvios |
+| `avalia_condicao.v` | Avaliação combinacional das condições de `B_COND` |
+| `unidade_de_controle.v` | Decodificação, escritas nas memórias, `start`/`done` dos motores e `engine_mux` |
+| `banco_registradores.v` | Registradores gerais, flags, `STATUS` e registradores do rasterizador |
+| `alu.v` | Operações aritméticas e lógicas, com flags N, Z, C e V |
+| `motor_background.v` | Geração da camada de fundo a partir do tilemap, dos padrões e da paleta |
+| `motor_sprite.v` | Atributos dos sprites, varredura, transparência, prioridade e espelhamento |
+| `rasterizador_top.v` | Interface do rasterizador de retângulos e triângulos, com `invalid_cmd` |
+| `camada_composicao.v` | Prioridade entre fundo, polígonos e sprites por mapa de camadas |
+| `framebuffer.v` | Dois bancos de pixels com escrita em 50 MHz e leitura em 25 MHz |
+| `vga_driver.v` | Temporização VGA, coordenadas do pixel e `vblank_tick` |
+| `fb_addr_gen.v` | Conversão `(x, y)` em endereço linear: `y × 320 + x` |
+
+Os motores de background, sprites e rasterização mantêm as características descritas na primeira etapa: o background combina tilemap, padrões e paleta, com deslocamento circular; o motor de sprites trata sprites de 16×16 pixels formados por 4 tiles, com índice 0 transparente, prioridade e espelhamento; e o rasterizador preenche retângulos e triângulos por varredura de linhas, com aritmética inteira. A diferença desta etapa está na forma de acionamento: os parâmetros agora vêm dos registradores e das instruções, e não de módulos auxiliares de demonstração.
+
+## 4.7 Memórias do Sistema
+
+O projeto utiliza **seis RAMs principais**, implementadas como RAMs de porta dupla simples (*simple dual-port RAM*) e geradas pelo IP Catalog do Quartus com a megafunction `altsyncram`: `bg_tile_ram`, `bg_tile_pattern_ram`, `sprite_pattern_ram`, `palette_ram`, `framebuffer_ram` e `instruction_memory`. A porta A é usada para escrita e a porta B para leitura. Cinco delas operam em um único domínio de clock. A exceção é o framebuffer, cuja escrita ocorre a 50 MHz e cuja leitura ocorre a 25 MHz. Além das RAMs, o sistema mantém os atributos dos sprites em registradores internos ao motor de sprites (seção 4.7.3) e utiliza dois mapas de camadas na camada de composição (seção 4.7.8).
+
+### 4.7.1 `bg_tile_ram` — 1200 × 8 bits
+
+Armazena o **tilemap do background**: uma grade de 40×30 tiles, ou seja, 1200 posições. Cada posição guarda um `pattern_id` de 8 bits, que seleciona um dos 256 padrões disponíveis. O endereço é `linha × 40 + coluna`. A escrita ocorre por `SET_TILEMAP`, e o deslocamento do background é feito por enrolamento (*wraparound*).
+
+### 4.7.2 `bg_tile_pattern_ram` — 16384 × 8 bits
+
+Armazena os padrões do background: 256 padrões de 8×8 pixels (256 × 64 = 16384 posições), com um índice de cor de 8 bits por pixel. O endereço é `{tile[7:0], y[2:0], x[2:0]}`. A escrita ocorre por `WRITE_TILE_DATA`.
+
+### 4.7.3 Atributos dos Sprites — 32 entradas
+
+Os atributos dos 32 sprites ficam em **registradores internos ao `motor_sprite`**, e não mais em uma RAM dedicada. A posição é escrita por `SET_SPRITE_POS` e os demais atributos por `SET_SPRITE_ATTR`, sempre entre as varreduras de desenho. Os registradores são zerados no reset, de modo que todos os sprites começam desabilitados e somente aparecem depois que o programa os configura.
+
+| Campo | Bits | Função |
+| :--- | ---: | :--- |
+| `enable` | 1 | Habilita ou desabilita o sprite |
+| `priority` | 5 | Prioridade de sobreposição |
+| `flip_v` | 1 | Espelhamento vertical |
+| `flip_h` | 1 | Espelhamento horizontal |
+| `palette_sel` | 1 | Seleciona o banco da paleta |
+| `pattern_index` | 6 | Seleciona o padrão 16×16 |
+| `pos_y` | 8 | Posição vertical |
+| `pos_x` | 9 | Posição horizontal |
+
+Quando dois sprites ocupam o mesmo pixel, vence o de maior prioridade e, em caso de empate, o de maior índice.
+
+### 4.7.4 `sprite_pattern_ram` — 16384 × 8 bits
+
+Armazena os padrões dos sprites em tiles de 8×8 pixels: 256 tiles, ou seja, 64 padrões de 16×16 pixels. O padrão `P` ocupa os endereços de `P × 256` a `P × 256 + 255`, com o tile obtido por `P × 4 + (y >> 3) × 2 + (x >> 3)`. O índice 0 é reservado para a transparência: o pixel correspondente não é escrito no framebuffer. A escrita ocorre por `WRITE_SPRITE_DATA`.
+
+### 4.7.5 `palette_ram` — 512 × 9 bits
+
+Armazena as cores do sistema em duas paletas de 256 entradas. O endereço é `{palette_sel, color_index}`, e cada entrada guarda uma cor `RRR GGG BBB`. A escrita ocorre por `SET_PALETTE`. A seleção do banco depende do consumidor:
+
+* o **background** lê sempre o banco 0, com endereço `{0, índice}`;
+* cada **sprite** escolhe o banco pelo bit `palette_sel` do seu atributo, o que permite usar o mesmo padrão com duas paletas diferentes;
+* os **polígonos** escolhem o banco pelo bit 8 do registrador `COLOR`.
+
+Como o background e os sprites compartilham o banco 0, as entradas usadas pelos sprites nesse banco não podem ser alteradas ao compor a paleta do fundo.
+
+### 4.7.6 `framebuffer_ram` — 2 bancos de 76800 × 9 bits
+
+Armazena o resultado da composição. Cada posição guarda uma cor RGB de 9 bits, de modo que não há nova consulta à paleta na leitura para o vídeo. Cada banco possui 320 × 240 = 76800 pixels. Enquanto um banco recebe o próximo quadro, o outro é exibido, e a troca ocorre no VBlank. O framebuffer é a única memória com dois domínios de clock.
+
+### 4.7.7 `instruction_memory` — 16384 × 32 bits
+
+Armazena o programa do coprocessador. Cada palavra é uma instrução de 32 bits, e a capacidade é de 16384 instruções (64 KiB). A memória é inicializada por um arquivo `.mif`, gerado pelo montador a partir do código em linguagem de montagem, e é lida pela unidade de busca com latência de 2 ciclos. As posições além do fim do programa são preenchidas com `NOP`.
+
+### 4.7.8 Mapas de Camadas — 2 × (76800 × 2 bits)
+
+A camada de composição mantém um mapa para cada banco do framebuffer, com 2 bits por pixel, inferidos pelo Quartus em blocos M10K (estimativa de cerca de 19 blocos por mapa). O mapa do banco de escrita é consultado e atualizado a cada escrita de pixel, e o mapa do banco exibido é zerado em segundo plano, como descrito na seção 4.4.2.
+
+## 4.8 Organização do Armazenamento
+
+As memórias possuem funções distintas dentro do sistema:
 
 ```text
-RRR GGG BBB
+                        PROGRAMA
+                           |
+                  instruction_memory
+                   (instruções 32 bits)
+                           |
+                           v
+                 UNIDADE DE BUSCA / CONTROLE
+                           |
+     +----------+----------+-----------+------------+
+     |          |          |           |            |
+     v          v          v           v            v
+ bg_tile_ram  bg_tile_    sprite_    atributos    palette_ram
+ (tilemap)    pattern_    pattern_   dos sprites  (512 x 9)
+              ram         ram        (registr.)
+     |          |          |           |            |
+     +----+-----+          +-----+-----+            |
+          |                      |                  |
+          v                      v                  |
+   motor_background         motor_sprite            |
+          |                      |                  |
+          +---> índice de cor <--+                  |
+                     |                              |
+                     +------------>-----------------+
+                                   |
+                                   v
+                            cor RGB (9 bits)
+
+   BACKGROUND ─┐
+   POLÍGONOS  ─┼─► ENGINE_MUX ─► CAMADA DE COMPOSIÇÃO ─► FRAMEBUFFER
+   SPRITES    ─┘                  (2 mapas de camadas)    Banco 0 | Banco 1
+                                                                  |
+                                                            Double Buffer
+                                                                  |
+                                                                  v
+                                                             Controlador VGA
 ```
 
-O índice 0 de cada paleta é reservado como marcador associado à transparência. Durante a depuração, esse índice recebe a cor magenta, permitindo identificar visualmente situações em que um pixel transparente tenha sido tratado incorretamente como uma cor válida.
-
-#### 4.3.6 `framebuffer_ram` — 2 bancos de 76800 × 9 bits
-
-O `framebuffer_ram` armazena o resultado final da composição gráfica. Cada posição contém diretamente uma cor RGB de **9 bits**, não sendo necessário realizar uma nova consulta à paleta durante a leitura para o vídeo.
-
-Cada banco possui:
-
-**320 × 240 = 76800 pixels**
-
-e cada pixel utiliza 9 bits.
-
-O sistema utiliza **dois bancos de framebuffer**, implementando a técnica de **double buffering**. Enquanto um banco é utilizado pelos motores gráficos para construir o próximo frame, o outro é utilizado pelo controlador VGA para exibir o frame atualmente pronto.
-
-Ao final da composição, a troca entre os bancos ocorre durante o período de **VBlank**, evitando que a mudança aconteça no meio da atualização da imagem e reduzindo o risco de *tearing*.
-
-O framebuffer é também a única memória do projeto que opera em **dois domínios de clock**:
-
-* **50 MHz:** escrita realizada pelos motores gráficos;
-* **25 MHz:** leitura realizada pelo controlador de vídeo VGA.
-
-### 4.4 Organização do Armazenamento
-
-As seis memórias possuem funções distintas dentro do pipeline gráfico:
-
-```text
-                 BACKGROUND
-                     │
-          ┌──────────┴──────────┐
-          │                     │
-   bg_tile_ram        bg_tile_pattern_ram
-   tilemap             pixels do tile
-          │                     │
-          └──────────┬──────────┘
-                     │
-                     ▼
-                 índice de cor
-                     │
-                     ▼
-              ┌─────────────┐
-              │ palette_ram │
-              └──────┬──────┘
-                     │
-                     ▼
-               cor RGB (9 bits)
+Essa organização mantém separadas as informações de **programa**, **descrição da cena**, **dados gráficos**, **cores** e **imagem final**. O programa define o que é configurado e desenhado, os motores acessam apenas as memórias de que precisam, e o framebuffer funciona como ponto de convergência das camadas, após a aplicação da prioridade pela camada de composição.
 
 
-                  SPRITES
-                     │
-          ┌──────────┴──────────┐
-          │                     │
- sprite_attribute_ram   sprite_pattern_ram
-  atributos             pixels dos padrões
-          │                     │
-          └──────────┬──────────┘
-                     │
-                     ▼
-                 índice de cor
-                     │
-                     ▼
-              ┌─────────────┐
-              │ palette_ram │
-              └──────┬──────┘
-                     │
-                     ▼
-               cor RGB (9 bits)
+# 5. Especificação de Hardware e Software
 
-
-       BACKGROUND ─┐
-       POLÍGONOS  ─┼──► COMPOSITOR ───► FRAMEBUFFER
-       SPRITES    ─┘                         │
-                                             │
-                                  ┌──────────┴──────────┐
-                                  │                     │
-                              Banco 0               Banco 1
-                                  │                     │
-                                  └──── Double Buffer ──┘
-                                             │
-                                             ▼
-                                        Controlador
-                                           VGA
-```
-
-Essa organização mantém separadas as informações de **descrição da cena**, **dados gráficos**, **cores** e **imagem final**, permitindo que cada motor gráfico acesse somente as memórias necessárias para executar sua função. O `framebuffer_ram` funciona como ponto de convergência das diferentes camadas, armazenando o resultado produzido pelo compositor antes de sua leitura pelo sistema de vídeo.
-
-
-# 5. ESPECIFICACAO DE HARDWARE E SOFTWARE
-
-Esta secao apresenta os principais recursos de hardware, software e arquivos de inicializacao utilizados no desenvolvimento e na execucao do sistema grafico implementado em FPGA.
+Esta seção apresenta os recursos de hardware e software utilizados no desenvolvimento, na simulação e na execução do coprocessador gráfico em FPGA. Também são descritos os arquivos de inicialização das memórias, as ferramentas auxiliares desenvolvidas para a ISA e os recursos utilizados para testar os programas Assembly antes de executá-los no hardware.
 
 ## 5.1 Hardware
 
-A plataforma utilizada no projeto e a Terasic DE1-SoC, equipada com um dispositivo Intel/Altera Cyclone V SoC. A FPGA concentra a implementacao dos modulos responsaveis pelo processamento grafico, controle e armazenamento dos dados utilizados durante a geracao da imagem.
+A implementação utiliza como plataforma-alvo a placa **Terasic DE1-SoC**, equipada com um dispositivo Intel/Altera Cyclone V SoC. O projeto Quartus está configurado para o dispositivo `5CSEMA5F31C6`, e o módulo de topo do sistema é `coprocessador_top`.
 
-As principais especificacoes de hardware utilizadas sao:
+A FPGA executa o núcleo de processamento, a unidade de controle, os motores gráficos, a composição das camadas e os circuitos de armazenamento e exibição da imagem.
 
-- Plataforma: Terasic DE1-SoC
-- FPGA: Intel/Altera Cyclone V SoC
-- Dispositivo utilizado na sintese: `5CSEMA5F31C6`
-- Clock principal: 50 MHz
-- Clock VGA: aproximadamente 25 MHz
-- Saida de video: VGA
-- Resolucao fisica: 640 x 480 pixels
-- Resolucao logica: 320 x 240 pixels
-- Controles de demonstracao: `KEY`, `SW` e sinais da placa
+As principais especificações da plataforma são:
 
-A imagem e processada internamente na resolucao logica de 320 x 240 pixels. Para a exibicao em VGA, essa imagem e apresentada na resolucao fisica de 640 x 480 pixels, com cada pixel logico correspondendo a um bloco de 2 x 2 pixels fisicos.
+- **Placa-alvo:** Terasic DE1-SoC.
+- **Família da FPGA:** Intel/Altera Cyclone V.
+- **Dispositivo configurado no Quartus:** `5CSEMA5F31C6`.
+- **Módulo de topo:** `coprocessador_top`.
+- **Clock principal:** 50 MHz.
+- **Clock de pixel:** aproximadamente 25 MHz, gerado por PLL.
+- **Interface de vídeo:** VGA.
+- **Resolução física de saída:** 640 × 480 pixels.
+- **Resolução lógica de renderização:** 320 × 240 pixels.
+- **Controles físicos:** botões `KEY`, utilizados para reset e reinício, além de LEDs de estado.
 
-De forma simplificada, o fluxo de processamento implementado em hardware pode ser representado por:
+A resolução lógica reduz a quantidade de pixels processados e armazenados internamente. Na saída VGA, cada pixel lógico é ampliado para um bloco de 2 × 2 pixels físicos, permitindo a exibição da imagem em 640 × 480 pixels.
 
-```text
-PARAMETROS DA CENA
-        |
-        v
-+---------------------+
-| MOTORES GRAFICOS    |
-|                     |
-| Background          |
-| Poligonos           |
-| Sprites             |
-+----------+----------+
-           |
-           v
-+---------------------+
-| COMPOSITOR          |
-+----------+----------+
-           |
-           v
-+---------------------+
-| FRAMEBUFFER         |
-+----------+----------+
-           |
-           v
-+---------------------+
-| DOUBLE BUFFERING    |
-+----------+----------+
-           |
-           v
-+---------------------+
-| CONTROLADOR VGA     |
-+----------+----------+
-           |
-           v
-        MONITOR
-```
+A arquitetura utiliza dois bancos de framebuffer (*double buffering*). Enquanto um banco fornece os pixels para a saída VGA, o outro recebe as operações de desenho. Ao final do programa gráfico, a troca dos bancos é sincronizada com o intervalo de apagamento vertical (*vertical blanking*), evitando que a imagem seja atualizada de maneira arbitrária durante a exibição.
 
-## 5.2 Software
-
-O desenvolvimento do projeto utiliza ferramentas destinadas a compilacao, sintese e simulacao dos circuitos implementados em HDL.
-
-Os relatorios presentes no projeto indicam a utilizacao do:
-
-- Intel Quartus Prime Lite Edition 20.1.1
-
-O repositorio tambem contem arquivos e scripts relacionados ao fluxo de simulacao ModelSim/Questa, utilizados durante o desenvolvimento do sistema.
-
-Tambem estao presentes arquivos `.qip` relacionados a componentes e memorias gerados como IPs. Alguns desses arquivos apresentam metadados associados a diferentes versoes do Quartus. Dessa forma, ao reconstruir o projeto em outra instalacao ou versao da ferramenta, determinados IPs podem exigir regeneracao ou atualizacao.
-
-## 5.3 Arquivos de Inicializacao
-
-O projeto utiliza arquivos no formato `.mif` (Memory Initialization File) para inicializar as memorias que armazenam dados utilizados pelos recursos graficos.
-
-Entre os principais arquivos de inicializacao presentes no projeto estao:
-
-- `bg_tile_pattern_praia.mif`
-- `bg_tile_ram.mif`
-- `palette_default.mif`
-- `sprite_attribute_ram.mif`
-- `sprite_pattern_ram_pikachu_charmander.mif`
-
-Esses arquivos estao associados aos diferentes recursos utilizados pelo sistema:
-
-- `bg_tile_pattern_praia.mif`: padroes graficos dos tiles utilizados pelo background.
-- `bg_tile_ram.mif`: dados referentes a organizacao do mapa de tiles.
-- `palette_default.mif`: dados iniciais utilizados pela paleta de cores.
-- `sprite_attribute_ram.mif`: atributos iniciais dos sprites.
-- `sprite_pattern_ram_pikachu_charmander.mif`: padroes graficos utilizados pelos sprites.
-
-A organizacao das memorias acompanha a propria arquitetura grafica do projeto. O motor de background acessa as memorias de tile, padrao grafico e paleta para gerar os pixels do cenario, enquanto o motor de sprites utiliza as memorias de atributos e padroes dos sprites. Esses elementos sao posteriormente encaminhados ao compositor e ao framebuffer.
-
-Assim, os arquivos de inicializacao constituem os dados graficos utilizados pelas memorias do sistema, enquanto os modulos HDL implementam a logica responsavel pelo processamento desses dados e pela construcao da imagem.
-
-De forma simplificada:
+De forma simplificada, o fluxo de processamento pode ser representado por:
 
 ```text
 +-----------------------------+
-|       ARQUIVOS .MIF         |
-|                             |
-| Background | Paleta | Sprite|
-+-------------+---------------+
-              |
-              v
+| MEMÓRIA DE INSTRUÇÕES       |
+| Programa Assembly em .mif   |
++--------------+--------------+
+               |
+               v
 +-----------------------------+
-|          MEMORIAS           |
-|                             |
-| Tilemap | Patterns | Atrib. |
-+-------------+---------------+
-              |
-              v
+| NÚCLEO DO COPROCESSADOR     |
+| Busca, controle, ULA        |
+| Banco de registradores      |
++--------------+--------------+
+               |
+               v
 +-----------------------------+
-|       MOTORES GRAFICOS      |
-+-------------+---------------+
-              |
-              v
+| UNIDADES GRÁFICAS           |
+| Background | Rasterizadores |
+| Sprites                    |
++--------------+--------------+
+               |
+               v
 +-----------------------------+
-|          COMPOSITOR         |
-+-------------+---------------+
-              |
-              v
-          FRAMEBUFFER
+| COMPOSIÇÃO DAS CAMADAS      |
+| Controle de sobreposição    |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+| FRAMEBUFFER DUPLO           |
++--------------+--------------+
+               |
+               v
++-----------------------------+
+| CONTROLADOR VGA + PLL       |
++--------------+--------------+
+               |
+               v
+          MONITOR VGA
 ```
+
+O núcleo utiliza o clock principal de 50 MHz, enquanto a geração dos sinais de vídeo e a leitura do framebuffer utilizam o clock de pixel gerado pelo PLL. A sincronização entre o processamento dos quadros e a exibição é realizada pelo próprio hardware.
+
+## 5.2 Software e Ferramentas de Desenvolvimento
+
+O projeto utiliza ferramentas de desenvolvimento, compilação, simulação e geração de arquivos de inicialização. Os principais recursos presentes no repositório são:
+
+- **Intel Quartus Prime Standard Lite Edition 25.1:** ambiente associado ao projeto `CoProcessador.qpf`, utilizado para configurar, sintetizar e preparar a implementação do hardware na FPGA.
+- **ModelSim/Questa:** ferramentas de simulação HDL para as quais o repositório contém testbenches e arquivos auxiliares de simulação.
+- **Verilog HDL:** linguagem utilizada na descrição do núcleo, dos motores gráficos, das memórias e dos circuitos de controle.
+- **Python:** utilizado em ferramentas auxiliares para montagem de programas, geração de Assembly e conversão de imagens em arquivos de inicialização.
+- **C:** utilizado no programa `compiladorISA.c`, que gera programas codificados para a ISA do coprocessador em formato `.mif`.
+- **HTML, CSS e JavaScript:** utilizados no simulador da ISA executado diretamente no navegador.
+
+### 5.2.1 Montador e Gerador de Programas
+
+O repositório contém ferramentas para produzir programas destinados à memória de instruções do coprocessador.
+
+O arquivo `aux_files/montador.py` recebe um programa Assembly e gera três arquivos:
+
+- `.mif`: conteúdo destinado à inicialização da memória de instruções no Quartus.
+- `.hex`: representação hexadecimal das instruções, utilizada em fluxos de simulação compatíveis com `$readmemh`.
+- `.lst`: listagem com endereços, instruções codificadas, campos binários e linhas de origem.
+
+O montador reconhece instruções da ISA, registradores, valores imediatos, rótulos e desvios condicionais e incondicionais. Isso permite escrever programas de demonstração em Assembly e convertê-los para a representação binária esperada pelo hardware.
+
+Também está presente o arquivo `aux_files/compiladorISA.c`, que implementa um gerador de programas em C e produz arquivos `.mif`. Entre os recursos previstos nesse gerador estão a composição de cenas com retângulos, triângulos, sprites e rolagem do background.
+
+O repositório contém ainda `aux_files/gerador_assembly.py`, utilizado para gerar programas Assembly de demonstração.
+
+É importante distinguir a geração do arquivo da sua utilização pelo hardware: depois de produzir um novo `.mif`, é necessário garantir que a memória de instruções do projeto Quartus esteja configurada para carregar esse arquivo durante a compilação.
+
+### 5.2.2 Simulador HTML da ISA
+
+O diretório `aux_files/` contém o simulador `simulador_isa (1).html`, desenvolvido com HTML, CSS e JavaScript para executar programas da ISA do coprocessador gráfico no navegador.
+
+O simulador permite montar e executar instruções Assembly, acompanhar os registradores e observar a imagem produzida em uma área de vídeo lógica de 320 × 240 pixels. Também contempla recursos como rótulos, desvios, desenho de primitivas, background baseado em tiles, sprites e composição por prioridade.
+
+Essa ferramenta oferece um ambiente auxiliar para estudar o comportamento dos programas e verificar a sequência de operações gráficas antes dos testes na FPGA. Entretanto, sua execução ocorre no navegador e não substitui a síntese, a simulação HDL ou a execução física do circuito.
+
+O repositório também contém `aux_files/Simulador do coprocessador gráfico (1).html`, outro arquivo HTML de simulação. Os arquivos HTML devem ser considerados ferramentas auxiliares distintas do hardware descrito em Verilog.
+
+### 5.2.3 Ferramentas de Conversão de Imagens e Visualização de Memórias
+
+O projeto contém scripts que facilitam a preparação dos dados gráficos utilizados pelas memórias da FPGA.
+
+Entre eles estão:
+
+- `aux_files/imagem_para_mif.py`: converte uma imagem em arquivos de inicialização para o tilemap, os padrões do background, a paleta e o programa associado à exibição do fundo.
+- `aux_files/gerar_background.py`: ferramenta auxiliar para geração de dados de background.
+- `aux_files/mif_visualizador.html`: visualizador de arquivos `.mif`, útil para inspecionar o conteúdo das memórias inicializadas.
+
+Esses recursos permitem preparar imagens e programas sem precisar editar manualmente cada endereço das memórias. Os arquivos gerados devem respeitar as dimensões, a organização dos dados e a representação de cores esperadas pelos módulos HDL correspondentes.
+
+## 5.3 Arquivos de Inicialização das Memórias
+
+O projeto utiliza arquivos no formato `.mif` (*Memory Initialization File*) para fornecer os dados iniciais das memórias de instruções e dos recursos gráficos.
+
+Os arquivos presentes em `memory_files/initialization_files/` incluem:
+
+- `apresentacao_programa.mif`
+- `apresentacao_background_tilemap.mif`
+- `apresentacao_background_padrao.mif`
+- `apresentacao_paleta.mif`
+- `apresentacao_sprite_pattern.mif`
+- `scroll_background.mif`
+
+Os módulos de memória gerados para o projeto referenciam os arquivos `apresentacao_*.mif` correspondentes às instruções, ao tilemap, aos padrões do background, à paleta e aos padrões de sprites. O diretório também contém `scroll_background.mif`, associado a um cenário de demonstração.
+
+A função dos principais arquivos é:
+
+| Arquivo | Finalidade |
+|---|---|
+| `apresentacao_programa.mif` | Inicialização da memória de instruções com o programa gráfico de demonstração. |
+| `apresentacao_background_tilemap.mif` | Inicialização do mapa que organiza os tiles do background. |
+| `apresentacao_background_padrao.mif` | Inicialização dos padrões gráficos utilizados pelos tiles do background. |
+| `apresentacao_paleta.mif` | Inicialização dos valores de cor utilizados pelo sistema gráfico. |
+| `apresentacao_sprite_pattern.mif` | Inicialização dos padrões gráficos dos sprites. |
+| `scroll_background.mif` | Arquivo de dados incluído no projeto para a demonstração de rolagem do background. |
+
+A organização das memórias acompanha a arquitetura gráfica. O motor de background consulta o mapa de tiles e seus padrões gráficos; o motor de sprites utiliza os padrões dos sprites; e a paleta fornece os valores de cor usados na composição dos pixels.
+
+Os dados produzidos pelos motores gráficos são encaminhados à composição das camadas e ao framebuffer, de onde são lidos pelo controlador VGA para formar a imagem exibida.
+
+O processo pode ser resumido da seguinte maneira:
+
+```text
++--------------------------------+
+| ARQUIVOS DE INICIALIZAÇÃO .MIF  |
+|                                |
+| Programa | Tilemap | Padrões   |
+| Paleta   | Sprite              |
++----------------+---------------+
+                 |
+                 v
++--------------------------------+
+| MEMÓRIAS DO COPROCESSADOR      |
+|                                |
+| Instruções | Background        |
+| Paleta     | Padrões de sprites|
++----------------+---------------+
+                 |
+                 v
++--------------------------------+
+| MOTORES GRÁFICOS                |
+| Background | Rasterizadores    |
+| Sprites                        |
++----------------+---------------+
+                 |
+                 v
++--------------------------------+
+| COMPOSIÇÃO E FRAMEBUFFER DUPLO |
++----------------+---------------+
+                 |
+                 v
+           CONTROLADOR VGA
+```
+
+Dessa forma, os arquivos `.mif` fornecem os dados utilizados na inicialização das memórias, enquanto os módulos Verilog implementam a lógica de busca, processamento, renderização, composição e exibição. As ferramentas auxiliares permitem gerar ou inspecionar esses dados, facilitando a criação de novas demonstrações e a validação da ISA.
 
 
 # 6. Processo de Desenvolvimento
 
-O processo de projeto e implementação do co-processador gráfico seguiu uma abordagem ascendente (*bottom-up*), iniciando nos módulos de menor nível (sinalização física de vídeo) até a composição final do pipeline gráfico e integração no *top-level* da FPGA DE1-SoC.
+O processo de projeto e implementação do co-processador gráfico seguiu uma abordagem ascendente (*bottom-up*) e foi dividido em duas etapas. Na **primeira etapa** (seções 6.1 a 6.7), partiu-se dos módulos de menor nível (sinalização física de vídeo) até a composição final do pipeline gráfico e a integração no *top-level* da FPGA DE1-SoC. Na **segunda etapa** (seções 6.8 a 6.16), o núcleo gráfico passou a ser comandado por um programa: foram definidos um conjunto de instruções, o caminho de controle que o executa e as garantias de composição e de controle de fluxo necessárias para o desenvolvimento de animações.
 
 ---
 
@@ -1376,6 +1655,7 @@ Integração final dos motores gráficos em uma única cadeia de saída antes da
   $$\mathbf{Background} \longrightarrow \mathbf{Polígonos} \longrightarrow \mathbf{Sprites}$$
 * **Tratamento de Transparências:** Se a camada de maior prioridade produzir o índice de cor `0x00`, o compositor repassa o pixel válido da camada imediatamente inferior.
 * **Mapeamento de Paleta (Color LUT):** Os índices de 8 bits resultantes da composição são passados pela Lookup Table de $256 \times 9\text{ bits}$, mapeando a informação para os canais físicos Red ($3\text{ bits}$), Green ($3\text{ bits}$) e Blue ($3\text{ bits}$).
+* **Evolução na segunda etapa:** A hierarquia de camadas deixou de depender da execução sequencial do compositor e passou a ser garantida pela camada de composição descrita na seção 6.12.
 
 ---
 
@@ -1385,6 +1665,116 @@ Finalização da descrição em Verilog e teste direto na plataforma de prototip
 
 * **Interconexão de Módulos:** Conexão de todas as unidades internas ao módulo *top-level* do projeto no Quartus Prime.
 * **Interface Hardware de Validação:** Mapeamento temporário de sinais de controle nas chaves (*SW*), botões (*KEY*) e LEDs da placa **DE1-SoC**, permitindo a alternância de *buffers*, scroll manual de background, disparo de comandos do rasterizador e controle de visibilidade de sprites diretamente no monitor VGA durante a apresentação do protótipo.
+
+---
+
+## 6.8 Definição da ISA e do Modelo de Execução
+
+A segunda etapa começou pela definição de como o coprocessador seria comandado. Em vez de módulos auxiliares gerando comandos fixos, optou-se por uma unidade de controle que executa um programa armazenado em memória, o que torna a cena programável sem alterar o hardware:
+
+* **Conjunto de Instruções de 32 Bits:** Definição de um conjunto pequeno, com quatro formatos (ULA, configuração de memórias, instruções sem operandos e desvios), documentado em um documento de especificação da ISA. A numeração dos registradores e as condições de desvio seguem a convenção do ARMv8/LEGv8.
+* **Registradores Dedicados ao Rasterizador:** Os vértices e a cor das primitivas ocupam registradores de endereços 37 a 43 (`V0X` a `COLOR`), ligados diretamente ao rasterizador. Dessa forma, os parâmetros de desenho são escritos por instruções comuns da ULA, sem barramento adicional.
+* **Instruções de Desenho Bloqueantes:** As instruções `DRAW_*` seguram o contador de programa até o término do motor, de modo que os motores nunca disputam o framebuffer nem a paleta.
+* **Ciclo de Quadro por Programa:** O `HALT` marca o fim do programa de um quadro. A troca de bancos e o reinício do programa ocorrem no VBlank, e os registradores são preservados, o que permite manter estado entre quadros, requisito central para animações.
+* **Espaço de Opcodes Reservado:** Os opcodes ainda livres foram reservados para extensões futuras, como instruções de acesso à memória e chamada de sub-rotinas.
+
+---
+
+## 6.9 Banco de Registradores e ULA
+
+Implementação do núcleo de dados do caminho de controle:
+
+* **Banco de Registradores:** Registradores de propósito geral (`R0` a `R30`), registrador zero (`XZR`), registrador de estado (`STATUS`), registrador de flags (`FLAGS`) e os sete registradores do rasterizador, com duas portas de leitura e uma de escrita e índices de 6 bits.
+* **ULA:** Operações `ADD`, `SUB`, `AND`, `LSL`, `LSR` e `PASS` sobre 32 bits. A soma e a subtração são calculadas com 33 bits para que o carry e o overflow possam ser extraídos.
+* **Flags N, Z, C e V:** O desenvolvimento começou com as flags N e Z. Ao implementar os desvios (seção 6.13), foram acrescentadas as flags C e V, necessárias para comparações corretas com e sem sinal. No `SUB`, o carry indica ausência de empréstimo, como no ARMv8.
+* **Comparação sem Destino:** O uso de `XZR` como destino permite que `SUB XZR, Rn, Rm` funcione como uma instrução de comparação, que atualiza apenas as flags.
+
+---
+
+## 6.10 Unidade de Busca de Instruções e Unidade de Controle
+
+Desenvolvimento dos módulos que executam o programa:
+
+* **Memória de Instruções e Latência:** A memória de instruções possui entrada de endereço e saída registradas, o que gera uma latência de leitura de 2 ciclos. A unidade de busca insere uma bolha de um ciclo a cada avanço do contador de programa, resultando em 2 ciclos por instrução simples.
+* **Unidade de Busca:** Contador de programa de 16 bits, pulso `execute` de um ciclo por instrução, parada (*stall*) durante instruções de desenho e `WAIT_VBLANK`, `HALT`, reinício automático por VBlank e reinício manual por botão.
+* **Tratamento de Instruções Inválidas:** Opcodes reservados são tratados como `NOP` e sinalizados.
+* **Unidade de Controle:** Decodificação do opcode, controle da ULA e das escritas no banco de registradores, escritas nas memórias gráficas (paleta, tilemap, padrões, atributos de sprites e scroll) e geração de `start` e `done` dos motores.
+* **Seleção do Motor Ativo:** O módulo `engine_mux`, definido junto à unidade de controle, conecta ao framebuffer e à paleta o motor indicado por `engine_sel`.
+
+---
+
+## 6.11 Integração no `coprocessador_top`
+
+Substituição do top-level da primeira etapa por um novo módulo de integração:
+
+* **Remoção dos Módulos Auxiliares:** O `coprocessador_top` substitui o `top_video`, o `test_driver` e o `sprite_mover_flip`. As portas externas de escrita nas memórias deixaram de existir, e a configuração passou a ser feita pelo programa.
+* **Componentes Reaproveitados:** PLL, controlador VGA, framebuffer com double buffering, memórias de background, de padrões de sprites e de paleta, e os três motores de renderização foram mantidos.
+* **Memória de Instruções:** Nova RAM de 16384 × 32 bits, inicializada por arquivo `.mif` gerado pelo montador.
+* **Atributos dos Sprites em Registradores:** Os atributos passaram a ser mantidos em registradores internos ao `motor_sprite`, escritos por `SET_SPRITE_POS` e `SET_SPRITE_ATTR`, e a `sprite_attribute_ram` deixou de ser utilizada. Todos os sprites começam desabilitados após o reset.
+* **Controles da Placa:** `KEY[0]` realiza o reset, sincronizado por dois estágios de registradores, e `KEY[1]` reinicia o programa na borda de descida, sem *debounce*. `LEDR[0]` indica programa em execução, `LEDR[1]` indica espera por motor ou VBlank, `LEDR[2]` indica erro (com trava), `LEDR[3]` indica PLL travado e `LEDR[4]` indica que algum pixel foi descartado por prioridade (com trava).
+* **Seleção do Top-Level:** Para sintetizar esta versão, o `coprocessador_top` deve ser definido como *top-level entity* do projeto Quartus.
+
+---
+
+## 6.12 Prioridade entre Camadas (Camada de Composição)
+
+Com o desenho comandado por instruções, identificou-se um problema: a hierarquia **fundo → polígonos → sprites** deixou de ser garantida. Na primeira etapa ela era consequência da execução sequencial do compositor, mas no modelo por instruções a ordem é a do programa, e um `DRAW_BG` executado depois de um `DRAW_SPRITES` apagava os sprites:
+
+* **Alternativa Avaliada:** Reaproveitar o compositor sequencial, executando as camadas em ordem fixa ao final do quadro. A alternativa foi descartada porque faria os desenhos ocorrerem somente após o `HALT`, com o estado final do quadro: programas que alteram a paleta, os atributos dos sprites ou o scroll entre duas instruções de desenho passariam a produzir resultados diferentes dos esperados.
+* **Solução Adotada:** Módulo `camada_composicao`, entre o `engine_mux` e o framebuffer. Um mapa de 2 bits por pixel registra a camada mais alta que já escreveu em cada pixel do quadro, e uma escrita só é aceita se a sua camada for maior ou igual à registrada. Os desenhos continuam imediatos e bloqueantes, preservando a semântica da ISA.
+* **Pipeline com *Forwarding*:** A camada é implementada em dois estágios, com a camada da escrita registrada junto com o endereço. Escritas em ciclos consecutivos no mesmo pixel são tratadas por encaminhamento, sem risco de leitura de marcas desatualizadas.
+* **Limpeza dos Mapas sem Custo para o Programa:** Cada banco do framebuffer possui o seu mapa. O mapa do banco exibido, que não é usado pelos motores, é zerado em segundo plano após cada troca de bancos. Após o reset ou o reinício manual, os dois mapas são zerados e a busca fica em reset durante essa varredura.
+* **Diagnóstico em Hardware:** `LEDR[4]` acende, com trava, quando algum pixel é descartado por prioridade.
+* **Verificação:** Testbench unitário, testbench com os motores reais desenhando a mesma cena em quatro ordens diferentes e simulação do `coprocessador_top` completo com um programa em ordem invertida. Na ordem invertida e sem a camada, 1600 pixels da cena de teste saíam errados (o fundo cobrindo o retângulo e o sprite); com a camada, o quadro foi idêntico ao da ordem correta em todos os cenários.
+
+---
+
+## 6.13 Desvios Condicionais e Flags
+
+Para tornar viável a programação de animações, foram acrescentadas instruções de controle de fluxo:
+
+* **Motivação:** Sem desvios, o programa é linear e não consegue limitar a posição de um objeto, inverter sua velocidade ao atingir uma borda, repetir um desenho em laço ou distinguir o primeiro quadro dos demais.
+* **Instruções `B` e `B_COND`:** Desvio incondicional e desvio condicional com as condições do LEGv8 (`EQ`, `NE`, `HS`, `LO`, `MI`, `PL`, `VS`, `VC`, `HI`, `LS`, `GE`, `LT`, `GT`, `LE` e `AL`), implementadas no módulo combinacional `avalia_condicao`.
+* **Deslocamento Relativo:** Deslocamento de 14 bits, em palavras, relativo ao endereço do desvio e somado módulo o tamanho da memória de instruções, de modo que qualquer endereço é alcançável.
+* **Mesma Temporização das Demais Instruções:** O desvio executa no ciclo `execute`, alterando apenas o próximo valor do contador de programa. A unidade de controle não precisou ser modificada.
+* **Desvio na Última Palavra:** O fim da memória sem desvio encerra o programa, mas um desvio tomado na última palavra continua a execução no alvo.
+* **Flags V e C:** Acrescentadas à ULA para que as comparações com sinal (`LT`, `GE`, `GT`, `LE`) e sem sinal (`HS`, `LO`, `HI`, `LS`) sejam corretas, inclusive nos casos de overflow.
+* **Padrão de Uso:** A comparação é feita com `SUB XZR, Rn, Rm` (ou imediato) imediatamente antes do desvio, já que toda instrução da ULA atualiza as flags.
+
+---
+
+## 6.14 Ferramentas de Apoio
+
+Foram desenvolvidas ferramentas para escrever, converter e validar programas e dados:
+
+* **Montador (`montador.py`):** Converte código em linguagem de montagem para os arquivos `.mif`, `.hex` e `.lst`. Foi estendido com *labels* (`nome:`), `B` e `B.cond` com *label* ou deslocamento literal, codificação do registrador destino com 6 bits e nomes simbólicos (`V0X` a `COLOR`, `XZR`, `FLAGS`). A saída para programas escritos na sintaxe anterior permaneceu idêntica.
+* **Conversores de Imagem para `.mif`:** Scripts que transformam imagens em dados de background (mapa de tiles, padrões e paleta) e em padrões de sprite. A conversão respeita as restrições do hardware: no máximo 256 tiles distintos de $8 \times 8$ pixels no fundo, cores RGB de 3 bits por canal e preservação das entradas da paleta usadas pelos sprites, que compartilham o banco 0 com o background.
+* **Simulador em Navegador (`simulador_isa.html`):** Arquivo único que monta o programa, executa as instruções já codificadas, desenha em um framebuffer de $320 \times 240$ com a prioridade entre camadas e exibe registradores, flags e a memória de instruções, com execução passo a passo, por quadro e contínua. Carrega os `.mif` de paleta, tilemap e padrões. É um modelo funcional: não reproduz a temporização do hardware e trata `WAIT_VBLANK` como instrução sem espera.
+* **Geradores de Programas de Teste:** Scripts que montam programas curtos para os testes de sistema.
+
+---
+
+## 6.15 Programas de Demonstração
+
+Programas escritos em linguagem de montagem para exercitar o sistema:
+
+* **Retângulo que quica (`animacao_quicando.asm`):** Mantém posição e velocidade em registradores que persistem entre quadros, usa um desvio para a inicialização no primeiro quadro, desvios condicionais para os limites e um laço com contador que desenha quatro quadrados em cada quadro.
+* **Fundo e sprites (`demo_programa`):** Desenha o fundo, um quadrado e um triângulo, e movimenta um sprite que é espelhado a cada vez que atinge uma borda: borda lateral inverte `flip_h` e borda superior ou inferior inverte `flip_v`.
+* **Dois bancos de paleta:** Segundo sprite que usa o banco 1 da paleta, e sprites estáticos no centro da tela, um de cada padrão.
+* **Teste de cores (`teste_cores`):** Barras de cores saturadas e rampa de cinzas, definidas pelo próprio programa, para isolar o caminho de vídeo do conteúdo dos arquivos `.mif`.
+
+---
+
+## 6.16 Verificação e Medições da Segunda Etapa
+
+A verificação desta etapa combinou testes unitários, de integração e de sistema, executados no Icarus Verilog:
+
+* **ULA e Condições (`tb_condicoes_desvio`):** Para pares de valores de borda e aleatórios, verifica as 16 condições após `SUB` e as flags C e V de `ADD`, comparando com aritmética de 64 bits (469 200 verificações). Defeitos introduzidos de propósito na ULA e no avaliador de condições foram todos detectados.
+* **Camada de Composição (`tb_camada_composicao`):** Escritas roteirizadas cobrindo sprite antes do fundo, sobreposição na mesma camada, escritas em ciclos consecutivos, troca de bancos, reinício manual e escritas durante a limpeza. Defeitos introduzidos de propósito (sem *forwarding*, sem o teste de prioridade, sem a varredura de limpeza e sem o descarte durante a inicialização) foram todos detectados.
+* **Integração com Motores Reais (`tb_composicao_ordem_desenho`):** Background, sprite e rasterizador reais desenham a mesma cena em quatro ordens diferentes, e o quadro final é comparado com o esperado.
+* **Sistema Completo (`tb/sim_top`):** Simulação do `coprocessador_top` completo, com modelos comportamentais para o PLL e as RAMs do Quartus, executando programas reais. Um *script* de testes cobre laço de soma, desvios para frente e para trás, as 15 condições em 6 pares de valores, desvio na última palavra com volta da memória, condição reservada e a animação do retângulo que quica durante 7 quadros.
+* **Medição de Custos:** Custo de instruções, de desenho e de quadro medidos no RTL, resumidos na seção 4.5.
+* **Limitação:** Os testes de sistema usam modelos comportamentais no lugar das IPs do Quartus e, por isso, não substituem a síntese, a análise de timing nem a validação em hardware.
 
 
 
@@ -1425,178 +1815,178 @@ O repositório do projeto está organizado conforme a estrutura abaixo:
 
 ---
 
+
 # 8. Testes e Erros
 
-Os testes do coprocessador foram realizados inicialmente por meio de testbenches desenvolvidos em Verilog, utilizando o ModelSim para simulação dos módulos individualmente. Os testes utilizaram memórias comportamentais como modelos das RAMs presentes no projeto, permitindo verificar os sinais de leitura, escrita no framebuffer, seleção de paletas e funcionamento dos motores de renderização.
+A validação do coprocessador gráfico foi realizada por meio de diferentes estratégias complementares: simulação dos módulos em Verilog, execução de programas Assembly em um simulador desenvolvido em HTML, geração de arquivos de inicialização de memória e testes do sistema integrado na FPGA DE1-SoC.
 
-A estratégia adotada foi validar inicialmente os módulos de forma isolada e, posteriormente, verificar o comportamento conjunto das diferentes camadas de renderização. Dessa forma, foi possível identificar erros de funcionamento antes da integração completa com o sistema de vídeo.
+A utilização dessas estratégias permitiu analisar o comportamento do projeto em diferentes níveis. Enquanto os testbenches verificam condições específicas dos circuitos digitais, o simulador HTML possibilita acompanhar a execução das instruções da ISA e observar seus efeitos sobre os registradores e a imagem produzida. Já os testes na placa permitem verificar o funcionamento do sistema integrado com as memórias, os motores gráficos e a saída VGA.
 
-### 8.0.1 Simulação
+Também foram desenvolvidas ferramentas auxiliares para facilitar a criação e a execução de programas destinados ao coprocessador. Entre elas estão o simulador da ISA, o montador de Assembly e o gerador de arquivos `.mif`, utilizados para preparar programas e dados que podem ser carregados nas memórias do projeto.
 
-Para executar os *testbenches* do projeto, é necessário primeiro **compilar o projeto** no Quartus. Em seguida, deve-se configurar a ferramenta de simulação em **Assignments → Settings**, selecionando o **ModelSim-Altera** como ferramenta de simulação.
+## 8.1 Testes por Simulação em Verilog
 
-Após essa configuração, o processo de execução de um *testbench* é:
+O repositório contém testbenches desenvolvidos em Verilog para verificar o funcionamento de módulos individuais e de partes integradas do coprocessador. Esses arquivos permitem aplicar entradas controladas, observar os sinais internos e comparar os resultados obtidos com os valores esperados.
 
-1. Acesse **Tools → Run Simulation Tool → Compile**.
-2. Selecione o arquivo do *testbench* que deseja testar.
-3. Clique em **Compile** e, após a compilação, em **Done**.
-4. Na página do ModelSim, localize a região **Library** e abra a biblioteca **work**.
-5. Localize o *testbench* desejado e dê **duplo clique** sobre ele para iniciar a simulação.
-6. Na janela da simulação, clique com o botão direito e selecione **Add → Wave** para adicionar os sinais à visualização de ondas.
-7. No terminal do ModelSim, execute:
+Entre os principais componentes contemplados pelos testes estão:
 
-```text
-run -all
+- **Unidade de busca de instruções:** verificação do fluxo de busca, da execução automática, do reinício e do tratamento do término do programa;
+- **Rasterizadores:** análise da geração de pixels para quadrados e triângulos, incluindo a verificação das coordenadas e das cores escritas no framebuffer;
+- **Motor de background:** verificação do deslocamento automático do cenário (*scroll*) e de sua atualização entre quadros;
+- **Motor de sprites:** análise da transparência, do espelhamento horizontal e vertical e da prioridade entre sprites;
+- **Framebuffer:** verificação da troca entre buffers e da independência dos conteúdos armazenados;
+- **Composição gráfica:** análise da ordem de desenho, da sobreposição de elementos e da arbitragem das escritas no framebuffer;
+- **Desvios da ISA:** testes de instruções de desvio, incluindo `B` e `B_COND`, por meio de simulações do sistema integrado.
+
+Os testbenches possuem verificações automáticas para comparar pixels, quantidades de escritas, valores de registradores e outros sinais com os resultados esperados. Quando uma condição não é satisfeita, alguns testes registram mensagens de erro; outros também contabilizam as falhas e apresentam um resumo ao final da execução.
+
+A existência desses mecanismos facilita a identificação de erros e a repetição dos testes após alterações no código. Entretanto, a presença de um testbench no repositório, isoladamente, não comprova que sua execução mais recente tenha sido aprovada.
+
+## 8.2 Simulador HTML da ISA
+
+Além das simulações em Verilog, foi desenvolvido um simulador em HTML para testar a arquitetura de conjunto de instruções (*Instruction Set Architecture* — ISA) do coprocessador gráfico.
+
+A ferramenta permite escrever um programa em Assembly, montar as instruções e executar o programa dentro do ambiente de simulação. Ela também permite acompanhar o estado dos registradores, o contador de programa (*Program Counter* — PC), a quantidade de instruções executadas e o resultado gráfico produzido.
+
+Durante a execução, é possível observar como as instruções modificam os registradores e como os comandos gráficos afetam a imagem. O simulador considera a ordem de composição definida para o projeto, na qual o background é processado antes dos rasterizadores e das sprites.
+
+A ferramenta também oferece suporte ao carregamento de arquivos `.mif` correspondentes às memórias gráficas, incluindo paleta, mapa de tiles, padrões do background e padrões de sprites. Isso permite utilizar dados de inicialização do próprio projeto na simulação, aproximando os cenários testados daqueles preparados para a FPGA.
+
+Esse recurso foi importante para investigar a relação entre o programa Assembly e o resultado visual esperado, facilitando a identificação de problemas de codificação, de utilização dos registradores e de interpretação das instruções antes dos testes em hardware.
+
+## 8.3 Testes com Programas Assembly
+
+O projeto contém programas Assembly utilizados para exercitar a ISA e comandar as funcionalidades gráficas. Entre os comandos presentes nos programas estão instruções para configuração de paletas, escrita de dados de tiles, desenho de primitivas, configuração de sprites, movimentação do background e controle da execução.
+
+Um dos arquivos presentes na raiz do repositório é `programa.asm`, que contém um programa de teste com operações de configuração de paleta e preenchimento de dados do background. Também existe o arquivo `aux_files/demo_programa_4sprites.asm`, utilizado como outro exemplo de programa para a arquitetura.
+
+A execução dos programas no simulador HTML permite verificar se as instruções são reconhecidas e montadas, se os registradores são utilizados conforme os operandos especificados e se os comandos gráficos produzem o efeito esperado na imagem simulada.
+
+Os testes de desvios também são contemplados por programas específicos, permitindo verificar o comportamento de instruções de salto e de desvio condicional. Para esses casos, o repositório inclui cenários automatizados de teste do sistema integrado.
+
+É importante distinguir a simulação da ISA da validação do hardware: o simulador HTML facilita a análise da lógica e dos efeitos esperados das instruções, mas não substitui os testes do circuito sintetizado na FPGA.
+
+## 8.4 Montagem de Instruções e Geração de Arquivos `.mif`
+
+Para facilitar a preparação de programas destinados ao hardware, o projeto contém ferramentas auxiliares de montagem e geração de arquivos de inicialização de memória.
+
+O arquivo `aux_files/montador.py` integra o conjunto de ferramentas relacionado à montagem de programas. O repositório também contém o código-fonte `aux_files/compiladorISA.c`, responsável por gerar programas codificados no formato Memory Initialization File (`.mif`).
+
+O gerador em C permite configurar ações gráficas, incluindo desenho de retângulos e triângulos, quantidade de sprites e deslocamento do background. A partir dessas configurações, as instruções são codificadas em palavras de 32 bits e gravadas em um arquivo `.mif`, com largura de 32 bits e profundidade de 16384 posições.
+
+O arquivo gerado pode ser associado à memória de instruções do projeto no Quartus, permitindo que o coprocessador execute o programa após a compilação e a programação da FPGA. Esse procedimento evita a necessidade de codificar manualmente cada instrução binária e torna mais simples modificar os comandos utilizados na demonstração.
+
+O gerador também considera desvios e rótulos internos, resolvendo os destinos correspondentes durante a geração do programa. Dessa forma, a ferramenta contribui para testar programas mais elaborados, incluindo sequências de ações e animações.
+
+Os arquivos `.mif` não se limitam ao programa de instruções. O projeto também contém arquivos destinados à inicialização de dados gráficos, como paleta, mapa de tiles, padrões do background e padrões de sprites. Esses arquivos devem corresponder às dimensões e aos formatos esperados pelas respectivas memórias do hardware.
+
+A utilização dessas ferramentas estabelece um fluxo de trabalho entre a descrição do programa, sua codificação, a inicialização das memórias e a execução na FPGA.
+
+## 8.5 Testes do Rasterizador de Quadrados
+
+O testbench `tb/tb_rasterizer_square.v` verifica a geração de pixels pelo rasterizador de quadrados.
+
+O teste compara os pixels escritos no framebuffer de teste com a região esperada, verificando a cor e a quantidade de pixels produzidos. Também verifica possíveis escritas fora dos limites da região definida, incluindo as bordas esquerda, direita, superior e inferior.
+
+Essas verificações permitem detectar erros de delimitação, preenchimento ou escrita no framebuffer. O testbench registra mensagens de aprovação ou erro conforme as comparações realizadas.
+
+## 8.6 Testes do Rasterizador de Triângulos
+
+O arquivo `tb/tb_rasterizer_triangle.v` verifica o preenchimento de triângulos por meio da análise das coordenadas e das cores produzidas pelo rasterizador.
+
+O testbench compara as posições dos pixels escritos com as regiões esperadas para cada linha do triângulo, utilizando os limites calculados para o preenchimento. Também verifica se os pixels são escritos com a cor correspondente.
+
+O teste contempla a identificação de divergências entre os limites esperados e os observados, além de registrar um aviso para triângulos degenerados em que todos os vértices possuem a mesma coordenada vertical.
+
+## 8.7 Testes do Motor de Background
+
+O arquivo `tb/tb_motor_background.v` contém um teste direcionado ao mecanismo de deslocamento automático do background.
+
+Nesse cenário, o deslocamento horizontal é configurado para avançar um pixel por quadro. O testbench acompanha a evolução do valor de `scroll_x` ao longo de cinco quadros e verifica se o deslocamento alcança o valor esperado.
+
+O teste também permite observar a atualização dos parâmetros utilizados pelo motor durante o processamento dos quadros. Dessa forma, auxilia na identificação de problemas relacionados ao controle do scroll e à consistência do deslocamento aplicado à imagem.
+
+## 8.8 Testes do Motor de Sprites
+
+O comportamento do motor de sprites é analisado por testbenches específicos, que verificam diferentes propriedades da renderização.
+
+### 8.8.1 Transparência
+
+O arquivo `tb/tb_motor_sprite_transparencia.v` verifica se pixels transparentes deixam de produzir escritas no framebuffer. O teste contabiliza as escritas realizadas pelo motor e apresenta o resultado da verificação.
+
+Essa propriedade é importante para que as regiões transparentes de uma sprite não apaguem ou substituam os pixels das camadas gráficas posicionadas atrás dela.
+
+### 8.8.2 Espelhamento
+
+O arquivo `tb/tb_motor_sprite_espelhamento.v` verifica as configurações de espelhamento horizontal (`flip_h`), vertical (`flip_v`) e combinado, além da configuração original sem espelhamento.
+
+O testbench utiliza um padrão assimétrico para permitir a identificação das alterações de posição dos pixels. Dessa forma, é possível comparar a imagem produzida com a imagem esperada para cada configuração.
+
+A validação em simulação é complementada pela observação do comportamento na FPGA, pois a interação entre os sinais de controle, os módulos integrados e as memórias pode revelar problemas que não aparecem nos testes isolados.
+
+### 8.8.3 Prioridade entre Sprites
+
+O arquivo `tb/tb_motor_sprite_prioridade.v` verifica o comportamento do sistema quando duas sprites ocupam a mesma região da tela.
+
+O teste configura sprites sobrepostas e verifica tanto a quantidade de escritas quanto o conteúdo final do framebuffer. A expectativa é que o resultado respeite a regra de prioridade implementada pelo motor, mantendo visível a sprite que deve prevalecer segundo essa configuração.
+
+## 8.9 Testes do Framebuffer e da Composição Gráfica
+
+O projeto possui testbenches voltados ao armazenamento e à composição dos elementos gráficos.
+
+O arquivo `tb/tb_framebuffer_troca_buffers.v` verifica a troca entre os dois buffers, observando se cada um mantém seu conteúdo independentemente do outro. Esse teste auxilia na validação da estratégia de *double buffering*.
+
+Já o arquivo `tb/tb_composicao_ordem_desenho.v` verifica a ordem de composição entre background, rasterizador e sprites. O resultado esperado considera a sprite sobre o retângulo e o retângulo sobre o background, de acordo com a ordem definida para a composição.
+
+O testbench `tb/tb_compositor_sobreposicao.v` também está presente no repositório para verificar situações de sobreposição. Em conjunto, esses testes ajudam a identificar problemas de arbitragem, seleção de camadas e escrita no framebuffer.
+
+A integração dos módulos é especialmente importante porque o funcionamento correto de cada motor isoladamente não garante, por si só, que a imagem final seja composta corretamente.
+
+## 8.10 Testes de Integração e Desvios
+
+Além dos testes dos módulos gráficos, o repositório contém testes direcionados à unidade de busca de instruções e ao comportamento do coprocessador integrado.
+
+O arquivo `tb/tb_unidade_de_busca_de_instrucoes.v` possui verificações automatizadas relacionadas à execução de programas, ao início e reinício da execução, ao término por `HALT` e às condições de funcionamento da unidade de busca.
+
+Para os desvios, o diretório `tb/sim_top/` contém o testbench `tb_top_desvios.v`, o script `testes_desvios.py` e o script de execução `run.sh`. Esses recursos foram organizados para permitir testes do coprocessador integrado, incluindo instruções `B` e `B_COND`.
+
+Os scripts utilizam o Icarus Verilog para compilar e executar determinadas simulações, enquanto os modelos auxiliares em `stubs_ip_quartus.v` substituem IPs do Quartus, como PLL e memórias, durante esses testes.
+
+A partir da raiz do repositório, o script de desvios pode ser executado com:
+
+```bash
+python3 tb/sim_top/testes_desvios.py
 ```
 
-Esse comando executa a simulação até que o *testbench* seja finalizado, permitindo analisar os sinais e verificar o comportamento do módulo testado. Todos os arquivos que correspondem a um *testbench* se iniciam com as letar *tb*.
+Para executar a simulação de integração relacionada à prioridade, pode-se utilizar:
 
-## 8.1 Testes do Rasterizador de Quadrados
-
-O rasterizador de quadrados foi testado considerando diferentes posições e dimensões dos retângulos, além de diferentes configurações de paleta.
-
-O primeiro teste utilizou um quadrado pequeno entre as coordenadas `(10,10)` e `(15,15)`, verificando se todos os pixels da região eram preenchidos com a cor esperada. Também foi realizada uma verificação dos pixels imediatamente externos à região, garantindo que não houvesse escrita fora dos limites especificados.
-
-Em seguida, foi testada a utilização dos vértices em ordem invertida. Nesse caso, as coordenadas foram fornecidas como `(50,40)` e `(45,35)`, verificando se o módulo realizava corretamente a normalização dos limites do quadrado.
-
-Também foi considerado o caso extremo em que os dois vértices são iguais, formando um quadrado de apenas um pixel. Por fim, foi realizado um teste com uma região maior, próxima ao canto superior esquerdo da tela, e outro utilizando o mesmo índice de cor em uma segunda paleta.
-
-Os testes verificaram tanto a quantidade de pixels escritos quanto a posição e a cor dos pixels armazenados no framebuffer de teste.
-
-## 8.2 Testes do Motor de Background
-
-O motor de background foi testado utilizando modelos comportamentais das memórias de tiles, padrões e paleta. O teste também avaliou o mecanismo de scroll automático.
-
-Foi configurado um scroll horizontal, com deslocamento de um pixel por frame. Foram executados cinco frames consecutivos e, ao final de cada processamento, foram observados os valores de `scroll_x` e `frame_scroll_x`.
-
-O objetivo foi verificar se o deslocamento era atualizado corretamente entre os frames e se o valor utilizado durante a renderização permanecia consistente com o frame em processamento.
-
-Além do controle de scroll, as escritas realizadas pelo motor no framebuffer foram monitoradas durante a simulação para confirmar que o background estava efetivamente produzindo pixels.
-
-## 8.3 Teste de Transparência das Sprites
-
-O teste de transparência verificou o comportamento do motor de sprites quando o índice de cor armazenado no pattern representa um pixel transparente.
-
-Foi configurada uma sprite de 16×16 pixels na posição `(50,50)`, com todos os pixels do pattern configurados com índice de cor `0`. O resultado esperado era que nenhum desses pixels produzisse uma escrita no framebuffer.
-
-Durante a simulação, todas as escritas do sinal `fb_we` foram contabilizadas. Caso alguma escrita fosse detectada, o testbench registrava um erro, pois pixels transparentes não devem alterar o conteúdo existente no framebuffer.
-
-O teste foi utilizado para validar que a transparência ocorre antes da escrita do pixel, evitando que regiões transparentes da sprite sobrescrevam as camadas inferiores.
-
-## 8.4 Teste de Espelhamento
-
-O comportamento de espelhamento foi testado considerando as quatro possíveis configurações dos bits de flip da sprite:
-
-* Sem espelhamento;
-* Espelhamento horizontal (`flip_h`);
-* Espelhamento vertical (`flip_v`);
-* Espelhamento horizontal e vertical simultaneamente (`flip_h + flip_v`).
-
-Para tornar o efeito do espelhamento verificável, foi utilizado um padrão assimétrico de 16×16 pixels. Dessa forma, uma simples mudança na posição dos pixels permite identificar se a transformação foi realizada corretamente.
-
-No teste combinado de `flip_h + flip_v`, por exemplo, a barra vertical originalmente posicionada à esquerda deveria aparecer à direita, enquanto a barra horizontal originalmente posicionada na parte inferior deveria aparecer na parte superior. O testbench verifica também a quantidade de pixels escritos e as posições esperadas no framebuffer.
-
-Ao final da execução, o testbench contabiliza as falhas encontradas e informa se o teste completo de espelhamento foi aprovado.
-
-## 8.5 Teste de Sobreposição
-
-O teste de sobreposição foi utilizado para verificar o comportamento do pipeline quando diferentes elementos de renderização ocupam a mesma região da tela.
-
-Nesse cenário, background, polígono e sprite são configurados de forma que suas áreas de escrita coincidam. Cada camada utiliza uma cor diferente, permitindo observar qual camada permanece no framebuffer após a composição.
-
-O testbench verifica individualmente a quantidade de pixels escritos por cada componente. Em um dos cenários utilizados, background, polígono e sprite realizam 256 escritas cada, totalizando 768 escritas. Ao final, os pixels da região de sobreposição são verificados e devem apresentar a cor correspondente à última camada renderizada.
-
-Esse teste também permite verificar, de forma indireta, a sequência de composição utilizada pelo sistema, garantindo que as camadas sejam processadas na ordem estabelecida pela arquitetura.
-
-## 8.6 Teste de Prioridade das Sprites
-
-O sistema possui um mecanismo de prioridade para determinar qual sprite deve permanecer visível quando duas ou mais sprites ocupam a mesma região.
-
-Para validar esse mecanismo, foram configuradas duas sprites de 16×16 pixels na posição `(50,50)`. A primeira sprite possui prioridade `0` e utiliza a cor vermelha, enquanto a segunda possui prioridade `1` e utiliza a cor azul.
-
-Como ambas ocupam os mesmos 256 pixels, o resultado esperado é que cada sprite produza 256 escritas, totalizando 512 escritas. Após a composição, entretanto, todos os pixels da região devem apresentar a cor da sprite de maior prioridade.
-
-O testbench verifica tanto os contadores individuais quanto o conteúdo final do framebuffer. A aprovação ocorre somente quando são detectadas 512 escritas, sendo 256 provenientes de cada sprite, e todos os pixels da região `(50,50)` até `(65,65)` apresentam a cor azul.
-
-## 8.7 Teste de Troca de Buffers
-
-A troca de buffers foi testada utilizando dois framebuffers independentes, denominados `BUFFER 0` e `BUFFER 1`. Cada buffer foi associado a uma cor diferente para facilitar a identificação durante a simulação.
-
-Inicialmente, foi escrita a cor vermelha na posição `(100,100)` do `BUFFER 0` e a cor azul na mesma posição do `BUFFER 1`. Em seguida, o teste selecionou o `BUFFER 0` para leitura e verificou a presença da cor vermelha. Posteriormente, a seleção foi alterada para o `BUFFER 1`, que deveria apresentar a cor azul.
-
-Por fim, o teste retornou ao `BUFFER 0` e verificou novamente seu conteúdo. Também foi verificado que os dois buffers mantiveram seus conteúdos independentes após as trocas.
-
-Esse teste valida o princípio utilizado pelo sistema de double buffering: enquanto um buffer pode ser utilizado para exibição, o outro pode receber os dados referentes ao próximo frame, permitindo realizar a troca posteriormente sem destruir o conteúdo do frame atualmente exibido.
-
-## 8.8 Testes de Integração
-
-Após a validação individual dos motores, foram realizados testes de integração para verificar a comunicação entre os componentes responsáveis pela composição da imagem.
-
-O compositor é responsável por controlar a sequência de processamento entre background, polígonos e sprites, enquanto realiza a arbitragem dos recursos compartilhados. Na arquitetura integrada, os três motores possuem suas próprias interfaces de escrita e o compositor seleciona qual delas será conectada à porta física de escrita do framebuffer. Da mesma forma, as solicitações de leitura da paleta são arbitradas pelo compositor.
-
-A sequência utilizada durante a composição é:
-
-```text
-START
-  |
-  v
-BACKGROUND
-  |
-  v
-POLÍGONOS
-  |
-  v
-SPRITES
-  |
-  v
-DONE
+```bash
+sh tb/sim_top/run.sh
 ```
 
-Dessa maneira, os testes de integração verificam não somente a geração dos pixels, mas também o correto sequenciamento dos motores e a composição das diferentes camadas no framebuffer.
+Esses comandos dependem das ferramentas indicadas nos próprios scripts e da disponibilidade dos arquivos necessários. A execução deve ser acompanhada pela saída do simulador para identificar eventuais falhas ou mensagens de timeout.
 
-## 8.9 Erros, Limitações e Decisões de Projeto
+## 8.11 Testes na FPGA DE1-SoC
 
-Durante o desenvolvimento dos testbenches foram identificados problemas relacionados principalmente à sincronização das memórias e ao controle da sequência de renderização.
+Após o desenvolvimento e a integração dos módulos, foram realizados testes na placa DE1-SoC para observar o comportamento do sistema em hardware e verificar a saída VGA.
 
-Como as memórias utilizadas no hardware possuem comportamento síncrono, seus dados não ficam disponíveis imediatamente após a aplicação do endereço. Por esse motivo, os testbenches dos motores de background e do framebuffer utilizam modelos de memória com latência de leitura, permitindo reproduzir mais fielmente o comportamento esperado no hardware.
+Nessa etapa, o projeto foi compilado no Quartus e programado na FPGA. Os arquivos de inicialização das memórias gráficas e o programa de instruções foram utilizados para preparar a demonstração, permitindo observar o background, as primitivas geométricas e as sprites na imagem exibida.
 
-Outro ponto importante foi a necessidade de considerar a latência durante a leitura da paleta. O testbench do rasterizador de quadrados utiliza uma memória de paleta com saída registrada e uma latência de um ciclo, reproduzindo o comportamento esperado pelo módulo.
+A demonstração em hardware complementa as simulações porque permite observar a interação entre os módulos, as memórias e os sinais de controle em funcionamento integrado. Ela também possibilita verificar se os resultados observados no simulador correspondem ao comportamento real do sistema.
 
-Também foram necessários testes específicos para verificar condições que poderiam provocar escrita incorreta no framebuffer, como pixels transparentes, coordenadas invertidas, sobreposição de elementos e seleção incorreta dos bancos de memória.
+Durante os testes, foram utilizadas entradas físicas da placa para controlar funções da demonstração, conforme a configuração implementada no projeto. Os sinais de estado disponibilizados nos LEDs também auxiliam na observação de condições de execução, espera e erro.
 
-### 8.9.1 Módulos auxiliares para demonstração
+## 8.12 Erros, Limitações e Decisões de Projeto
 
-Como a unidade de controle do coprocessador foi definida como parte do desenvolvimento da **Fase 2**, foi necessário utilizar uma solução temporária para permitir a demonstração das funcionalidades implementadas nesta etapa.
+A utilização conjunta de simulação, ferramentas de montagem e testes em hardware permitiu investigar o comportamento do coprocessador em diferentes níveis. Ainda assim, é necessário distinguir os recursos implementados daqueles cuja validação permanece incompleta.
 
-Para isso, foram desenvolvidos módulos auxiliares responsáveis por gerar comandos de teste e modificar os atributos das sprites. Entre eles estão o `test_driver` e o `sprite_mover_flip`.
+Uma limitação identificada durante a demonstração na FPGA está relacionada ao espelhamento horizontal das sprites. Embora exista um testbench dedicado ao espelhamento e o motor possua suporte aos sinais `flip_h` e `flip_v`, foi observado na demonstração que o espelhamento horizontal não apresentou o comportamento esperado. Essa divergência indica a necessidade de investigar a integração entre o controle dos atributos da sprite e o caminho de renderização utilizado no hardware.
 
-O módulo `test_driver` atua como um controlador simplificado da demonstração. Ele gera o início de cada frame e, durante a fase de polígonos, pode comandar a execução de um quadrado e de um triângulo com parâmetros previamente definidos. Também permite habilitar ou desabilitar a renderização dos polígonos por meio de uma entrada externa.
+Esse caso evidencia a importância de combinar testes isolados com testes integrados: uma propriedade verificada em um ambiente controlado deve também ser observada no sistema completo antes de ser considerada validada em hardware.
 
-Já o módulo `sprite_mover_flip` foi desenvolvido para permitir a movimentação de uma sprite e o acionamento dos comandos de espelhamento horizontal e vertical. O módulo mantém a posição da sprite e os estados dos bits `flip_h` e `flip_v`, atualizando a memória de atributos da sprite quando ocorre uma movimentação ou alteração de espelhamento.
+Outra consideração diz respeito à execução dos testbenches. Os arquivos de teste contêm verificações automáticas e mensagens para indicar erros, aprovações e timeouts, mas os resultados devem ser confirmados pela execução dos respectivos scripts ou pela análise dos registros gerados. Portanto, não se deve considerar todos os testes aprovados apenas porque seus arquivos estão presentes no repositório.
 
-Esses módulos não substituem a unidade de controle definitiva do coprocessador. Eles foram utilizados especificamente como uma solução auxiliar para conectar e demonstrar, em hardware, os módulos de renderização desenvolvidos na fase atual.
-
-### 8.9.2 Problema identificado na demonstração
-
-A execução da demonstração em hardware foi importante para complementar os testes realizados no ModelSim. Durante essa etapa foi identificado um problema no funcionamento do **espelhamento horizontal das sprites**.
-
-Embora os testbenches utilizados durante a validação dos módulos tenham sido capazes de verificar as diferentes configurações de `flip_h` e `flip_v`, a execução integrada na FPGA revelou que o espelhamento horizontal não apresentava o comportamento esperado na demonstração.
-
-Esse resultado evidenciou uma diferença entre a validação individual realizada em simulação e o comportamento observado no sistema integrado em hardware. O problema foi identificado especificamente durante a utilização do módulo auxiliar `sprite_mover_flip`, que permitia acionar o espelhamento por meio de pulsos externos.
-
-A identificação desse erro também demonstrou a importância da etapa de demonstração em hardware como complemento aos testes de simulação. Enquanto os testbenches permitem verificar o comportamento lógico de módulos específicos em condições controladas, a execução na FPGA possibilita observar a interação entre os módulos e as condições reais de operação do sistema.
-
-O problema do espelhamento horizontal permanece, portanto, como uma pendência identificada nesta fase e deverá ser investigado e corrigido durante a continuidade do desenvolvimento.
-
-### 8.9.3 Comandos Inválidos
-
-Apesar de o rasterizador possuir o sinal `invalid_cmd`, não foi desenvolvido um testbench específico para validação de comandos inválidos nesta fase do projeto.
-
-Essa funcionalidade está relacionada ao tratamento dos comandos recebidos pelo coprocessador e depende de uma unidade de controle responsável pela interpretação e gerenciamento desses comandos. Foi tomada a decisão de direcionar o desenvolvimento dessa unidade de controle para a **Fase 2 do projeto**.
-
-Dessa forma, os testes realizados nesta etapa foram concentrados na validação dos módulos de renderização e de sua integração, incluindo rasterização, background, sprites, composição, transparência, espelhamento, prioridade e troca de buffers.
-
-A ausência desse teste nesta fase representa, portanto, uma limitação de escopo do desenvolvimento atual, e não uma indicação de que o comportamento de comandos inválidos tenha sido validado.
+Por fim, as ferramentas de simulação e geração de arquivos `.mif` constituem parte importante do processo de desenvolvimento. Elas facilitam a preparação dos programas, a inspeção dos registradores e a reprodução de cenários gráficos, reduzindo a dependência de alterações manuais na memória de instruções. A continuidade da validação deve priorizar a investigação das divergências encontradas em hardware e a documentação dos resultados efetivamente obtidos em cada teste.
 
 
 
@@ -1748,46 +2138,8 @@ Da mesma forma, a interface de controle definitiva baseada em comandos e MMIO ai
 Assim, considerando o escopo definido para esta etapa, o projeto apresenta um grau elevado de atendimento aos requisitos funcionais de renderização, com as principais pendências concentradas no controle do coprocessador e na correção do espelhamento horizontal das sprites.
 
 
-# 10. Controles DA DEMONSTRACAO NA FPGA
 
-Na versao atual do top-level foram identificados os seguintes controles:
-
-KEY[0]
-Reset
-
-SW[0]
-Habilita scroll automatico
-
-SW[1]
-Seleciona eixo do scroll
-
-SW[2]
-Seleciona direcao do scroll
-
-SW[4:3]
-Direcao de movimento do sprite
-
-KEY[1]
-Movimento do sprite
-
-SW[5]
-Seleciona flip horizontal ou vertical
-
-KEY[2]
-Executa flip
-
-SW[8:0]
-Define posicao X para criacao de sprite
-
-KEY[3]
-Cria novo sprite
-
-SW[9]
-Habilita demonstracao de poligonos
-
-Esses controles servem apenas como interface de demonstracao da etapa FPGA e nao substituem a interface por software prevista para a evolucao do projeto.
-
-# 11. Equipe DO DESENVOLVIMENTO
+# 10. Equipe do Desenvolvimento
 
 ### Integrantes oficiais do grupo:
 
@@ -1796,25 +2148,26 @@ Esses controles servem apenas como interface de demonstracao da etapa FPGA e nao
 - Heitor Abdalla Mascarenhas
 
 
-### Instituicao:
+### Instituição:
 - Universidade Estadual de Feira de Santana - UEFS
 
 ### Disciplina:
 - Sistema Digital
 
-### Periodo:
+### Período:
 - 2026.2
 
 
 
-# 12. Referências
+# 11. Referências
 
-- **INTEL CORPORATION.** *Cyclone V Device Overview*. Santa Clara: Intel Corporation. Disponível em: <https://www.intel.com/content/www/us/en/products/details/fpga/cyclone/v.html>.
-- **INTEL CORPORATION.** *Cyclone V Hard Processor System Technical Reference Manual*. Santa Clara: Intel Corporation.
-- **INTEL CORPORATION.** *Quartus Prime Standard Edition User Guide*. Santa Clara: Intel Corporation.
-- **TERASIC TECHNOLOGIES.** *DE1-SoC Development and Education Board User Manual*. Hsinchu: Terasic Inc. Disponível em: <https://www.terasic.com.tw/cgi-bin/page/archive.pl?Language=English&No=836>.
-- **UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA (UEFS).** *Problema #1 - Desenho do Núcleo de um Co-processador Gráfico em FPGA*. Disciplina de MI - Sistemas Digitais (2026.2), Departamento de Tecnologia, Feira de Santana, 2026.
-- **SIEMENS EDA.** *Questa / ModelSim FPGA Edition Simulation User Guide*. Siemens Industry Software Inc.
+- **PATTERSON, David A.; HENNESSY, John L.** *Computer Organization and Design ARM Edition: The Hardware/Software Interface*. 2. ed. Cambridge: Morgan Kaufmann, 2016. Disponível em: <https://shop.elsevier.com/books/computer-organization-and-design-arm-edition/patterson/978-0-12-801733-3>.
+
+- **IEEE.** *IEEE Standard for Verilog Hardware Description Language*. IEEE Std 1364-2005. New York: IEEE, 2006. DOI: <https://doi.org/10.1109/IEEESTD.2006.99495>. Disponível em: <https://ieeexplore.ieee.org/document/1620780>.
+
+- **INTEL CORPORATION.** *Cyclone V Device Handbook: Volume 1 — Device Interfaces and Integration*. Seção 2: Embedded Memory Blocks in Cyclone V Devices. Disponível em: <https://www.intel.com/programmable/technical-pdfs/683375.pdf>.
+  
+- **UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA (UEFS).** *Problema #2 - Sistema Digital*. Disciplina de MI - Sistemas Digitais (2026.2), Departamento de Tecnologia, Feira de Santana, 2026.
 
 
 
