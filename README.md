@@ -358,26 +358,26 @@ A partir da análise do enunciado do Problema #2 de Sistemas Digitais (2026.2) e
 | :--- | :--- | :--- | :--- |
 | **RF01** | **ISA de 32 bits** | Conjunto de instruções próprio, com instruções de largura fixa de 32 bits e opcode de 5 bits. | **IMPLEMENTADO NO RTL** |
 | **RF02** | **Unidade de Busca de Instruções** | Busca ativa de instruções em memória interna, com atualização do contador de programa (PC) e suporte a desvios. | **IMPLEMENTADO NO RTL** |
-| **RF03** | **Registrador de Instrução (IR)** | Armazenamento e disponibilização da instrução para decodificação e execução. | **VALIDADO** — correspondência existente com o requisito de IR no datapath integrado. |
+| **RF03** | **Registrador de Instrução (IR)** | Armazenamento e disponibilização da instrução para decodificação e execução. | **IMPLEMENTADO NO RTL** |
 | **RF04** | **Unidade de Controle** | Decodificação dos opcodes e geração dos sinais de controle para a ULA, o banco de registradores, as memórias e os motores gráficos. | **IMPLEMENTADO NO RTL** |
 | **RF05** | **Datapath** | Integração do banco de registradores, ULA, unidade de busca, controle e unidades funcionais. | **IMPLEMENTADO NO RTL** |
 | **RF06** | **Banco de Registradores** | Armazenamento de operandos gerais, flags e registradores dedicados às coordenadas dos vértices e à cor do rasterizador. | **IMPLEMENTADO NO RTL** |
 | **RF07** | **Registradores de Estado** | Disponibilização de informações de estado do coprocessador e das flags utilizadas nas operações e nos desvios condicionais. | **IMPLEMENTADO NO RTL** |
 | **RF08** | **Unidade Lógica e Aritmética (ULA)** | Execução das operações `ADD`, `SUB`, `AND`, `LSL`, `LSR` e `PASS`, com geração das flags utilizadas pelos desvios. | **IMPLEMENTADO NO RTL** |
 | **RF09** | **Programa Gráfico em Assembly da ISA Própria** | Programa de demonstração codificado para a ISA criada pela equipe e armazenado na memória interna de instruções. | **SUPORTE PRESENTE** — implementado também por um simulador em html. |
-| **RF10** | **Definição da Sintaxe da ISA** | Documentação dos formatos de instrução, operandos, campos de codificação, opcodes e regras de execução. | **DOCUMENTAÇÃO PRESENTE** — conferir se a versão final está incluída e atualizada no repositório. |
+| **RF10** | **Definição da Sintaxe da ISA** | Documentação dos formatos de instrução, operandos, campos de codificação, opcodes e regras de execução. | **DOCUMENTAÇÃO PRESENTE** |
 | **RF11** | **Motor de Background** | Geração do plano de fundo a partir de um mapa de tiles e de uma memória de padrões gráficos. | **IMPLEMENTADO NO RTL** |
-| **RF12** | **Motor de Sprites** | Renderização de até 32 sprites, com posição, habilitação, padrão, seleção de paleta, prioridade e espelhamento horizontal e vertical. | **IMPLEMENTADO NO RTL** — comportamentos por simulação e hardware validados. |
+| **RF12** | **Motor de Sprites** | Renderização de até 32 sprites, com posição, habilitação, padrão, seleção de paleta, prioridade e espelhamento horizontal e vertical. | **IMPLEMENTADO NO RTL** |
 | **RF13** | **Rasterizador de Polígonos** | Rasterização de retângulos preenchidos e triângulos, acionada por instruções da ISA. | **IMPLEMENTADO NO RTL** |
 | **RF14** | **Compositor Gráfico** | Composição das camadas com prioridade entre background, rasterizadores e sprites. | **IMPLEMENTADO NO RTL** |
 | **RF15** | **Controlador VGA** | Geração dos sinais de vídeo para saída VGA de 640 × 480 pixels, a partir da imagem lógica de 320 × 240 pixels. | **IMPLEMENTADO NO RTL** |
 | **RF16** | **Sincronização com VGA** | Utilização do `vblank` para sincronização do quadro e troca dos bancos do framebuffer. | **IMPLEMENTADO NO RTL** |
-| **RF17** | **Comunicação entre Unidades Funcionais** | Uso de sinais de controle, incluindo `busy`, `done` e sinais de início de operação, conforme a unidade acionada. | **IMPLEMENTADO NO RTL** — a validação dos protocolos deve ser documentada pelos testes. |
+| **RF17** | **Comunicação entre Unidades Funcionais** | Uso de sinais de controle, incluindo `busy`, `done` e sinais de início de operação, conforme a unidade acionada. | **IMPLEMENTADO NO RTL** |
 | **RF18** | **Memória Interna de Instruções** | Armazenamento do programa gráfico em memória de 16.384 palavras de 32 bits, configurada para inicialização por arquivo de memória. | **IMPLEMENTADO NO RTL** |
-| **RF19** | **Testbenches dos Módulos Principais** | O enunciado exige testes para cada módulo principal. O repositório contém testbenches para diversos módulos e comportamentos específicos. | **PARCIALMENTE DOCUMENTADO** |
+| **RF19** | **Testbenches dos Módulos Principais** | O enunciado exige testes para cada módulo principal. O repositório contém testbenches para diversos módulos e comportamentos específicos. | **IMPLEMENTADO NO RTL** |
 | **RF20** | **Testbench de Integração** | O enunciado exige um testbench de integração do coprocessador. Existem testes de sistema associados a cenários específicos, mas é necessário confirmar e documentar a cobertura integral exigida. | **A VALIDAR** |
-| **RF21** | **Driver Linux em Assembly ARM** | Na alternativa de busca passiva, o enunciado prevê comunicação com o coprocessador por fila de comandos via MMIO e um programa Assembly ARM. | **NÃO IMPLEMENTADO NESTA ARQUITETURA** — o projeto adota busca ativa, alternativa permitida pelo enunciado. |
-| **RF22** | **Aplicação de Jogo em C** | Aplicação prevista como etapa posterior, destinada a utilizar o coprocessador gráfico. | **ETAPA POSTERIOR** — não constitui requisito de implementação imediata do caminho de busca ativa escolhido. |
+| **RF21** | **Driver Linux em Assembly ARM** | Na alternativa de busca passiva, o enunciado prevê comunicação com o coprocessador por fila de comandos via MMIO e um programa Assembly ARM. | **NÃO IMPLEMENTADO NESTA ARQUITETURA** — o projeto adota busca ativa.|
+
 
 > **Nota sobre os status:** “Implementado no RTL” identifica funcionalidades observáveis na implementação; não significa que tenham sido aprovadas em todos os testes ou demonstradas com sucesso na placa. Os itens que dependem de evidências de execução permanecem indicados como validação pendente.
 
@@ -1494,14 +1494,11 @@ O repositório contém ainda `aux_files/gerador_assembly.py`, utilizado para ger
 
 ### 5.2.2 Simulador HTML da ISA
 
-O diretório `aux_files/` contém o simulador `simulador_isa (1).html`, desenvolvido com HTML, CSS e JavaScript para executar programas da ISA do coprocessador gráfico no navegador.
+O diretório `aux_files/` contém o simulador `Simulador do coprocessador gráfico.html`, desenvolvido com HTML, CSS e JavaScript para executar programas da ISA do coprocessador gráfico no navegador.
 
 O simulador permite montar e executar instruções Assembly, acompanhar os registradores e observar a imagem produzida em uma área de vídeo lógica de 320 × 240 pixels. Também contempla recursos como rótulos, desvios, desenho de primitivas, background baseado em tiles, sprites e composição por prioridade.
 
 Essa ferramenta oferece um ambiente auxiliar para estudar o comportamento dos programas e verificar a sequência de operações gráficas antes dos testes na FPGA. Entretanto, sua execução ocorre no navegador e não substitui a síntese, a simulação HDL ou a execução física do circuito.
-
-O repositório também contém `aux_files/Simulador do coprocessador gráfico (1).html`, outro arquivo HTML de simulação. Os arquivos HTML devem ser considerados ferramentas auxiliares distintas do hardware descrito em Verilog.
-
 ### 5.2.3 Ferramentas de Conversão de Imagens e Visualização de Memórias
 
 O projeto contém scripts que facilitam a preparação dos dados gráficos utilizados pelas memórias da FPGA.
@@ -1525,7 +1522,6 @@ Os arquivos presentes em `memory_files/initialization_files/` incluem:
 - `apresentacao_background_padrao.mif`
 - `apresentacao_paleta.mif`
 - `apresentacao_sprite_pattern.mif`
-- `scroll_background.mif`
 
 Os módulos de memória gerados para o projeto referenciam os arquivos `apresentacao_*.mif` correspondentes às instruções, ao tilemap, aos padrões do background, à paleta e aos padrões de sprites. O diretório também contém `scroll_background.mif`, associado a um cenário de demonstração.
 
@@ -1538,7 +1534,6 @@ A função dos principais arquivos é:
 | `apresentacao_background_padrao.mif` | Inicialização dos padrões gráficos utilizados pelos tiles do background. |
 | `apresentacao_paleta.mif` | Inicialização dos valores de cor utilizados pelo sistema gráfico. |
 | `apresentacao_sprite_pattern.mif` | Inicialização dos padrões gráficos dos sprites. |
-| `scroll_background.mif` | Arquivo de dados incluído no projeto para a demonstração de rolagem do background. |
 
 A organização das memórias acompanha a arquitetura gráfica. O motor de background consulta o mapa de tiles e seus padrões gráficos; o motor de sprites utiliza os padrões dos sprites; e a paleta fornece os valores de cor usados na composição dos pixels.
 
@@ -1858,7 +1853,7 @@ Esse recurso foi importante para investigar a relação entre o programa Assembl
 
 O projeto contém programas Assembly utilizados para exercitar a ISA e comandar as funcionalidades gráficas. Entre os comandos presentes nos programas estão instruções para configuração de paletas, escrita de dados de tiles, desenho de primitivas, configuração de sprites, movimentação do background e controle da execução.
 
-Um dos arquivos presentes na raiz do repositório é `programa.asm`, que contém um programa de teste com operações de configuração de paleta e preenchimento de dados do background. Também existe o arquivo `aux_files/demo_programa_4sprites.asm`, utilizado como outro exemplo de programa para a arquitetura.
+Um dos arquivos presentes na raiz do repositório é  `memory_files/initialization_files/Programas Teste/programa_demo05.txt`, que contém um programa de teste com operações de configuração de paleta e preenchimento de dados do background. Também existem, dentro dessa pasta, outro 4 arquivos .txt com programas em Assembly da ISA desenvolvida para verificação no simulador.
 
 A execução dos programas no simulador HTML permite verificar se as instruções são reconhecidas e montadas, se os registradores são utilizados conforme os operandos especificados e se os comandos gráficos produzem o efeito esperado na imagem simulada.
 
