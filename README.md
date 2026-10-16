@@ -1494,14 +1494,11 @@ O repositório contém ainda `aux_files/gerador_assembly.py`, utilizado para ger
 
 ### 5.2.2 Simulador HTML da ISA
 
-O diretório `aux_files/` contém o simulador `simulador_isa (1).html`, desenvolvido com HTML, CSS e JavaScript para executar programas da ISA do coprocessador gráfico no navegador.
+O diretório `aux_files/` contém o simulador `Simulador do coprocessador gráfico.html`, desenvolvido com HTML, CSS e JavaScript para executar programas da ISA do coprocessador gráfico no navegador.
 
 O simulador permite montar e executar instruções Assembly, acompanhar os registradores e observar a imagem produzida em uma área de vídeo lógica de 320 × 240 pixels. Também contempla recursos como rótulos, desvios, desenho de primitivas, background baseado em tiles, sprites e composição por prioridade.
 
 Essa ferramenta oferece um ambiente auxiliar para estudar o comportamento dos programas e verificar a sequência de operações gráficas antes dos testes na FPGA. Entretanto, sua execução ocorre no navegador e não substitui a síntese, a simulação HDL ou a execução física do circuito.
-
-O repositório também contém `aux_files/Simulador do coprocessador gráfico (1).html`, outro arquivo HTML de simulação. Os arquivos HTML devem ser considerados ferramentas auxiliares distintas do hardware descrito em Verilog.
-
 ### 5.2.3 Ferramentas de Conversão de Imagens e Visualização de Memórias
 
 O projeto contém scripts que facilitam a preparação dos dados gráficos utilizados pelas memórias da FPGA.
@@ -1525,7 +1522,6 @@ Os arquivos presentes em `memory_files/initialization_files/` incluem:
 - `apresentacao_background_padrao.mif`
 - `apresentacao_paleta.mif`
 - `apresentacao_sprite_pattern.mif`
-- `scroll_background.mif`
 
 Os módulos de memória gerados para o projeto referenciam os arquivos `apresentacao_*.mif` correspondentes às instruções, ao tilemap, aos padrões do background, à paleta e aos padrões de sprites. O diretório também contém `scroll_background.mif`, associado a um cenário de demonstração.
 
@@ -1538,7 +1534,6 @@ A função dos principais arquivos é:
 | `apresentacao_background_padrao.mif` | Inicialização dos padrões gráficos utilizados pelos tiles do background. |
 | `apresentacao_paleta.mif` | Inicialização dos valores de cor utilizados pelo sistema gráfico. |
 | `apresentacao_sprite_pattern.mif` | Inicialização dos padrões gráficos dos sprites. |
-| `scroll_background.mif` | Arquivo de dados incluído no projeto para a demonstração de rolagem do background. |
 
 A organização das memórias acompanha a arquitetura gráfica. O motor de background consulta o mapa de tiles e seus padrões gráficos; o motor de sprites utiliza os padrões dos sprites; e a paleta fornece os valores de cor usados na composição dos pixels.
 
@@ -1858,7 +1853,7 @@ Esse recurso foi importante para investigar a relação entre o programa Assembl
 
 O projeto contém programas Assembly utilizados para exercitar a ISA e comandar as funcionalidades gráficas. Entre os comandos presentes nos programas estão instruções para configuração de paletas, escrita de dados de tiles, desenho de primitivas, configuração de sprites, movimentação do background e controle da execução.
 
-Um dos arquivos presentes na raiz do repositório é `programa.asm`, que contém um programa de teste com operações de configuração de paleta e preenchimento de dados do background. Também existe o arquivo `aux_files/demo_programa_4sprites.asm`, utilizado como outro exemplo de programa para a arquitetura.
+Um dos arquivos presentes na raiz do repositório é  `memory_files/initialization_files/Programas Teste/programa_demo05.txt`, que contém um programa de teste com operações de configuração de paleta e preenchimento de dados do background. Também existem, dentro dessa pasta, outro 4 arquivos .txt com programas em Assembly da ISA desenvolvida para verificação no simulador.
 
 A execução dos programas no simulador HTML permite verificar se as instruções são reconhecidas e montadas, se os registradores são utilizados conforme os operandos especificados e se os comandos gráficos produzem o efeito esperado na imagem simulada.
 
