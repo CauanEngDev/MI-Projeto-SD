@@ -1802,22 +1802,22 @@ Esta seção apresenta os requisitos de software e hardware e os procedimentos n
 
 Para reproduzir o desenvolvimento, a síntese e os testes do coprocessador gráfico, são necessários os seguintes recursos.
 
-* Software de desenvolvimento:
+Software de desenvolvimento:
 
-* ** Intel Quartus Prime: versão compatível com o dispositivo Cyclone V, responsável pela síntese, implementação e geração do arquivo de programação da FPGA.
+*  Intel Quartus Prime: versão compatível com o dispositivo Cyclone V, responsável pela síntese, implementação e geração do arquivo de programação da FPGA.
 
-* ** ModelSim Intel FPGA Edition ou Questa Intel FPGA Edition: ambiente utilizado para compilar os módulos Verilog e executar os testbenches unitários e de integração.
+*  ModelSim Intel FPGA Edition ou Questa Intel FPGA Edition: ambiente utilizado para compilar os módulos Verilog e executar os testbenches unitários e de integração.
 
 
-* Hardware requerido:
+Hardware requerido:
 
-* ** Placa de desenvolvimento: Terasic DE1-SoC.
+*  Placa de desenvolvimento: Terasic DE1-SoC.
 
-* ** Dispositivo FPGA: Intel/Altera Cyclone V 5CSEMA5F31C6.
+*  Dispositivo FPGA: Intel/Altera Cyclone V 5CSEMA5F31C6.
 
-* ** Exibição: monitor compatível com o sinal VGA produzido pelo projeto e cabo VGA apropriado.
+*  Exibição: monitor compatível com o sinal VGA produzido pelo projeto e cabo VGA apropriado.
 
-* ** Interface de gravação: conexão USB utilizada pelo USB-Blaster II integrado à placa.
+*  Interface de gravação: conexão USB utilizada pelo USB-Blaster II integrado à placa.
 
 ## 7.2 Estrutura do Repositório
 
