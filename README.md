@@ -4,15 +4,17 @@
 
 * [1. Visão Geral do Projeto](#1-visão-geral-do-projeto)
 
-  * [1.1 Conceito Geral](#11-conceito-geral)
-  * [1.2 Da Descrição da Cena ao Pixel](#12-da-descrição-da-cena-ao-pixel)
-  * [1.3 Resolução e Representação da Imagem](#13-resolução-e-representação-da-imagem)
-  * [1.4 Arquitetura Gráfica em Hardware](#14-arquitetura-gráfica-em-hardware)
-  * [1.5 Composição e Memória de Vídeo](#15-composição-e-memória-de-vídeo)
-  * [1.6 Double Buffering](#16-double-buffering)
-  * [1.7 Organização Modular](#17-organização-modular)
-  * [1.8 Estrutura Principal do Projeto](#18-estrutura-principal-do-projeto)
-
+  * [1.1 Contexto e objetibo](#11-contexto-e-objetivo)
+  * [1.2 Conceito Geral](#12-conceito-geral)
+  * [1.3 Do Programa ao Pixel](#13-do-programa-ao-pixel)
+  * [1.4 Resolução e Representação da Imagem](#14-resolucao-e-representacao-da-imagem)
+  * [1.5 Arquitetura Programável em Hardware](#15-arquitetura-programavel-em-hardware)
+  * [1.6 Composição e Memória de Vídeo](#16-composicao-e-memoria-do-video)
+  * [1.7 Double Buffering e Controle de Quadro](#17-double-buffering-e-controle-de-quadro)
+  * [1.8 Atendimento ao Enunciado do Problema #2](#18-atendimento-ao-enunciado-do-problema)
+  * [1.9 Organização Modular e Estrutura Principal do Projeto](#19-organizacao-modular-e-estrutura-principal-do-projeto)
+  * [1.10 Escopo e Limitações desta Versão](#110-escopo-e-limitações-desta-versao)
+  * 
 * [2. Levantamento de Requisitos](#2-levantamento-de-requisitos)
 
   * [2.1 Requisitos Funcionais](#21-requisitos-funcionais)
@@ -102,6 +104,7 @@
   * [7.3 Observação Importante sobre o Projeto Quartus](#73-observação-importante-sobre-o-projeto-quartus)
   * [7.4 Configuração Básica](#74-configuração-básica)
   * [7.5 Programação](#75-programação)
+    
 
 
 * [8. Testes e Erros](#8-testes-e-erros)
@@ -136,87 +139,96 @@
 
 * [11. Referências](#11-referências)
 
-Projeto desenvolvido para o Problema #1 - 2026.2 / Sistema Digital, com o objetivo de implementar, em FPGA, um nucleo de coprocessamento grafico inspirado na arquitetura de consoles de 16 bits. A solucao implementa geracao de background por tiles, sprites com atributos e prioridade, rasterizacao de poligonos, framebuffer com double buffering e saida VGA.
+Projeto desenvolvido para o Problema #2 - 2026.2 / Sistema Digital (PBL02), com o objetivo de transformar o núcleo gráfico implementado na primeira etapa em um **coprocessador gráfico programável** em FPGA, inspirado na arquitetura de consoles de 16 bits. O sistema combina um caminho de controle baseado em Instruction Set Architecture (ISA), com unidade de busca, unidade de controle, banco de registradores e ULA, a motores gráficos de background por tiles, sprites com atributos e prioridade e rasterização de polígonos, além de composição de camadas, framebuffer com double buffering e saída VGA.
 
 Estado atual do projeto:
-Esta versao implementa o nucleo grafico em FPGA e sua demonstracao diretamente na placa DE1-SoC. A integracao posterior com Linux, driver em ARM Assembly e jogo em C faz parte da continuidade proposta para o sistema, mas nao esta presente nesta versao do repositorio.
+Esta versão implementa o coprocessador completo em FPGA, com **busca ativa de instruções**: o programa gráfico, escrito em Assembly da ISA definida pela equipe, fica armazenado em uma memória de instruções interna inicializada por arquivo `.mif`, e sua demonstração é feita diretamente na placa DE1-SoC. A interface MMIO com o processador ARM, o driver Linux em Assembly ARM e o jogo em linguagem C correspondem às etapas posteriores previstas no enunciado e não estão presentes nesta versão do repositório.
 
+# 1. Visão Geral do Projeto
 
-# 1. VISAO GERAL DO PROJETO
+Este projeto consiste no desenvolvimento de um coprocessador gráfico dedicado, implementado em FPGA, capaz de executar um programa composto por instruções de 32 bits e transformá-lo em uma imagem exibida em um monitor VGA. Em vez de acionar individualmente cada módulo gráfico, o software passa a descrever a cena por meio de instruções, e cabe à arquitetura de hardware interpretar esse programa, acionar os recursos necessários e construir cada quadro.
 
-Este projeto consiste no desenvolvimento de um sistema grafico dedicado implementado em FPGA, capaz de receber parametros de objetos graficos, processa-los em hardware e construir uma imagem destinada a exibicao em um monitor VGA.
+A ideia central do projeto é explorar como um sistema gráfico completo pode ser organizado de maneira semelhante à de um processador convencional, com ciclo de busca e execução de instruções, e, ao mesmo tempo, aproveitar características próprias de uma FPGA, como unidades de hardware especializadas, paralelismo entre blocos e controle por máquinas de estados.
 
-A ideia central do projeto e explorar como funcionalidades normalmente associadas a um sistema grafico podem ser implementadas diretamente em hardware digital reconfiguravel, utilizando modulos especializados para executar diferentes etapas do processo de renderizacao.
+O resultado pode ser entendido como uma pequena arquitetura programável: um núcleo de controle executa as instruções e comanda unidades funcionais gráficas, que geram, rasterizam, compõem e armazenam os pixels da cena.
 
-Em vez de utilizar o processador principal para determinar e escrever individualmente cada pixel da imagem, o sistema trabalha com elementos graficos e seus respectivos parametros, permitindo que a FPGA execute as operacoes necessarias para gerar, rasterizar, compor e armazenar os pixels da cena.
+## 1.1 Contexto e Objetivo
 
-Dessa forma, o projeto pode ser entendido como uma pequena pipeline grafica em hardware, na qual diferentes componentes cooperam para transformar informacoes abstratas sobre a cena em uma imagem efetivamente exibida no monitor.
+O desenvolvimento do projeto foi dividido em duas etapas, conforme os enunciados da disciplina:
 
-## 1.1 Conceito Geral
+* **Problema #1:** desenvolvimento dos motores gráficos (background por tiles, sprites e rasterizador de polígonos), do compositor, do framebuffer com double buffering e do controlador VGA. Nessa etapa, os motores eram acionados individualmente por módulos auxiliares de demonstração.
+* **Problema #2 (PBL02):** transformação desse núcleo em um coprocessador gráfico programável. O enunciado identifica como limitação da etapa anterior o fato de os módulos ainda precisarem ser controlados individualmente, e estabelece que uma aplicação não deve conhecer os detalhes internos de cada módulo: o software envia **comandos ao coprocessador**, e a arquitetura os interpreta.
 
-A arquitetura foi organizada com base na separacao entre controle, processamento grafico, armazenamento e saida de video.
+Para isso, o enunciado exige uma organização semelhante à de um processador convencional, com ISA de 32 bits, unidade de busca de instruções, registrador de instrução, unidade de controle, banco de registradores, ULA, datapath, registradores de estado, unidades funcionais gráficas, compositor, unidade de controle de quadro e controlador VGA. Toda operação deve ocorrer como consequência da execução de uma instrução da ISA definida pela equipe, e os motores desenvolvidos na primeira etapa passam a ser tratados como unidades funcionais do novo coprocessador.
 
-O processador e os modulos de controle fornecem informacoes como posicoes, dimensoes, padroes graficos, cores, prioridades e demais parametros necessarios para a construcao da cena.
+## 1.2 Conceito Geral
 
-A partir dessas informacoes, unidades especializadas da FPGA realizam o processamento correspondente a cada tipo de elemento grafico.
+A arquitetura foi organizada com base na separação entre **controle**, **processamento gráfico**, **armazenamento** e **saída de vídeo**:
 
-Entre os principais recursos implementados estao:
+* o **caminho de controle** busca, decodifica e executa as instruções do programa;
+* o **caminho gráfico** gera os pixels de cada elemento da cena e os combina respeitando a prioridade entre camadas;
+* as **memórias** armazenam o programa, os dados gráficos (tiles, padrões de sprites e paleta) e os quadros produzidos;
+* a **saída de vídeo** lê continuamente o framebuffer e gera os sinais VGA.
 
-- Background baseado em tiles, utilizado para a construcao do cenario;
-- Primitivas geometricas rasterizadas, atualmente com suporte a retangulos e triangulos preenchidos;
-- Sprites, com parametros de posicao, padrao grafico, prioridade, paleta e espelhamento;
-- Composicao grafica, responsavel por combinar os diferentes elementos da cena;
-- Framebuffer, utilizado para armazenar os pixels do quadro produzido;
-- Double buffering, permitindo a construcao de um quadro enquanto outro e exibido;
-- Controlador VGA, responsavel pela leitura do framebuffer e geracao dos sinais necessarios para a exibicao.
+Entre os principais recursos implementados estão:
 
-A organizacao desses componentes permite que cada etapa possua uma responsabilidade especifica, formando uma arquitetura modular e extensivel.
+- ISA de 32 bits, com instruções aritméticas e lógicas, de configuração das memórias gráficas, de desenho, de sincronização e de desvio;
+- Unidade de busca com contador de programa, execução em laço de quadros e reinício sincronizado com o VBlank;
+- Unidade de controle, banco de registradores e ULA com flags N, Z, C e V;
+- Desvios condicionais e incondicionais, que permitem programar laços, limites e animações;
+- Background baseado em tiles, com scroll horizontal e vertical e *wraparound*;
+- Primitivas geométricas rasterizadas, com suporte a retângulos e triângulos preenchidos;
+- Sprites de 16 × 16 pixels, com posição, padrão, prioridade, paleta e espelhamento;
+- Camada de composição, que garante a hierarquia fundo, polígonos e sprites independentemente da ordem de desenho;
+- Framebuffer com double buffering e troca de bancos sincronizada com o VBlank;
+- Controlador VGA em 640 × 480 a 60 Hz;
+- Montador, geradores de dados e simulador da ISA em navegador, que apoiam o desenvolvimento dos programas.
 
-## 1.2 Da Descricao da Cena ao Pixel
+## 1.3 Do Programa ao Pixel
 
-Um dos principais objetivos do projeto e demonstrar a transformacao de uma descricao relativamente abstrata da cena em uma sequencia de pixels.
+Um dos principais objetivos do projeto é demonstrar a transformação de um programa, descrito em um nível relativamente abstrato, em uma sequência de pixels. De forma simplificada, o processo pode ser representado por:
 
-De forma simplificada, o processo pode ser representado como:
+```text
+    PROGRAMA EM ASSEMBLY (.asm)
+              |
+              v  montador
+    MEMÓRIA DE INSTRUÇÕES (.mif)
+              |
+              v
+    +------------------------------+
+    |  UNIDADE DE BUSCA            |
+    |  UNIDADE DE CONTROLE         |
+    |  BANCO DE REGISTRADORES, ULA |
+    +--------------+---------------+
+                   | start / done
+          +--------+--------+
+          |        |        |
+          v        v        v
+     BACKGROUND POLÍGONOS SPRITES
+          |        |        |
+          +--------+--------+
+                   |
+                   v
+            COMPOSIÇÃO DAS CAMADAS
+                   |
+                   v
+             FRAMEBUFFER (2 bancos)
+                   |
+                   v
+            CONTROLADOR VGA
+                   |
+                   v
+                MONITOR
+```
 
-    PARAMETROS DA CENA
-            |
-            v
-    +---------------------+
-    |    MOTORES GRAFICOS |
-    +---------------------+
-       |       |       |
-       v       v       v
-    BACKGROUND POLIGONOS SPRITES
-       |       |       |
-       +-------+-------+
-               |
-               v
-          COMPOSICAO
-               |
-               v
-          FRAMEBUFFER
-               |
-               v
-         CONTROLADOR VGA
-               |
-               v
-            MONITOR
+Cada instrução de desenho dispara o motor correspondente, que interpreta os parâmetros lidos dos registradores e das memórias e produz os pixels da sua camada. Esses pixels passam pela camada de composição, que decide quais prevalecem no quadro final, e são armazenados no framebuffer, de onde o controlador VGA os lê para exibição.
 
-Cada motor grafico interpreta seus respectivos parametros e produz os elementos necessarios para a construcao do quadro.
+## 1.4 Resolução e Representação da Imagem
 
-Esses elementos sao posteriormente submetidos a logica de composicao, que determina como eles devem coexistir na imagem final, considerando aspectos como sobreposicao e prioridade grafica.
+A imagem é construída internamente em uma resolução lógica de 320 × 240 pixels. Essa resolução reduz a quantidade de pixels que precisam ser processados e armazenados pelos circuitos gráficos. Para a saída VGA em 640 × 480 pixels, cada pixel lógico é representado por um bloco de 2 × 2 pixels físicos:
 
-O resultado e entao armazenado no framebuffer e disponibilizado ao controlador VGA.
-
-## 1.3 Resolucao e Representacao da Imagem
-
-A imagem e construida internamente em uma resolucao logica de 320 x 240 pixels.
-
-Essa resolucao foi adotada como representacao interna da cena, reduzindo a quantidade de pixels que precisam ser processados e armazenados pelos circuitos graficos.
-
-Para a saida VGA em 640 x 480 pixels, cada pixel logico e representado por um bloco de 2 x 2 pixels fisicos:
-
-    Pixel logico
+```text
+    Pixel lógico
     +---+---+
     |   |   |
     +---+---+
@@ -224,124 +236,133 @@ Para a saida VGA em 640 x 480 pixels, cada pixel logico e representado por um bl
     +---+---+
 
      2 x 2
+```
 
-Assim, o sistema mantem uma representacao grafica mais compacta internamente, enquanto produz uma imagem compativel com o modo VGA utilizado pelo projeto.
+Os padrões de tiles e sprites armazenam **índices de cor** de 8 bits, e a paleta converte cada índice em uma cor RGB de 9 bits (3 bits por canal). A paleta possui 512 entradas organizadas em dois bancos de 256 cores, de modo que um mesmo padrão pode ser exibido com cores diferentes sem duplicar seus pixels na memória.
 
-## 1.4 Arquitetura Grafica em Hardware
+## 1.5 Arquitetura Programável em Hardware
 
-Um dos aspectos centrais do projeto e a implementacao das operacoes graficas diretamente na logica programavel da FPGA.
+Em uma abordagem convencional, o processador poderia ser responsável por calcular as posições, determinar os pixels de cada objeto e realizar sucessivas escritas na memória de vídeo. Neste projeto, o software define **o que** deve ser desenhado, e o hardware executa **como** esse desenho é convertido em pixels.
 
-Em uma abordagem convencional, o processador poderia ser responsavel por calcular as posicoes, determinar os pixels pertencentes a cada objeto e realizar sucessivas escritas na memoria de video.
+O núcleo de controle segue o ciclo de busca e execução de um processador:
 
-Neste projeto, parte significativa desse trabalho e transferida para modulos de hardware especializados.
+* a **unidade de busca** mantém o contador de programa e lê a instrução corrente da memória de instruções;
+* a **unidade de controle** decodifica a instrução e gera os sinais para a ULA, para as escritas nas memórias gráficas e para o acionamento dos motores;
+* o **banco de registradores** guarda os operandos, as flags, o estado do coprocessador e os parâmetros do rasterizador;
+* a **ULA** executa as operações aritméticas e lógicas e atualiza as flags usadas pelos desvios.
 
-Essa abordagem permite explorar caracteristicas proprias de uma FPGA, como:
+As instruções de desenho são **bloqueantes**: o contador de programa permanece parado até que o motor correspondente sinalize o término. Esse protocolo de comunicação (`start`, `busy` e `done`) garante que os motores nunca disputem o framebuffer nem a paleta.
 
-- Processamento dedicado;
-- Paralelismo entre diferentes blocos de hardware;
-- Maquinas de estados para controle de operacoes;
-- Acesso estruturado as memorias graficas;
-- Processamento orientado a pixels;
-- Modularizacao dos componentes de renderizacao.
+**Decisão de projeto: busca ativa.** O enunciado permite duas formas de obter as instruções: a busca ativa, com uma memória de instruções interna ao projeto, e a busca passiva, com uma fila de comandos proveniente da interface MMIO do processador ARM. Optou-se pela **busca ativa**, pois ela permite validar integralmente a ISA, o datapath e os motores gráficos na própria FPGA, por meio de programas armazenados em arquivos `.mif`, sem depender das etapas de integração com o processador ARM, o driver Linux e a aplicação em C, previstas para etapas posteriores. A arquitetura mantém a ISA separada da origem das instruções, de modo que a fonte de instruções possa ser substituída em uma etapa futura sem alterar as unidades funcionais.
 
-O resultado e uma arquitetura na qual software e hardware possuem responsabilidades distintas: o software pode definir o que deve ser desenhado, enquanto o hardware executa como esse desenho sera convertido em pixels.
+## 1.6 Composição e Memória de Vídeo
 
-## 1.5 Composicao e Memoria de Video
+Como a ordem de desenho passa a ser definida pelo programa, a hierarquia entre as camadas precisa ser garantida pelo hardware. Essa etapa é realizada por duas unidades: o `engine_mux`, que conecta ao framebuffer e à paleta o motor que está em execução, e a **camada de composição**, que mantém, para cada pixel do quadro, a camada mais alta que já escreveu naquela posição e descarta escritas de camadas inferiores:
 
-Depois que os diferentes elementos graficos sao gerados, eles precisam ser combinados para formar um unico quadro.
+```text
+    camada 0 (atrás)   background
+    camada 1           polígonos (retângulos e triângulos)
+    camada 2 (frente)  sprites
+```
 
-Essa etapa e realizada pela logica de composicao, que organiza os elementos provenientes dos diferentes motores graficos e determina o conteudo final de cada posicao da imagem.
+Dessa forma, um fundo desenhado depois de um sprite não o cobre, e a ordem das instruções de desenho deixa de importar entre camadas diferentes. O resultado é armazenado no framebuffer, que funciona como a representação em memória do quadro e estabelece a interface entre o processamento gráfico e a saída de vídeo:
 
-O resultado da composicao e armazenado em um framebuffer, que funciona como a representacao em memoria do quadro que sera exibido.
-
-O framebuffer estabelece, portanto, a interface entre o processamento grafico e a saida de video:
-
-    Motores graficos
+```text
+    Motores gráficos
            |
            v
-       Compositor
+      engine_mux
+           |
+           v
+   Camada de composição
            |
            v
       Framebuffer
            |
            v
-     Controlador VGA
+    Controlador VGA
            |
            v
         Monitor
+```
 
-Essa separacao permite que a geracao da imagem e sua exibicao ocorram de maneira organizada e sincronizada.
+## 1.7 Double Buffering e Controle de Quadro
 
-## 1.6 Double Buffering
+Para evitar que o quadro exibido seja alterado enquanto ainda está sendo lido pelo controlador VGA, o sistema utiliza dois bancos de framebuffer. Enquanto um banco fornece os pixels para a saída VGA, o outro é atualizado pelos motores:
 
-Para evitar que o quadro exibido seja alterado enquanto ainda esta sendo lido pelo controlador VGA, o sistema utiliza double buffering.
-
-Sao mantidos dois buffers de imagem:
-
+```text
     +------------------+
-    |    BUFFER A      |
-    |                  |
-    |     EXIBICAO     |
+    |    BANCO A       |
+    |     EXIBIÇÃO     |
     +------------------+
 
     +------------------+
-    |    BUFFER B      |
-    |                  |
-    |    RENDERIZACAO  |
+    |    BANCO B       |
+    |   RENDERIZAÇÃO   |
     +------------------+
+```
 
-Enquanto um buffer fornece os dados para a saida VGA, o outro pode ser atualizado pelos motores graficos.
+O ciclo de cada quadro é controlado pelo próprio programa e pelo hardware de controle de quadro. O programa termina com a instrução `HALT`; a unidade de busca então aguarda o próximo VBlank, momento em que os bancos são trocados e o programa é reiniciado a partir do endereço 0, com os registradores preservados. Essa preservação do estado permite que o programa mantenha, por exemplo, a posição e a velocidade de um objeto em movimento de um quadro para o seguinte. O controlador VGA opera continuamente, independentemente da execução das instruções.
 
-Quando um novo quadro esta pronto, os buffers sao alternados de forma sincronizada com o sinal de video, utilizando o periodo de vertical blanking como momento adequado para a troca.
+Um quadro a 60 Hz corresponde a 840 000 ciclos do clock de 50 MHz, e esse é o orçamento de tempo disponível para o programa de cada quadro (seção 4.5).
 
-Esse mecanismo reduz artefatos visuais decorrentes da leitura de uma imagem enquanto ela ainda esta sendo modificada.
+## 1.8 Atendimento ao Enunciado do Problema #2
 
-## 1.7 Organizacao Modular
+A tabela a seguir relaciona os itens exigidos pelo enunciado (PBL02) à sua implementação neste projeto:
 
-A implementacao foi estruturada de maneira modular, permitindo separar as diferentes responsabilidades do sistema grafico.
+| Exigência do enunciado | Implementação | Seção |
+| :--- | :--- | :---: |
+| ISA de 32 bits | 22 instruções em 4 formatos (A, G, N e D) | 4.2 |
+| Unidade de busca de instruções | `unidade_de_busca_de_instrucoes.v`: contador de programa, parada em instruções bloqueantes, `HALT`, reinício por VBlank e desvios | 4.3.1 |
+| Registrador de Instrução (IR) | A saída registrada da memória de instruções mantém a instrução corrente estável durante a execução; não há um registrador separado | 4.3.1 e 4.7.7 |
+| Unidade de controle | `unidade_de_controle.v`: decodificação, escritas nas memórias gráficas, `start` e `done` dos motores | 4.3.4 |
+| Banco de registradores | `banco_registradores.v`: `R0` a `R30`, `XZR`, `STATUS`, `FLAGS` e registradores do rasterizador | 4.3.2 |
+| Unidade Lógica e Aritmética | `alu.v`: `ADD`, `SUB`, `AND`, `LSL`, `LSR` e `PASS`, com flags N, Z, C e V | 4.3.3 |
+| Datapath | Busca, controle, banco de registradores, ULA e unidades funcionais gráficas, integrados no `coprocessador_top.v` | 4.1 |
+| Registradores de estado | `STATUS` (`R33`) e `FLAGS` (`R36`) | 4.2.3 |
+| Unidades funcionais gráficas | Motores de background, de sprites e rasterizador de polígonos da primeira etapa | 4.6 |
+| Comunicação `valid`, `busy` e `done` | `valid`, `busy` e `done` na ULA; `start`, `busy` e `done` nos motores | 4.3.3 e 4.3.4 |
+| Compositor | `engine_mux` e `camada_composicao`, que impõem a prioridade entre camadas | 4.4 |
+| Unidade de controle de quadro | `HALT`, detecção do VBlank, `frame_swap` e seleção dos bancos do framebuffer | 4.5 |
+| Controlador VGA | `vga_driver.v` em 640 × 480 a 60 Hz, com PLL de 25 MHz | 4.6 |
+| Mecanismo de sincronização com VGA | Sinal de VBlank sincronizado ao clock de 50 MHz e troca de bancos apenas nesse intervalo | 4.5 |
+| Busca ativa com memória de instruções interna | `instruction_memory` de 16384 × 32 bits, inicializada por arquivo `.mif` | 4.7.7 |
+| Programa de demonstração em Assembly e sintaxe própria | Sintaxe definida na especificação da ISA, montador e programas de demonstração | 5.2 e 6.15 |
+| Testbench por módulo e de integração | Testbenches dos módulos e simulações do sistema integrado | 8 |
+| Demonstração em hardware | `coprocessador_top` na placa DE1-SoC, com controles `KEY` e LEDs de estado | 8.11 |
+| Relatório de síntese, recursos, frequência máxima e timing | Análise de recursos, timing e desempenho | 9.4 |
 
-Em uma visao macro, a arquitetura pode ser organizada da seguinte forma:
+Os itens que o enunciado prevê para etapas posteriores, como a busca passiva por fila de comandos via MMIO, o programa em Assembly do ARM, o driver Linux e o jogo em linguagem C, não fazem parte desta versão. As demais pendências e limitações são registradas nas seções 8.12 e 9.7.
 
-                    SISTEMA DE VIDEO
-                           |
-          +----------------+----------------+
-          |                |                |
-          v                v                v
-     BACKGROUND        POLIGONOS         SPRITES
-       ENGINE            ENGINE           ENGINE
-          |                |                |
-          +----------------+----------------+
-                           |
-                           v
-                      COMPOSITOR
-                           |
-                           v
-                     FRAMEBUFFER
-                           |
-                           v
-                  DOUBLE BUFFERING
-                           |
-                           v
-                    CONTROLADOR VGA
-                           |
-                           v
-                        MONITOR
+## 1.9 Organização Modular e Estrutura Principal do Projeto
 
-Essa modularizacao facilita a implementacao, os testes individuais, a depuracao e a expansao da arquitetura, permitindo que novos recursos graficos possam ser incorporados sem a necessidade de reestruturar completamente o sistema.
+A implementação foi estruturada de maneira modular, separando as responsabilidades do sistema. Em uma visão macro:
 
-## 1.8 Estrutura Principal do Projeto
+```text
+                      coprocessador_top
+                             |
+     +-----------------------+-----------------------+
+     |                       |                       |
+     v                       v                       v
+  CONTROLE               GRÁFICO                  SAÍDA DE VÍDEO
+  busca, controle,       motores, engine_mux,     framebuffer duplo,
+  registradores, ULA     camada de composição     vga_driver, PLL
+     |                       |
+     v                       v
+  memória de             memórias gráficas
+  instruções (.mif)      (tiles, padrões, paleta)
+```
 
-O modulo de nivel superior utilizado na integracao com a plataforma e:
+O módulo de nível superior utilizado na integração com a placa é o **`coprocessador_top.v`**, que conecta o caminho de controle, as memórias, os motores gráficos, a camada de composição, o framebuffer e o controlador VGA. Ele substitui o `top_video.v` e os módulos auxiliares de demonstração da primeira etapa (`test_driver` e `sprite_mover_flip`): as portas externas de escrita nas memórias deixaram de existir, e toda a configuração passa a ser feita por instruções do programa.
 
-DE1_SOC_golden_top.v
+Os arquivos de inicialização das memórias, o montador, os geradores de dados e o simulador da ISA fornecem o ambiente para escrever, converter e validar programas antes da execução na placa. As seções seguintes detalham os requisitos, a fundamentação teórica, a arquitetura, o processo de desenvolvimento, a instalação, os testes e a análise dos resultados.
 
-A integracao principal do sistema grafico e realizada em:
+## 1.10 Escopo e Limitações desta Versão
 
-top_video.v
+O escopo desta versão é o coprocessador gráfico programável com busca ativa, executado na DE1-SoC. Estão dentro do escopo a ISA, o caminho de controle, os motores gráficos, a composição de camadas, o double buffering, a saída VGA e as ferramentas de apoio. Estão fora do escopo a interface MMIO, a busca passiva e a integração com Linux, Assembly ARM e a aplicação em C.
 
-A partir desses modulos sao conectados os diferentes componentes responsaveis pelo processamento grafico, armazenamento e geracao da saida de video.
+Entre as limitações de projeto desta versão estão o processamento sequencial das etapas de desenho, que limita o grau de paralelismo entre os motores, e o tempo de quadro determinado pela soma dos custos das instruções do programa. Esses pontos, assim como as funcionalidades parcialmente atendidas, são analisados nas seções 9.5, 9.6 e 9.7.
 
-As proximas secoes apresentam cada uma dessas partes em maior profundidade, detalhando o funcionamento dos motores graficos, organizacao da memoria, rasterizacao, sprites, composicao, framebuffer, double buffering e controlador VGA.
 
 
 
@@ -1775,40 +1796,105 @@ A verificação desta etapa combinou testes unitários, de integração e de sis
 
 # 7. Instalação e Configuração
 
-Esta seção descreve as ferramentas, os pré-requisitos e o procedimento passo a passo para compilação, simulação e programação do co-processador gráfico na placa **DE1-SoC**.
+Esta seção apresenta os requisitos de software e hardware e os procedimentos necessários para configurar o ambiente de desenvolvimento, compilar o projeto, executar as simulações e programar o coprocessador gráfico na placa DE1-SoC.
 
----
+7.1 Pré-requisitos de Software e Hardware
 
-## 7.1 Pré-requisitos de Software e Hardware
+Para reproduzir o desenvolvimento, a síntese e os testes do coprocessador gráfico, são necessários os seguintes recursos.
 
-Para reproduzir a síntese e os testes do sistema, são necessárias as seguintes ferramentas e componentes:
+* Software de desenvolvimento:
 
-* **Software de Desenvolvimento:**
-  * **Intel Quartus Prime (Lite ou Standard Edition)** — Versão 18.1 ou superior, contendo o pacote de suporte para a família **Cyclone V**.
-  * **ModelSim / Questa Intel FPGA Edition** — Utilizado para execução dos testbenches unitários e de integração.
-* **Hardware Requerido:**
-  * **Placa de Desenvolvimento:** Terasic DE1-SoC.
-  * **Dispositivo FPGA Altera/Intel:** `5CSEMA5F31C6`.
-  * **Exibição:** Monitor CRT ou LCD com suporte à resolução VGA padrão ($640 \times 480 @ 60\text{Hz}$) e cabo VGA de 15 pinos.
-  * **Interface de Gravação:** Cabo USB Type-A/Mini-B (conexão On-Board USB-Blaster II).
+* ** Intel Quartus Prime: versão compatível com o dispositivo Cyclone V, responsável pela síntese, implementação e geração do arquivo de programação da FPGA.
 
----
+* ** ModelSim Intel FPGA Edition ou Questa Intel FPGA Edition: ambiente utilizado para compilar os módulos Verilog e executar os testbenches unitários e de integração.
+
+
+* Hardware requerido:
+
+* ** Placa de desenvolvimento: Terasic DE1-SoC.
+
+* ** Dispositivo FPGA: Intel/Altera Cyclone V 5CSEMA5F31C6.
+
+* ** Exibição: monitor compatível com o sinal VGA produzido pelo projeto e cabo VGA apropriado.
+
+* ** Interface de gravação: conexão USB utilizada pelo USB-Blaster II integrado à placa.
 
 ## 7.2 Estrutura do Repositório
 
-O repositório do projeto está organizado conforme a estrutura abaixo:
+O repositório está organizado em diretórios que separam a implementação em hardware, as memórias utilizadas pelo sistema, os testes de simulação e as ferramentas auxiliares de desenvolvimento.
 
-```text
-.
-├── memory_files/       # Arquivos de inicialização de memória (.mif)
-├── output_files/       # Arquivos de síntese, relatórios e binários (.sof)
-├── tb/                 # Testbenches para simulação (ModelSim / Questa)
-├── DE1_SOC_golden_top.v # Módulo Top-Level integrado com os pinos da placa
-├── *.v                 # Arquivos fonte em Verilog HDL (Módulos RTL e IPs)
-└── README.md           # Documentação técnica do projeto
+```
+├── rtl/
+│   ├── core/
+│   │   ├── alu/
+│   │   ├── auxiliary_modules/
+│   │   ├── control_unit/
+│   │   ├── fetch_unit/
+│   │   └── register_bank/
+│   ├── driver/
+│   ├── motores_independentes/
+│   ├── rasterizers/
+│   ├── utils/
+│   ├── coprocessador_top.v
+│   └── top_video.v
+├── memory_files/
+│   ├── initialization_files/
+│   ├── arquivos de memória e IPs
+│   └── arquivos de inicialização MIF
+├── tb/
+│   ├── sim_top/
+│   └── testbenches Verilog
+├── aux_files/
+│   ├── compiladorISA.c
+│   ├── conversor_img_to_mif.py
+│   ├── gerador_assembly.py
+│   ├── gerar_background.py
+│   ├── imagem_para_mif.py
+│   ├── montador.py
+│   ├── isa_coprocessador_grafico.txt
+│   └── mif_visualizador.html
+├── ip/
+│   └── pll01.qip
+├── DE1_SOC_golden_top.v
+├── CoProcessador.qpf
+├── CoProcessador.qsf
+├── CoProcessador.qws
+├── programa.asm
+└── README.md
 ```
 
----
+O diretório rtl/ contém a implementação do coprocessador gráfico. A unidade de controle, a unidade de busca de instruções, a ULA, o banco de registradores e os módulos auxiliares estão organizados em subdiretórios próprios. Os módulos de renderização, os motores independentes, o controlador VGA e os utilitários de acesso à memória completam o processamento gráfico.
+
+O diretório memory_files/ reúne as memórias utilizadas pelo sistema, seus arquivos de configuração e os arquivos MIF empregados na inicialização de conteúdos como instruções, paletas, padrões de tiles e sprites.
+
+O diretório tb/ contém os testbenches destinados à verificação dos módulos. A subpasta sim_top/ reúne testes voltados à integração. Esses arquivos são utilizados na simulação e devem permanecer separados da compilação de síntese do projeto.
+
+O diretório aux_files/ concentra os programas auxiliares usados durante o desenvolvimento, como montadores, compiladores da ISA, conversores de imagens para MIF e ferramentas de visualização. O diretório ip/ contém arquivos de configuração das IPs utilizadas pelo projeto, incluindo a PLL.
+
+Os arquivos CoProcessador.qpf e CoProcessador.qsf identificam e configuram o projeto do Quartus. A entidade principal configurada é coprocessador_top, enquanto DE1_SOC_golden_top.v fornece a integração com os sinais e as interfaces da placa.
+
+## 7.3 Compilação e Síntese no Quartus Prime
+
+Para abrir o projeto, inicie o Quartus Prime e selecione File → Open Project. Em seguida, abra o arquivo CoProcessador.qpf.
+
+A configuração do projeto está registrada em CoProcessador.qsf, que especifica o dispositivo-alvo, a entidade principal e os arquivos Verilog e QIP necessários. O dispositivo configurado é o Cyclone V 5CSEMA5F31C6, e a entidade principal é coprocessador_top.
+
+Após abrir o projeto, execute Processing → Start Compilation. O Quartus realizará as etapas de análise, síntese, ajuste e geração dos arquivos de saída, desde que todas as dependências estejam disponíveis e não existam erros de compilação.
+
+Os testbenches do diretório tb/ são destinados à simulação e não devem ser adicionados indiscriminadamente à compilação de síntese. Arquivos de teste e stubs que declarem módulos com os mesmos nomes das implementações reais devem permanecer separados para evitar definições duplicadas.
+
+## 7.4 Simulação e Testes
+
+As simulações são realizadas no ModelSim ou no Questa Intel FPGA Edition. Para executar um teste unitário, compile os módulos RTL necessários, suas dependências e o testbench correspondente. Depois, selecione o módulo do testbench como raiz da simulação e execute-a até a conclusão.
+
+Os testbenches abrangem componentes como a unidade de busca de instruções, a unidade de controle, os motores de renderização, o compositor e os rasterizadores. Os testes de integração permitem verificar o comportamento conjunto de diferentes componentes.
+
+
+## 7.5 Programação da FPGA
+
+Após a compilação bem-sucedida no Quartus, utilize o Programmer para selecionar o hardware conectado pelo USB-Blaster II e carregar o arquivo .sof gerado para a FPGA.
+
+Depois da programação, conecte o monitor à saída VGA e verifique o comportamento do coprocessador conforme o programa de instruções e os arquivos de inicialização utilizados.
 
 
 # 8. Testes e Erros
@@ -2138,7 +2224,7 @@ Assim, considerando o escopo definido para esta etapa, o projeto apresenta um gr
 
 ### Integrantes oficiais do grupo:
 
-- Cauan Dos Reis Almeida
+- Cauan Dos Reis Almeida (sem contribuição neste README)
 - Diego Dos Santos Barros Santana
 - Heitor Abdalla Mascarenhas
 
