@@ -672,6 +672,8 @@ set_global_assignment -name VERILOG_FILE rtl/core/fetch_unit/unidade_de_busca_de
 set_global_assignment -name VERILOG_FILE rtl/core/fetch_unit/instruction_fetch.v
 set_global_assignment -name VERILOG_FILE rtl/core/fetch_unit/Program_counter.v
 set_global_assignment -name VERILOG_FILE rtl/core/fetch_unit/Adder.v
+set_global_assignment -name VERILOG_FILE rtl/core/fetch_unit/fila_comandos.v
+set_global_assignment -name VERILOG_FILE rtl/core/fetch_unit/unidade_de_busca_passiva.v
 set_global_assignment -name VERILOG_FILE rtl/core/register_bank/banco_registradores.v
 set_global_assignment -name VERILOG_FILE rtl/core/auxiliary_modules/camada_composicao.v
 set_global_assignment -name VERILOG_FILE rtl/core/auxiliary_modules/avalia_condicao.v

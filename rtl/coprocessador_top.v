@@ -36,7 +36,9 @@
 // LEDR[3] = PLL travado, LEDR[4] = pixel descartado por prioridade (trava).
 // ============================================================================
 
-module coprocessador_top (
+module coprocessador_top #(
+    parameter BUSCA_PASSIVA = 0     // 0: ROM + PC (ativa)   1: FIFO escrita pelo HPS (passiva)
+) (
     input  wire        CLOCK_50,
     input  wire [3:0]  KEY,            // botoes, ativos em 0
     output wire [9:0]  LEDR,
@@ -49,6 +51,12 @@ module coprocessador_top (
     output wire        VGA_CLK,
     output wire        VGA_BLANK_N,
     output wire        VGA_SYNC_N
+
+    // Fila de comandos (so usada com BUSCA_PASSIVA = 1)
+    input  wire        cmd_wr,
+    input  wire [31:0] cmd_data,
+    output wire        cmd_full,
+    output wire        cmd_empty
 );
 
     wire clk = CLOCK_50;
@@ -77,6 +85,10 @@ module coprocessador_top (
     wire        running, waiting, invalid_opcode;
     wire        engine_done;
     wire        frame_swap;
+    wire        fifo_empty, fifo_full, fifo_rd;
+    wire [31:0] fifo_q;
+    assign cmd_full  = fifo_full;
+    assign cmd_empty = fifo_empty;
 
     // Banco de registradores e ULA
     wire [31:0]  reg_a, reg_b;
@@ -235,25 +247,44 @@ module coprocessador_top (
     // ------------------------------------------------------------------------
     // Unidade de busca de instrucoes (PC, Adder e instruction_memory internos)
     // ------------------------------------------------------------------------
-    unidade_de_busca_de_instrucoes #(
-        .LAT_MEM     (2),   // instruction_memory com saida q registrada
-        .INICIAR_AUTO(1),   // executa logo apos o reset
-        .LOOP_AUTO   (1)    // apos o HALT, troca os buffers e reinicia no vblank
-    ) u_busca (
-        .clk           (clk),
-        .reset         (reset | comp_init_busy),   // so comeca com os mapas de camadas zerados
-        .start         (start_pulse),
-        .engine_done   (engine_done),
-        .vblank        (vblank),
-        .flags         (flags_q[3:0]),   // {C, V, N, Z} para os desvios condicionais
-        .pc            (pc),
-        .instruction   (instruction),
-        .execute       (execute),
-        .frame_swap    (frame_swap),
-        .running       (running),
-        .waiting       (waiting),
-        .invalid_opcode(invalid_opcode)
-    );
+    generate
+        if (BUSCA_PASSIVA) begin : gen_busca_passiva
+            fila_comandos #(.LARGURA(32), .PROFUNDIDADE(64)) u_fila (
+                .clk(clk), .reset(reset),          // so o reset da placa
+                .wr_en(cmd_wr), .wr_data(cmd_data), .full(fifo_full),
+                .rd_en(fifo_rd), .rd_data(fifo_q), .empty(fifo_empty));
+
+            unidade_de_busca_passiva u_busca (
+                .clk(clk), .reset(reset | comp_init_busy), .start(start_pulse),
+                .engine_done(engine_done), .vblank(vblank), .flags(flags_q[3:0]),
+                .fifo_empty(fifo_empty), .fifo_q(fifo_q), .fifo_rd(fifo_rd),
+                .pc(pc), .instruction(instruction), .execute(execute),
+                .frame_swap(frame_swap), .running(running),
+                .waiting(waiting), .invalid_opcode(invalid_opcode));
+        end else begin : gen_busca_ativa
+            assign fifo_empty = 1'b1;  assign fifo_full = 1'b1;  assign fifo_q = 32'd0;
+            unidade_de_busca_de_instrucoes #(
+                .LAT_MEM     (2),   // instruction_memory com saida q registrada
+                .INICIAR_AUTO(1),   // executa logo apos o reset
+                .LOOP_AUTO   (1)    // apos o HALT, troca os buffers e reinicia no vblank
+            ) u_busca (
+                .clk           (clk),
+                .reset         (reset | comp_init_busy),   // so comeca com os mapas de camadas zerados
+                .start         (start_pulse),
+                .engine_done   (engine_done),
+                .vblank        (vblank),
+                .flags         (flags_q[3:0]),   // {C, V, N, Z} para os desvios condicionais
+                .pc            (pc),
+                .instruction   (instruction),
+                .execute       (execute),
+                .frame_swap    (frame_swap),
+                .running       (running),
+                .waiting       (waiting),
+                .invalid_opcode(invalid_opcode)
+            );
+        end
+    endgenerate
+    
 
     // ------------------------------------------------------------------------
     // Unidade de controle (decodificador, escritas, disparos)
