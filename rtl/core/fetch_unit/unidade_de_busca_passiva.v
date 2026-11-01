@@ -47,7 +47,7 @@
 //   - vblank ja esta sincronizado ao dominio de clk.
 // ============================================================================
 
-'include "rtl/core/include/isa.vh"
+`include "rtl/include/isa.vh"
 
 module unidade_de_busca_passiva (
     input  wire        clk,            // clock do sistema

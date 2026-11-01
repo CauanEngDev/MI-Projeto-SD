@@ -1,22 +1,27 @@
-localparam NOP  = 5'b00000;
-localparam ADD  = 5'b00001;
-localparam SUB  = 5'b00010;
-localparam AND  = 5'b00011;
-localparam LSL  = 5'b00100;
-localparam LSR  = 5'b00101;
-localparam PASS = 5'b00110;
-localparam SEP  = 5'b00111; // SET_PALETTE
-localparam DRR  = 5'b01000; // DRAW_RECT
-localparam DRT  = 5'b01001; // DRAW_TRIANGLE
-localparam SESP = 5'b01010; // SET_SPRITE_POS
-localparam SESA = 5'b01011; // SET_SPRITE_ATTR
-localparam SETM = 5'b01100; // SET_TILEMAP
-localparam SCB  = 5'b01101; // SCROLL_BG
-localparam WRSD = 5'b01110; // WRITE_SPRITE_DATA
-localparam WRTD = 5'b01111; // WRITE_TILE_DATA
-localparam CLF  = 5'b10000; // CLEAR_FRAMEBUFFER
-localparam DRB  = 5'b10001; // DRAW_BACKGROUND
-localparam DRS  = 5'b10010; // DRAW_SPRITES 
-localparam SWB  = 5'b10011; // SWAP_BUFFERS
-localparam WVB  = 5'b10100; // WAIT_VBLANK
-localparam HALT = 5'b10101; // Último Opcode Válido
+`ifndef ISA_VH
+`define ISA_VH
+
+`define NOP  5'b00000
+`define ADD  5'b00001
+`define SUB  5'b00010
+`define AND  5'b00011
+`define LSL  5'b00100
+`define LSR  5'b00101
+`define PASS 5'b00110
+`define SEP  5'b00111
+`define DRR  5'b01000
+`define DRT  5'b01001
+`define SESP 5'b01010
+`define SESA 5'b01011
+`define SETM 5'b01100
+`define SCB  5'b01101
+`define WRSD 5'b01110
+`define WRTD 5'b01111
+`define CLF  5'b10000
+`define DRB  5'b10001
+`define DRS  5'b10010
+`define SWB  5'b10011
+`define WVB  5'b10100
+`define HALT 5'b10101
+
+`endif

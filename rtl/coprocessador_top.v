@@ -30,6 +30,11 @@
 // Clocks: toda a logica em 50 MHz; clk_pixel (25 MHz, PLL) so no vga_driver e
 // na leitura do framebuffer.
 //
+// Interface com o HPS (busca passiva): cmd_* alimentam a fila de comandos;
+// st_* exportam o estado para o registrador STATUS do avalon_cmd_slave;
+// sw_reset (vindo do registrador CTRL) reinicia fila, busca, motores,
+// registradores e camada de composicao sem mexer em PLL, VGA e framebuffer.
+//
 // Controles da placa: KEY[0] = reset, KEY[1] = reinicia o programa (sem
 // debounce). LEDR[0] = programa rodando, LEDR[1] = aguardando motor/vblank,
 // LEDR[2] = erro (opcode reservado ou comando rejeitado), com trava,
@@ -50,13 +55,25 @@ module coprocessador_top #(
     output wire        VGA_VS,
     output wire        VGA_CLK,
     output wire        VGA_BLANK_N,
-    output wire        VGA_SYNC_N
+    output wire        VGA_SYNC_N,
 
     // Fila de comandos (so usada com BUSCA_PASSIVA = 1)
     input  wire        cmd_wr,
     input  wire [31:0] cmd_data,
     output wire        cmd_full,
-    output wire        cmd_empty
+    output wire        cmd_empty,
+
+    // Reset por software (registrador CTRL do avalon_cmd_slave)
+    input  wire        sw_reset,
+
+    // Status exportado ao HPS (registrador STATUS do avalon_cmd_slave)
+    output wire        st_running,
+    output wire        st_waiting,
+    output wire        st_vblank,
+    output wire        st_error,
+    output wire        st_init_busy,
+    output wire        st_pll_locked,
+    output wire        st_frame_swap
 );
 
     wire clk = CLOCK_50;
@@ -73,6 +90,13 @@ module coprocessador_top #(
     end
 
     wire reset       = rst_sync[1];
+
+    // reset_core: reset da placa OU reset por software. Vale para a fila, a
+    // busca, os motores, o banco de registradores, a composicao e os
+    // indicadores. PLL, VGA, sincronizador de vblank e selecao dos bancos do
+    // framebuffer ficam so com o reset da placa (um sw_reset nao pode piscar a
+    // tela nem desalinhar o double buffer).
+    wire reset_core  = reset | sw_reset;
     wire start_pulse = key1_sync[2] & ~key1_sync[1];   // borda de descida de KEY[1]
 
     // ------------------------------------------------------------------------
@@ -250,12 +274,12 @@ module coprocessador_top #(
     generate
         if (BUSCA_PASSIVA) begin : gen_busca_passiva
             fila_comandos #(.LARGURA(32), .PROFUNDIDADE(64)) u_fila (
-                .clk(clk), .reset(reset),          // so o reset da placa
+                .clk(clk), .reset(reset_core),     // placa ou software
                 .wr_en(cmd_wr), .wr_data(cmd_data), .full(fifo_full),
                 .rd_en(fifo_rd), .rd_data(fifo_q), .empty(fifo_empty));
 
             unidade_de_busca_passiva u_busca (
-                .clk(clk), .reset(reset | comp_init_busy), .start(start_pulse),
+                .clk(clk), .reset(reset_core | comp_init_busy), .start(start_pulse),
                 .engine_done(engine_done), .vblank(vblank), .flags(flags_q[3:0]),
                 .fifo_empty(fifo_empty), .fifo_q(fifo_q), .fifo_rd(fifo_rd),
                 .pc(pc), .instruction(instruction), .execute(execute),
@@ -269,7 +293,7 @@ module coprocessador_top #(
                 .LOOP_AUTO   (1)    // apos o HALT, troca os buffers e reinicia no vblank
             ) u_busca (
                 .clk           (clk),
-                .reset         (reset | comp_init_busy),   // so comeca com os mapas de camadas zerados
+                .reset         (reset_core | comp_init_busy),   // so comeca com os mapas de camadas zerados
                 .start         (start_pulse),
                 .engine_done   (engine_done),
                 .vblank        (vblank),
@@ -352,7 +376,7 @@ module coprocessador_top #(
     // ------------------------------------------------------------------------
     banco_registradores u_banco (
         .clk          (clk),
-        .reset        (reset),
+        .reset        (reset_core),
         .instrucao    (instruction),
         .write_enable (rf_write_enable),
         .write_data   (alu_rd),
@@ -444,7 +468,7 @@ module coprocessador_top #(
     // ------------------------------------------------------------------------
     motor_background u_motor_bg (
         .clk              (clk),
-        .reset            (reset),
+        .reset            (reset_core),
 
         .scroll_wr_en     (scroll_wr_en),
         .scroll_sel       (scroll_sel),
@@ -473,7 +497,7 @@ module coprocessador_top #(
 
     motor_sprite u_motor_sprite (
         .clk             (clk),
-        .reset           (reset),
+        .reset           (reset_core),
 
         .spos_we         (spos_we),
         .spos_wr_addr    (spos_wr_addr),
@@ -499,7 +523,7 @@ module coprocessador_top #(
 
     rasterizador_top u_rasterizador (
         .clk             (clk),
-        .reset           (reset),
+        .reset           (reset_core),
 
         .start_square    (start_square),
         .start_triangle  (start_triangle),
@@ -565,7 +589,7 @@ module coprocessador_top #(
     // ------------------------------------------------------------------------
     camada_composicao u_composicao (
         .clk        (clk),
-        .reset      (reset),
+        .reset      (reset_core),
         .clear_all  (start_pulse),     // reinicio manual: zera os mapas de camadas
         .wr_buf_sel (wr_buf_sel),
         .engine_sel (engine_sel),
@@ -589,7 +613,7 @@ module coprocessador_top #(
     // ------------------------------------------------------------------------
     reg err_latch = 1'b0;
     always @(posedge clk) begin
-        if (reset)
+        if (reset_core)
             err_latch <= 1'b0;
         else if (invalid_opcode | cmd_error)
             err_latch <= 1'b1;
@@ -598,12 +622,23 @@ module coprocessador_top #(
     // LEDR[4]: algum pixel foi descartado pela camada de composicao (trava)
     reg prio_latch = 1'b0;
     always @(posedge clk) begin
-        if (reset)
+        if (reset_core)
             prio_latch <= 1'b0;
         else if (comp_blocked)
             prio_latch <= 1'b1;
     end
 
     assign LEDR = {5'b0, prio_latch, pll_locked, err_latch, waiting, running};
+
+    // ------------------------------------------------------------------------
+    // Status exportado ao HPS
+    // ------------------------------------------------------------------------
+    assign st_running    = running;
+    assign st_waiting    = waiting;
+    assign st_vblank     = vblank;
+    assign st_error      = err_latch;
+    assign st_init_busy  = comp_init_busy;
+    assign st_pll_locked = pll_locked;
+    assign st_frame_swap = frame_swap;
 
 endmodule
