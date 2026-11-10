@@ -1,7 +1,6 @@
 # --- Artefatos de compilação do Quartus (regenerados a cada build) ---
 db/
 incremental_db/
-output_files/
 greybox_tmp/
 verilog_libs/
 .qsys_edit/
