@@ -1,12 +1,12 @@
-Fitter Status : Successful - Tue Nov 10 22:10:21 2026
+Fitter Status : Successful - Wed Nov 11 14:21:45 2026
 Quartus Prime Version : 25.1std.0 Build 1129 10/21/2025 SC Lite Edition
 Revision Name : CoProcessador
 Top-level Entity Name : de1_soc_hps_top
 Family : Cyclone V
 Device : 5CSEMA5F31C6
 Timing Models : Final
-Logic utilization (in ALMs) : 3,259 / 32,070 ( 10 % )
-Total registers : 4003
+Logic utilization (in ALMs) : 3,287 / 32,070 ( 10 % )
+Total registers : 4041
 Total pins : 171 / 457 ( 37 % )
 Total virtual pins : 0
 Total block memory bits : 1,967,872 / 4,065,280 ( 48 % )

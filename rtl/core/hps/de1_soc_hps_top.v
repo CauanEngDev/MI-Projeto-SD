@@ -104,6 +104,16 @@ module de1_soc_hps_top (
     wire        cmd_empty;
     wire        sw_reset;
 
+    // Reset gerado pelo HPS para a logica no FPGA.
+    // O HPS pode manter a fabric em reset durante sua sequencia de inicializacao.
+    wire        hps_to_fpga_reset_n;
+    wire        fpga_reset_n;
+    wire [3:0]  coprocessador_key;
+
+    // KEY[0] e ativo em nivel baixo. O reset do HPS tambem e ativo em baixo.
+    assign fpga_reset_n = KEY[0] & hps_to_fpga_reset_n;
+    assign coprocessador_key = {KEY[3:1], fpga_reset_n};
+
     wire        st_running;
     wire        st_waiting;
     wire        st_vblank;
@@ -114,13 +124,21 @@ module de1_soc_hps_top (
 
     // ------------------------------------------------------------------------
     // Sistema Platform Designer: HPS + ponte LW + avalon_cmd_slave
-    // reset_reset_n = KEY[0]: o mesmo botao que reseta o coprocessador tambem
-    // limpa os registradores do slave. Se o seu soc_system ligar o clk_0 a
-    // outros resets importantes do HPS, troque por 1'b1.
+    // fpga_reset_n combina KEY[0] com o reset ativo-baixo que o HPS fornece
+    // para a fabric. Assim, a ponte e o slave so saem do reset quando ambos
+    // os lados permitem a operacao.
     // ------------------------------------------------------------------------
     soc_system u_soc (
         .clk_clk       (CLOCK_50),
-        .reset_reset_n (KEY[0]),
+        .reset_reset_n (fpga_reset_n),
+
+        // Entradas de reset/eventos exportadas pelo HPS no Platform Designer.
+        // Sao sinais ativos em nivel baixo; 1'b1 os mantem inativos.
+        .hps_0_f2h_cold_reset_req_reset_n  (1'b1),
+        .hps_0_f2h_debug_reset_req_reset_n (1'b1),
+        .hps_0_f2h_warm_reset_req_reset_n  (1'b1),
+        .hps_0_f2h_stm_hw_events_stm_hwevents (28'b0),
+        .hps_0_h2f_reset_reset_n           (hps_to_fpga_reset_n),
 
         // avalon_cmd_slave <-> coprocessador
         .cmd_wr        (cmd_wr),
@@ -231,7 +249,7 @@ module de1_soc_hps_top (
     // ------------------------------------------------------------------------
     coprocessador_top #(.BUSCA_PASSIVA(1)) u_coprocessador (
         .CLOCK_50    (CLOCK_50),
-        .KEY         (KEY),
+        .KEY         (coprocessador_key),
         .LEDR        (LEDR),
 
         .VGA_R       (VGA_R),

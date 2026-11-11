@@ -6,7 +6,7 @@ JedecChain;
 	P ActionCode(Ign)
 		Device PartName(SOCVHPS) MfrSpec(OpMask(0));
 	P ActionCode(Cfg)
-		Device PartName(5CSEMA5F31) Path("/home/aluno/Downloads/HDC/MI-Projeto-SD/output_files/") File("CoProcessador.sof") MfrSpec(OpMask(1));
+		Device PartName(5CSEMA5F31) Path("/home/aluno/HDC LTDA/MI-Projeto-SD-feat_busca_passiva/output_files/") File("CoProcessador.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 

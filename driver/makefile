@@ -15,7 +15,7 @@ BIN     := estrelas
 all: $(BIN)
 
 $(BIN): $(OBJ)
-	$(CC) $(CFLAGS) -no-pie -o $@ $(OBJ)
+	$(CC) $(CFLAGS) -no-pie -o $@ $(OBJ) -lrt
 
 build/%.o: src/%.c | build
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@
