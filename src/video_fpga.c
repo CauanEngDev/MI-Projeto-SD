@@ -1,0 +1,10 @@
+#include "video.h"
+#include "cop_api_c.h"
+#include <string.h>
+static uint16_t pal[16]={COP_RGB(0,0,0),COP_RGB(2,4,7),COP_RGB(2,6,2),COP_RGB(4,2,1),COP_RGB(3,3,3),COP_RGB(1,1,1),COP_RGB(4,2,0),COP_RGB(1,5,1),COP_RGB(7,7,7),COP_RGB(7,6,3)};
+static uint8_t oldmap[1200]; static int old_tx=-1,old_ty=-1; static void *base;
+static void tile_pixels(int id,uint8_t p[64]){for(int y=0;y<8;y++)for(int x=0;x<8;x++){uint8_t c=1;switch(id){case GRASS:c=(y<2)?2:3;break;case DIRT:c=((x*3+y*5)%9==0)?6:3;break;case STONE:c=((x+y)%7==0)?4:5;break;case COAL:c=((x+y)%4==0)?5:4;break;case WOOD:c=(x==3||x==4)?6:3;break;case LEAF:c=((x+y)%3)?7:2;break;case BEDROCK:c=5;break;default:c=1;}p[y*8+x]=c;}}
+static int upload_world(Game*g,int tx,int ty){for(int y=0;y<VH;y++)for(int x=0;x<VW;x++){int wx=tx+x,wy=ty+y;uint8_t b=(wx<MW&&wy<MH)?g->map[wy][wx]:EMPTY;unsigned slot=((wy%VH)*VW+(wx%VW));if(oldmap[slot]!=b){if(cop_set_tilemap(base,slot,b)<0)return -1;oldmap[slot]=b;}}old_tx=tx;old_ty=ty;return 0;}
+int video_open(void){base=hps_open();if(!base)return -1;if(cop_init(base)<0)return -2;for(unsigned i=0;i<10;i++)if(cop_set_palette(base,0,i,pal[i])<0)return -3;uint8_t p[64];for(int i=0;i<8;i++){tile_pixels(i,p);if(cop_write_tile_data(base,i,p)<0)return -4;}uint8_t lin[256],ram[256];for(int y=0;y<16;y++)for(int x=0;x<16;x++)lin[y*16+x]=(y<3)?8:((x<3||x>12)?6:((y<7)?9:3));cop_sprite16_to_ram(lin,ram);if(cop_write_sprite_data(base,0,ram)<0)return -5;if(cop_set_sprite_attr(base,0,COP_SPRITE_ATTR(1,20,0,0,0,0))<0)return -6;memset(oldmap,0xff,sizeof oldmap);return 0;}
+void video_close(void){if(base)hps_close(base);base=0;}
+int video_frame(Game*g,const char*unused){(void)unused;int tx=g->cam_x/8,ty=g->cam_y/8;if(upload_world(g,tx,ty)<0)return -1;if(cop_scroll_bg(base,(unsigned)(g->cam_x%320),(unsigned)(g->cam_y%240))<0)return -1;if(cop_draw_bg(base)<0)return -1;int sx=g->p.x-g->cam_x,sy=g->p.y-g->cam_y;if(sx<0)sx=0;if(sy<0)sy=0;if(cop_set_sprite_pos(base,0,(unsigned)sx,(unsigned)sy)<0)return -1;if(cop_draw_sprites(base)<0)return -1;static uint32_t frame;uint32_t n=cop_present(base,frame);if(n==0xffffffffu)return -1;frame=n;return 0;}
