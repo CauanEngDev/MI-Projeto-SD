@@ -22,7 +22,7 @@ static void usage(const char *p)
 
 int main(int argc, char **argv)
 {
-    pac_cfg_t cfg = { 0 };
+    pac_cfg_t cfg = { .max_frames = 0, .mouse_threshold = 0, .on_frame = NULL, .user = NULL };
     const char *csv = NULL, *kbd = NULL, *mouse = NULL;
 
     for (int i = 1; i < argc; i++) {

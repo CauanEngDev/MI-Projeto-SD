@@ -25,7 +25,9 @@ enum {
     INPUT_LEFT   = 1u << 0,
     INPUT_RIGHT  = 1u << 1,
     INPUT_ACTION = 1u << 2,
-    INPUT_QUIT   = 1u << 3
+    INPUT_QUIT   = 1u << 3,
+    INPUT_UP     = 1u << 4,
+    INPUT_DOWN   = 1u << 5
 };
 
 /* Botoes do mouse (campos buttons e button_edges) */
@@ -47,6 +49,8 @@ typedef struct {
     int      mouse_x;       /* 0..INPUT_SCREEN_W-1                            */
     int      mouse_y;       /* 0..INPUT_SCREEN_H-1                            */
     int      mouse_gain;    /* multiplicador do deslocamento relativo (1)     */
+    int      mouse_dx, mouse_dy; /* deslocamento relativo acumulado no poll */
+    double   event_time;    /* timestamp monotônico do evento mais antigo, em s */
 
     uint32_t phys;          /* uso interno: teclas fisicas pressionadas       */
 } input_t;

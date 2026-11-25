@@ -76,7 +76,7 @@ static void roll_second(perf_t *p, double t)
 
 void perf_present_done(perf_t *p, double event_time)
 {
-    double t = p->clk.mono(p->clk.ctx), real = p->clk.real(p->clk.ctx);
+    double t = p->clk.mono(p->clk.ctx);
     double push = p->t_push_end - p->t_frame0, wait = t - p->t_push_end;
     double cpu_present = p->clk.cpu_thread(p->clk.ctx) - p->cpu_thr_push_end;
     if (cpu_present < 0.0) cpu_present = 0.0;
@@ -94,7 +94,8 @@ void perf_present_done(perf_t *p, double event_time)
     p->s_cpu_present += cpu_present; p->cpu_present_sum += cpu_present;
 
     if (event_time > 0.0) {
-        double lat = (real - event_time) * 1e3;
+        /* event_time e registrado com CLOCK_MONOTONIC quando o jogo consome o evento. */
+        double lat = (t - event_time) * 1e3;
         if (lat < 0.0) lat = 0.0;
         p->lat_frames++; p->s_lat_n++; p->s_lat_sum += lat;
         if (lat > p->s_lat_max) p->s_lat_max = lat;
